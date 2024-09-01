@@ -2,11 +2,10 @@ package app
 
 import (
 	"errors"
+	"github.com/FredericoBento/HandGame/internal/middleware"
 	"log/slog"
 	"net/http"
 	"strconv"
-
-	"github.com/FredericoBento/HandGame/internal/handlers"
 )
 
 var (
@@ -18,7 +17,8 @@ var (
 )
 
 type ServerHandlers struct {
-	authHandler *handlers.AuthHandler
+	authHandler http.Handler
+	homeHandler http.Handler
 }
 
 type Server struct {
@@ -66,9 +66,10 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func NewServerHandlers(authH *handlers.AuthHandler) *ServerHandlers {
+func NewServerHandlers(authH http.Handler, homeH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
 		authHandler: authH,
+		homeHandler: homeH,
 	}
 }
 
@@ -90,12 +91,21 @@ func (s *Server) setupRoutes() error {
 		return ErrAuthHandlerNotFound
 	}
 
-	s.authRouter.HandleFunc("GET /sign-in", s.handlers.authHandler.GetSignIn)
-	s.authRouter.HandleFunc("GET /sign-up", s.handlers.authHandler.GetSignUp)
+	authHandlerMiddlewares := middleware.StackMiddleware(
+		middleware.Logger,
+		middleware.SecureHeadersMiddleware,
+	)
+
+	s.authRouter.Handle("/sign-in", s.handlers.authHandler)
+	s.authRouter.Handle("/sign-up", s.handlers.authHandler)
+
+	// s.authRouter.HandleFunc("GET /sign-in", s.handlers.authHandler.GetSignIn)
+	// s.authRouter.HandleFunc("GET /sign-up", s.handlers.authHandler.GetSignUp)
+	s.router.Handle("/home", s.handlers.homeHandler)
 
 	// s.authRouter.HandleFunc("/dashboard", s..Dashboard)
 
-	s.router.Handle("/", s.authRouter)
+	s.router.Handle("/", authHandlerMiddlewares(s.authRouter))
 	// s.router.Handle("/admin/", http.StripPrefix("/admin", s.adminRouter))
 
 	return nil
@@ -110,6 +120,9 @@ func (s *Server) Run() error {
 		Addr:    addr,
 		Handler: s.router,
 	}
+
+	fs := http.FileServer(http.Dir("./assets"))
+	s.router.Handle("/assets/*", http.StripPrefix("/assets/", fs))
 
 	err := s.httpServer.ListenAndServe()
 	defer s.httpServer.Close()

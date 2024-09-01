@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/FredericoBento/HandGame/internal/handlers"
+	"github.com/FredericoBento/HandGame/internal/handler"
 	"log/slog"
 )
 
@@ -20,9 +20,10 @@ func NewHandGameApp() App {
 
 func (hga *HandGameApp) Start() error {
 	slog.Info("Starting HandGame App...")
-	authHandler := handlers.NewAuthHandler()
+	authHandler := handler.NewAuthHandler()
+	homeHandler := handler.NewHomeHandler()
 
-	serverHandlers := NewServerHandlers(authHandler)
+	serverHandlers := NewServerHandlers(authHandler, homeHandler)
 	hga.Server = NewServer(
 		WithPort(8080),
 		WithHandlers(serverHandlers),

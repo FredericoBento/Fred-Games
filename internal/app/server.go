@@ -96,14 +96,22 @@ func (s *Server) setupRoutes() error {
 		middleware.SecureHeadersMiddleware,
 	)
 
+	homeHandlerMiddlewares := middleware.StackMiddleware(
+		middleware.Logger,
+		middleware.SecureHeadersMiddleware,
+	)
+
 	s.authRouter.Handle("/sign-in", s.handlers.authHandler)
 	s.authRouter.Handle("/sign-up", s.handlers.authHandler)
 
 	// s.authRouter.HandleFunc("GET /sign-in", s.handlers.authHandler.GetSignIn)
 	// s.authRouter.HandleFunc("GET /sign-up", s.handlers.authHandler.GetSignUp)
-	s.router.Handle("/home", s.handlers.homeHandler)
+	s.router.Handle("/home", homeHandlerMiddlewares(s.handlers.homeHandler))
 
 	// s.authRouter.HandleFunc("/dashboard", s..Dashboard)
+
+	fs := http.FileServer(http.Dir("./assets"))
+	s.router.Handle("/assets/", homeHandlerMiddlewares(http.StripPrefix("/assets", fs)))
 
 	s.router.Handle("/", authHandlerMiddlewares(s.authRouter))
 	// s.router.Handle("/admin/", http.StripPrefix("/admin", s.adminRouter))
@@ -120,9 +128,6 @@ func (s *Server) Run() error {
 		Addr:    addr,
 		Handler: s.router,
 	}
-
-	fs := http.FileServer(http.Dir("./assets"))
-	s.router.Handle("/assets/*", http.StripPrefix("/assets/", fs))
 
 	err := s.httpServer.ListenAndServe()
 	defer s.httpServer.Close()

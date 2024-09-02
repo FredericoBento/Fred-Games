@@ -39,20 +39,20 @@ func (hga *HandGameApp) Start() error {
 	if err == nil {
 		slog.Info("HandGame App has started ")
 	} else {
-		slog.Info("HandGame App could not start")
+		slog.Error("HandGame App could not start")
 	}
 
 	return err
 }
 
 func (hga *HandGameApp) Stop() error {
-	slog.Info("Stopping HandGame App...")
+	slog.Warn("Stopping HandGame App...")
 	err := hga.Server.Shutdown()
 
 	if err == nil {
 		slog.Info("HandGame App has stopped")
 	} else {
-		slog.Info("HandGame App could not be stopped")
+		slog.Error("HandGame App could not be stopped")
 	}
 
 	return err

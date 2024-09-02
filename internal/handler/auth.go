@@ -2,12 +2,16 @@ package handler
 
 import (
 	"net/http"
+
+	"github.com/FredericoBento/HandGame/internal/views"
+	"github.com/FredericoBento/HandGame/internal/views/auth_views"
+	"github.com/a-h/templ"
 )
 
 type AuthHandler struct {
 }
 
-func NewAuthHandler() http.Handler {
+func NewAuthHandler() *AuthHandler {
 	return &AuthHandler{}
 }
 
@@ -43,6 +47,11 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ah.View(w, r, viewProps{
+		title:   "Sign Up",
+		content: auth_views.SignUpForm(),
+	})
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Sign Up Get"))
 }
@@ -55,4 +64,13 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Sign In Get"))
+}
+
+type viewProps struct {
+	title   string
+	content templ.Component
+}
+
+func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewProps) {
+	views.Page(props.title, props.content).Render(r.Context(), w)
 }

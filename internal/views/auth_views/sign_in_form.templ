@@ -1,0 +1,17 @@
+package auth_views
+
+templ SignInForm() {
+  <form hx-post="/sign-in" hx-swap="outerHTML" class="container sign-in">
+    <h3>Log In</h3>
+    <hr>
+
+    <label for="username">Username</label>
+    <input id="usernameInput" type="text" required/>
+
+    <label for="password">Password</label>
+    <input id="passwordInput" type="password" required/>
+
+    <input class="button-primary" type="submit" value="Log In"/>
+    <a hx-get="/sign-up" hx-swap="outerHTML" hx-target=".sign-in" hx-push-url="true">Don't have an account? Sign Up</a>
+  </form>
+}

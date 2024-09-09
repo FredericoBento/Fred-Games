@@ -51,9 +51,6 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		title:   "Sign Up",
 		content: auth_views.SignUpForm(),
 	})
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Sign Up Get"))
 }
 
 func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
@@ -62,8 +59,10 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Sign In Get"))
+	ah.View(w, r, viewProps{
+		title:   "Sign In",
+		content: auth_views.SignInForm(),
+	})
 }
 
 type viewProps struct {
@@ -72,5 +71,9 @@ type viewProps struct {
 }
 
 func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewProps) {
-	views.Page(props.title, props.content).Render(r.Context(), w)
+	if IsHTMX(r) {
+		props.content.Render(r.Context(), w)
+	} else {
+		views.Page(props.title, props.content).Render(r.Context(), w)
+	}
 }

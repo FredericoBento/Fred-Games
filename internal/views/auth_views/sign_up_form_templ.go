@@ -26,7 +26,7 @@ func SignUpForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section><form><input name=\"username\" id=\"username\" type=\"text\" required>Username <input name=\"password\" id=\"password\" type=\"password\">Password <input name=\"repeat_password\" id=\"repeat_password\" type=\"password\">Repeat Password</form></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form class=\"container sign-up\"><h3>Sign Up</h3><hr><label for=\"username\">Username</label> <input name=\"username\" id=\"username\" type=\"text\" required> <label for=\"password\">Password</label> <input name=\"password\" id=\"password\" type=\"password\" required> <label for=\"repeat_password\">Repeat Password</label> <input name=\"repeat_password\" id=\"repeat_password\" type=\"password\" required> <input class=\"button-primary\" type=\"submit\" value=\"Sign Up\"> <a hx-get=\"/sign-in\" hx-swap=\"outerHTML\" hx-target=\".sign-up\" hx-push-url=\"true\">Already a user? Log In</a></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

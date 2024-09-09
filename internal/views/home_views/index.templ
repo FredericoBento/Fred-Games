@@ -1,17 +1,15 @@
 package home_views
 
-import "github.com/FredericoBento/HandGame/internal/views/components"
+templ Base() {
+		<h3>This is Home</h3>
+		@Menu()
+}
 
-templ Index() {
-	<!DOCTYPE html>
-	<html lang="en">
-		@components.Header()
+templ Menu() {
 
-		<body>
-		<section class="container">
-				<h1 class="title">HandGame</h1>
-		</section>
-		</body>
-		@components.Footer()
-	</html>
+  <div>
+		<input type="button" value="Quick Play"/>
+		<input type="button" value="Create Room"/>
+		<input type="button" value="Join Room"/>
+	</div>
 }

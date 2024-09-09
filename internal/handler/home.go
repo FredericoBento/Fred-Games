@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 
+	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/home_views"
+	"github.com/a-h/templ"
 )
 
 type HomeHandler struct {
@@ -21,13 +23,23 @@ func (hh *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (hh *HomeHandler) Get(w http.ResponseWriter, r *http.Request) {
-	props := ViewProps{}
-	hh.View(w, r, props)
+
+	hh.View(w, r, homeViewProps{
+		title:   "Sign In",
+		content: home_views.Base(),
+	})
 }
 
-type ViewProps struct {
+type homeViewProps struct {
+	title   string
+	content templ.Component
 }
 
-func (hh *HomeHandler) View(w http.ResponseWriter, r *http.Request, props ViewProps) {
-	home_views.Index().Render(r.Context(), w)
+func (hh *HomeHandler) View(w http.ResponseWriter, r *http.Request, props homeViewProps) {
+
+	if IsHTMX(r) {
+		props.content.Render(r.Context(), w)
+	} else {
+		views.Page(props.title, props.content).Render(r.Context(), w)
+	}
 }

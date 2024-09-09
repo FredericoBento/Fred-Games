@@ -17,18 +17,19 @@ var (
 )
 
 type ServerHandlers struct {
-	authHandler http.Handler
-	homeHandler http.Handler
+	AuthHandler http.Handler
+	HomeHandler http.Handler
 }
 
 type Server struct {
 	Host        string
 	Port        int
-	httpServer  *http.Server
-	router      *http.ServeMux
-	authRouter  *http.ServeMux
-	adminRouter *http.ServeMux
-	handlers    *ServerHandlers
+	HttpServer  *http.Server
+	Router      *http.ServeMux
+	AuthRouter  *http.ServeMux
+	AdminRouter *http.ServeMux
+	// HandGameRouter *http.ServeMux
+	Handlers *ServerHandlers
 }
 
 type ServerOption func(*Server)
@@ -47,17 +48,17 @@ func WithPort(port int) ServerOption {
 
 func WithHandlers(handlers *ServerHandlers) ServerOption {
 	return func(s *Server) {
-		s.handlers = handlers
+		s.Handlers = handlers
 	}
 }
 
 func NewServer(opts ...ServerOption) *Server {
 	server := &Server{
-		httpServer:  nil,
-		router:      http.NewServeMux(),
-		authRouter:  http.NewServeMux(),
-		adminRouter: http.NewServeMux(),
-		handlers:    nil,
+		HttpServer:  nil,
+		Router:      http.NewServeMux(),
+		AuthRouter:  http.NewServeMux(),
+		AdminRouter: http.NewServeMux(),
+		Handlers:    nil,
 	}
 	for _, option := range opts {
 		option(server)
@@ -68,8 +69,8 @@ func NewServer(opts ...ServerOption) *Server {
 
 func NewServerHandlers(authH http.Handler, homeH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
-		authHandler: authH,
-		homeHandler: homeH,
+		AuthHandler: authH,
+		HomeHandler: homeH,
 	}
 }
 
@@ -87,34 +88,27 @@ func (s *Server) Init() error {
 }
 
 func (s *Server) setupRoutes() error {
-	if s.handlers.authHandler == nil {
+	if s.Handlers.AuthHandler == nil {
 		return ErrAuthHandlerNotFound
 	}
 
-	authHandlerMiddlewares := middleware.StackMiddleware(
+	AuthHandlerMiddlewares := middleware.StackMiddleware(
 		middleware.Logger,
 		middleware.SecureHeadersMiddleware,
 	)
 
-	homeHandlerMiddlewares := middleware.StackMiddleware(
+	HomeHandlerMiddlewares := middleware.StackMiddleware(
 		middleware.Logger,
 		middleware.SecureHeadersMiddleware,
 	)
 
-	s.authRouter.Handle("/sign-in", s.handlers.authHandler)
-	s.authRouter.Handle("/sign-up", s.handlers.authHandler)
+	s.AuthRouter.Handle("/sign-in", s.Handlers.AuthHandler)
+	s.AuthRouter.Handle("/sign-up", s.Handlers.AuthHandler)
 
-	// s.authRouter.HandleFunc("GET /sign-in", s.handlers.authHandler.GetSignIn)
-	// s.authRouter.HandleFunc("GET /sign-up", s.handlers.authHandler.GetSignUp)
-	s.router.Handle("/home", homeHandlerMiddlewares(s.handlers.homeHandler))
-
-	// s.authRouter.HandleFunc("/dashboard", s..Dashboard)
+	s.Router.Handle("/", AuthHandlerMiddlewares(s.AuthRouter))
 
 	fs := http.FileServer(http.Dir("./assets"))
-	s.router.Handle("/assets/", homeHandlerMiddlewares(http.StripPrefix("/assets", fs)))
-
-	s.router.Handle("/", authHandlerMiddlewares(s.authRouter))
-	// s.router.Handle("/admin/", http.StripPrefix("/admin", s.adminRouter))
+	s.Router.Handle("/assets/", HomeHandlerMiddlewares(http.StripPrefix("/assets", fs)))
 
 	return nil
 }
@@ -124,21 +118,27 @@ func (s *Server) Run() error {
 
 	slog.Info("Server is running on " + addr)
 
-	s.httpServer = &http.Server{
+	s.HttpServer = &http.Server{
 		Addr:    addr,
-		Handler: s.router,
+		Handler: middleware.BlockRoutes(s.Router),
 	}
 
-	err := s.httpServer.ListenAndServe()
-	defer s.httpServer.Close()
-	if err != nil {
-		slog.Error(err.Error())
-		return ErrServerCouldNotRan
-	}
+	go func() {
+		err := s.HttpServer.ListenAndServe()
+		// defer s.HttpServer.Close()
+		if err != nil {
+			slog.Error(err.Error())
+		}
+	}()
+
 	return nil
 }
 
 func (s *Server) Shutdown() error {
 	slog.Info("Server is shuting down...")
-	return nil
+	return s.HttpServer.Close()
+}
+
+func (s *Server) BlockAppRoutes(appPrefix string) {
+	middleware.BlockRoute(appPrefix)
 }

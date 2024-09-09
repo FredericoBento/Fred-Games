@@ -1,0 +1,13 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8080
+  },
+  "applications": {
+    "HandGame": {
+      "name": "HandGame",
+      "routePrefix": "/handgame",
+      "active": 1
+    }
+  }
+}

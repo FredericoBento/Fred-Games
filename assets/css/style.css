@@ -3,3 +3,41 @@
 /* width: 50%; */
 /* border: 3px solid green; */
 /* } */
+
+#header {
+  width: 100%;
+  /* border-bottom: 1px solid black; */
+}
+
+#footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  text-align: center;
+}
+
+/* Sign Up */
+
+.sign-up input {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.sign-in input {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Utilities / Helpers */
+
+.center {
+  margin: auto;
+  width: 50%;
+  /* border: 3px solid green; */
+  padding: 10px;
+}

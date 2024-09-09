@@ -1,11 +1,20 @@
 package auth_views
 
 templ SignUpForm() {
-<section>
-  <form>
-    <input name="username" id="username" type="text" required>Username</input>
-    <input name="password" id="password" type="password">Password</input>
-    <input name="repeat_password" id="repeat_password" type="password">Repeat Password</input>
+  <form class="container sign-up">
+    <h3>Sign Up</h3>
+    <hr>
+
+    <label for="username">Username</label>
+    <input name="username" id="username" type="text" required/>
+
+    <label for="password">Password</label>
+    <input name="password" id="password" type="password" required/>
+
+    <label for="repeat_password">Repeat Password</label>
+    <input name="repeat_password" id="repeat_password" type="password" required/>
+
+    <input class="button-primary" type="submit" value="Sign Up"/>
+    <a hx-get="/sign-in" hx-swap="outerHTML" hx-target=".sign-up" hx-push-url="true">Already a user? Log In</a>
   </form>
-</section>
 }

@@ -9,8 +9,9 @@ templ Page(title string, content templ.Component) {
   <html>
     <body>
       @components.Header()
-
-      @content
+      <div id="contents">      
+        @content
+      </div>
 
       @components.Footer()
     </body>

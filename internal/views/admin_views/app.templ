@@ -1,0 +1,68 @@
+package admin_views
+
+import (
+  "github.com/FredericoBento/HandGame/internal/app"
+  "sort"
+)
+
+templ AdminAppCard(a app.App) {
+  <div class="card" id={a.GetAppName()}>
+    <header class="card-header">
+      <p class="card-header-title is-flex is-justify-content-space-between">{ a.GetAppName() }
+        if a.GetStatus().IsActive() {
+            <span class="tag is-success">Running</span>
+          } else {
+            if a.GetStatus().HasStartedOnce() {
+              <span class="tag is-danger">Stopped</span>
+            } else {
+              <span class="tag is-danger">Off</span>
+            }
+          }
+       </p>
+    </header>
+
+    // <div class="card-content">
+    //   <div class="content">
+    //   </div>
+    // </div>
+
+    <footer class="card-footer">
+      if a.GetStatus().IsActive() {
+        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=stop"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Stop</button>
+        // <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">More</button>
+        <button class="card-footer-item">Restart</button>
+      } else {
+        if a.GetStatus().HasStartedOnce() {
+          <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=resume"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Resume</button>
+        } else {
+          <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Start</button>
+        }
+        <button class="card-footer-item">Restart</button>
+        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
+        // <button  class="card-footer-item js-modal-trigger" data-target="admin-app-modal">More</button>
+      }
+    </footer>
+
+    </div>
+}
+
+templ ListAppCards(apps map[string]app.App){
+    <div class="grid">
+    {{ appsKeys := make([]string, 0, len(apps)) }}
+
+    {{
+
+      for appKey := range apps {
+        appsKeys = append(appsKeys, appKey)
+      }
+
+    }}
+
+    {{ sort.Strings(appsKeys) }} 
+    for _, key:= range appsKeys {
+      <div class="cell">
+          @AdminAppCard(apps[key])
+      </div>
+    }
+  </div>
+}

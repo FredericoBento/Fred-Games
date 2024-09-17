@@ -1,0 +1,21 @@
+package admin_views
+
+import "github.com/FredericoBento/HandGame/internal/app"
+
+templ AppModal(app app.App) {
+	  <div class="modal-card" id="admin-app-modal-content">
+	    <header class="modal-card-head">
+	      <p class="modal-card-title">{ app.GetAppName() }</p>
+	      <button class="delete" aria-label="close"></button>
+	    </header>
+	    <section class="modal-card-body">
+			<h1>abc</h1>
+	    </section>
+	    <footer class="modal-card-foot">
+	      <div class="buttons">
+	        <button class="button is-success">Save changes</button>
+	        <button class="button">Cancel</button>
+	      </div>
+	    </footer>
+			</div>
+}

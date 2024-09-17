@@ -26,7 +26,7 @@ func SignInForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/sign-in\" hx-swap=\"outerHTML\" class=\"container sign-in\"><h3>Log In</h3><hr><label for=\"username\">Username</label> <input id=\"usernameInput\" type=\"text\" required> <label for=\"password\">Password</label> <input id=\"passwordInput\" type=\"password\" required> <input class=\"button-primary\" type=\"submit\" value=\"Log In\"> <a hx-get=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\">Don't have an account? Sign Up</a></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"section sign-in\"><form hx-post=\"/sign-in\" hx-swap=\"outerHTML\" class=\"container is-max-desktop\"><h2 class=\"subtitle is-4\">Log In</h2><hr><div class=\"field\"><label class=\"label\" for=\"username\">Username</label> <input class=\"input\" id=\"usernameInput\" type=\"text\" required></div><div class=\"field\"><label class=\"label\" for=\"password\">Password</label><p class=\"control has-icons-left\"><input class=\"input\" id=\"passwordInput\" type=\"password\" required> <span class=\"icon is-small is-left\"><i class=\"fas fa-lock\"></i></span></p></div><div class=\"field\"><input class=\"button is-success w-100\" type=\"submit\" value=\"Log In\"></div><div class=\"field\"><a href=\"\" hx-get=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\">Don't have an account? Sign Up</a></div></form></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

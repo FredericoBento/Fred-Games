@@ -17,8 +17,9 @@ var (
 )
 
 type ServerHandlers struct {
-	AuthHandler http.Handler
-	HomeHandler http.Handler
+	AuthHandler  http.Handler
+	HomeHandler  http.Handler
+	AdminHandler http.Handler
 }
 
 type Server struct {
@@ -67,10 +68,11 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func NewServerHandlers(authH http.Handler, homeH http.Handler) *ServerHandlers {
+func NewServerHandlers(authH http.Handler, homeH http.Handler, adminH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
-		AuthHandler: authH,
-		HomeHandler: homeH,
+		AuthHandler:  authH,
+		HomeHandler:  homeH,
+		AdminHandler: adminH,
 	}
 }
 
@@ -141,4 +143,8 @@ func (s *Server) Shutdown() error {
 
 func (s *Server) BlockAppRoutes(appPrefix string) {
 	middleware.BlockRoute(appPrefix)
+}
+
+func (s *Server) UnblockAppRoutes(appPrefix string) {
+	middleware.UnblockRoute(appPrefix)
 }

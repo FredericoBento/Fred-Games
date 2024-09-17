@@ -1,12 +1,24 @@
-/* .center { */
-/* margin: auto; */
-/* width: 50%; */
-/* border: 3px solid green; */
-/* } */
+:root {
+  --primary: #6B8A7A;
+  --primary-alt: #254336;
+  --secondary: #DAD3BE;
+  --secondary-alt: #B7B597;
+  --bulma-border: black !important;
+}
 
-#header {
+body {
+  margin: 0 auto;
+  padding: 0;
+  height: 100vh;
   width: 100%;
-  /* border-bottom: 1px solid black; */
+}
+
+body {
+  background: var(--secondary);
+}
+
+hr {
+  background-color: var(--primary) !important;
 }
 
 #footer {
@@ -14,30 +26,32 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  text-align: center;
+  /* height: 2rem; */
+  padding: 20px;
+  background-color: var(--secondary-alt);
+  /* color: white; */
 }
 
-.title {
-  text-align: center;
-}
+/* .center { */
+/* margin: auto; */
+/* width: 50%; */
+/* border: 3px solid green; */
+/* padding: 10px; */
+/* } */
 
-/* Sign Up */
 
-.sign-up input {
-  margin-bottom: 1rem;
+
+.w-100 {
   width: 100%;
 }
 
-.sign-in input {
-  margin-bottom: 1rem;
-  width: 100%;
+.header-menu ul li {
+  color: black !important;
+  text-decoration: none !important;
 }
 
-/* Utilities / Helpers */
-
-.center {
-  margin: auto;
-  width: 50%;
-  /* border: 3px solid green; */
-  padding: 10px;
+.header-menu ul li:hover {
+  /* border-bottom: 1px solid black !important; */
+  /* border-bottom: 1px solid var(--secondary-alt); */
+  color: var(--primary) !important;
 }

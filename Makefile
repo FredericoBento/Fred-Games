@@ -6,7 +6,7 @@ build: generate
 	@chmod +x build/${BINARY_NAME}
 
 generate:
-	templ generate
+	TEMPL_EXPERIMENT=rawgo templ generate
 
 run: build
 	@build/${BINARY_NAME}

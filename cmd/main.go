@@ -12,6 +12,8 @@ import (
 	"syscall"
 
 	"github.com/FredericoBento/HandGame/internal/app"
+	"github.com/FredericoBento/HandGame/internal/app/admin"
+	"github.com/FredericoBento/HandGame/internal/app/dummyapp"
 	"github.com/FredericoBento/HandGame/internal/app/handgame"
 	"github.com/FredericoBento/HandGame/internal/handler"
 )
@@ -28,9 +30,10 @@ type ServerConfig struct {
 }
 
 type ApplicationConfig struct {
-	Name        string `json:"name"`
-	RoutePrefix string `json:"routePrefix"`
-	Active      int    `json:"active"`
+	Name           string `json:"name"`
+	RoutePrefix    string `json:"routePrefix"`
+	Active         int    `json:"active"`
+	StartAtStartup int    `json:"startAtStartup"`
 }
 
 type Config struct {
@@ -40,10 +43,13 @@ type Config struct {
 
 func main() {
 
+	appManager := app.NewAppsManager()
+
 	authHandler := handler.NewAuthHandler()
 	homeHandler := handler.NewHomeHandler()
+	adminHandler := handler.NewAdminHandler(appManager)
 
-	serverHandlers := app.NewServerHandlers(authHandler, homeHandler)
+	serverHandlers := app.NewServerHandlers(authHandler, homeHandler, adminHandler)
 
 	config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
 	if err != nil {
@@ -51,51 +57,58 @@ func main() {
 		os.Exit(exitCode)
 	}
 
-	slog.Info("Port: " + strconv.Itoa(config.Server.Port))
-
 	server := app.NewServer(
 		app.WithHost(config.Server.Host),
 		app.WithPort(config.Server.Port),
 		app.WithHandlers(serverHandlers),
 	)
 
-	appManager := app.NewAppsManager(
-		app.WithServer(server),
-	)
+	err = appManager.SetServer(server)
+
+	if err != nil {
+		slog.Error("Couldnt setup app manager server")
+		os.Exit(exitCode)
+	}
 
 	for _, appConfig := range config.Applications {
 		if appConfig.Active == 1 {
-			app := createApp(appConfig, server)
-			appManager.AddApp(app)
+			app, err := createApp(appConfig, server)
+			if err != nil {
+				slog.Error(err.Error())
+			} else {
+				appManager.AddApp(app)
+				if appConfig.StartAtStartup != 1 {
+					err = appManager.StartApp(app.GetAppName())
+					if err != nil {
+						slog.Error(err.Error())
+					}
+				}
+			}
 		}
 	}
 
-	go catchInterrupt(appManager)
-
-	_, err = appManager.StartAll()
+	err = appManager.StartServer()
 	if err != nil {
 		slog.Error(err.Error())
-	} else {
-		err = appManager.StartServer()
-	}
-
-	slog.Warn("Going to block Handgame")
-	err = appManager.StopApp("handgame")
-	if err != nil {
-		slog.Error("Could not block Handgame")
-	} else {
-		slog.Info("Handgame routes do not work anymore")
 	}
 
 	catchInterrupt(appManager)
 }
 
-func createApp(appConfig ApplicationConfig, server *app.Server) app.App {
+func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {
 	switch strings.ToLower(appConfig.Name) {
 	case "handgame":
-		return handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server)
+		return handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+
+	case "admin":
+		return admin.NewAdminApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+
+	case "dummyapp":
+		return dummyapp.NewDummyApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+
+	default:
+		return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")
 	}
-	return nil
 }
 
 func loadConfig(filename string) (*Config, error) {

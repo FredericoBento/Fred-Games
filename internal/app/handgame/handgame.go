@@ -8,34 +8,51 @@ import (
 	"github.com/FredericoBento/HandGame/internal/middleware"
 )
 
-type HandGameApp struct {
-	Name        string
-	RoutePrefix string
-	Status      string
-	Server      *app.Server
-}
-
 var (
 	ErrServerRouterNotFound = errors.New("Could not find server router")
+	ErrHasNotStartedYet     = errors.New("app hasnt started yet")
+	ErrCouldNotCreateLogger = errors.New("could not create app logger")
 )
 
+type HandGameApp struct {
+	name        string
+	routePrefix string
+	status      *app.AppStatus
+	server      *app.Server
+	log         *slog.Logger
+}
+
 func NewHandGameApp(name, routePrefix string, server *app.Server) *HandGameApp {
+	lo, err := app.NewAppLogger(name, "", false)
+	if err != nil {
+		slog.Error(ErrCouldNotCreateLogger.Error(), err)
+		lo = slog.Default()
+	}
+
 	return &HandGameApp{
-		Name:        name,
-		RoutePrefix: routePrefix,
-		Status:      "inactive",
-		Server:      server,
+		name:        name,
+		routePrefix: routePrefix,
+		status:      app.NewAppStatus(),
+		server:      server,
+		log:         lo,
 	}
 }
 
 func (hga *HandGameApp) Start() error {
-	slog.Info("Starting HandGame App...")
-
-	return hga.setupRoutes()
+	hga.log.Info("Starting HandGame App...")
+	err := hga.setupRoutes()
+	if err != nil {
+		hga.log.Error(" - Failed")
+		hga.log.Error(err.Error())
+		return err
+	}
+	hga.log.Info(" - Ok")
+	hga.status.SetActive()
+	return nil
 }
 
 func (hga *HandGameApp) setupRoutes() error {
-	if hga.Server.Router == nil {
+	if hga.server.Router == nil {
 		return ErrServerRouterNotFound
 	}
 
@@ -44,22 +61,39 @@ func (hga *HandGameApp) setupRoutes() error {
 		middleware.SecureHeadersMiddleware,
 	)
 
-	hga.Server.Router.Handle(hga.RoutePrefix+"/home", appMiddlewares(hga.Server.Handlers.HomeHandler))
+	hga.server.Router.Handle(hga.routePrefix+"/home", appMiddlewares(hga.server.Handlers.HomeHandler))
 
-	slog.Info(hga.Name + " App routes have been setup")
 	return nil
 }
 
 func (hga *HandGameApp) Stop() error {
-	slog.Warn("Stopping HandGame App...")
-	hga.Server.BlockAppRoutes(hga.RoutePrefix)
+	hga.log.Warn("Stopping HandGame App...")
+	hga.server.BlockAppRoutes(hga.routePrefix)
 
-	slog.Info("HandGame App routes has stopped")
-	hga.Status = "Stopped"
+	hga.log.Info(" - Ok")
+	hga.status.SetInactive()
+
+	return nil
+}
+
+func (hga *HandGameApp) Resume() error {
+	if hga.status.HasStartedOnce() == false {
+		hga.log.Error(ErrHasNotStartedYet.Error())
+		return ErrHasNotStartedYet
+	}
+	hga.log.Warn("Resuming HandGame App...")
+	hga.server.UnblockAppRoutes(hga.routePrefix)
+
+	hga.log.Info(" - Ok")
+	hga.status.SetActive()
 
 	return nil
 }
 
 func (hga *HandGameApp) GetAppName() string {
-	return hga.Name
+	return hga.name
+}
+
+func (aa *HandGameApp) GetStatus() app.AppStatusChecker {
+	return aa.status
 }

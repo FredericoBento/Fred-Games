@@ -25,3 +25,11 @@ func BlockRoutes(next http.Handler) http.Handler {
 func BlockRoute(prefix string) {
 	blockedRoutesPrefixes = append(blockedRoutesPrefixes, prefix)
 }
+
+func UnblockRoute(prefix string) {
+	for i, route := range blockedRoutesPrefixes {
+		if route == prefix {
+			blockedRoutesPrefixes = append(blockedRoutesPrefixes[:i], blockedRoutesPrefixes[i+1:]...)
+		}
+	}
+}

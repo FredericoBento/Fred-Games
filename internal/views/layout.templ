@@ -3,12 +3,12 @@ package views
 import "github.com/FredericoBento/HandGame/internal/views/components"
 
 
-templ Page(title string, content templ.Component) {
+templ Page(title string, headerTitle string, navlinks map[string]string, content templ.Component) {
   <!DOCTYPE HTML>
   @components.Head()
   <html>
     <body>
-      @components.Header()
+      @components.Header(headerTitle, navlinks)
       <div id="contents">      
         @content
       </div>

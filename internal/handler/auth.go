@@ -74,6 +74,7 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewPr
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, props.content).Render(r.Context(), w)
+		var aux map[string]string
+		views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
 	}
 }

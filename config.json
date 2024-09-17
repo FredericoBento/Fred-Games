@@ -4,10 +4,23 @@
     "port": 8080
   },
   "applications": {
+    "Admin": {
+      "name": "Admin",
+      "routePrefix": "/admin",
+      "active": 1,
+      "startAtStartup": 0
+    },
     "HandGame": {
       "name": "HandGame",
       "routePrefix": "/handgame",
-      "active": 1
+      "active": 1,
+      "startAtStartup": 1
+    },
+    "DummyApp": {
+      "name": "DummyApp",
+      "routePrefix": "/dummyapp",
+      "active": 1,
+      "startAtStartup": 1
     }
   }
 }

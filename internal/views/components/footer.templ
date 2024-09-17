@@ -1,8 +1,18 @@
 package components
 
-templ Footer() {
+templ FooterOld() {
   <footer id="footer">
       <hr>
       <p>Author: Frederico Bento</p>
+  </footer>
+}
+
+templ Footer() {
+  <footer class="footer mt-auto" id="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Fred Apps</strong> by Frederico Bento.
+      </p>
+    </div>
   </footer>
 }

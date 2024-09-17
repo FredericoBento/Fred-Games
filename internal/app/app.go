@@ -9,7 +9,67 @@ import (
 type App interface {
 	Start() error
 	Stop() error
+	Resume() error
 	GetAppName() string
+	GetStatus() AppStatusChecker
+}
+
+type AppStatusChecker interface {
+	IsActive() bool
+	IsInactive() bool
+	HasStartedOnce() bool
+	SetActive()
+	SetInactive()
+	SetError(error)
+	GetErrors() []error
+	HasErrors() bool
+}
+
+type AppStatus struct {
+	value          string
+	statusErrors   []error
+	hasStartedOnce bool
+}
+
+func NewAppStatus() *AppStatus {
+	return &AppStatus{
+		value:          "inactive",
+		statusErrors:   make([]error, 0),
+		hasStartedOnce: false,
+	}
+}
+
+func (as *AppStatus) IsActive() bool {
+	return as.value == statusActive
+}
+
+func (as *AppStatus) IsInactive() bool {
+	return as.value == statusInactive
+}
+
+func (as *AppStatus) SetInactive() {
+	as.value = statusInactive
+}
+
+func (as *AppStatus) SetActive() {
+	as.value = statusActive
+	as.hasStartedOnce = true
+}
+
+func (as *AppStatus) SetError(e error) {
+	as.statusErrors = append(as.statusErrors, e)
+}
+
+func (as *AppStatus) GetErrors() []error {
+	return as.statusErrors
+}
+
+func (as *AppStatus) HasErrors() bool {
+	return len(as.statusErrors) > 0
+}
+
+func (as *AppStatus) HasStartedOnce() bool {
+	return as.hasStartedOnce
 }
 
 type AppsManager struct {
@@ -22,8 +82,8 @@ type AppsManagerOption func(*AppsManager)
 const (
 	statusInactive           = "inactive"
 	statusActive             = "active"
-	statusInactiveWithErrors = "inactive and errors"
-	statusActiveWithErrors   = "active and errors"
+	statusInactiveWithErrors = "inactive with errors"
+	statusActiveWithErrors   = "active with errors"
 )
 
 var (
@@ -65,6 +125,11 @@ func (am *AppsManager) AddApp(app App) error {
 	return nil
 }
 
+func (am *AppsManager) SetServer(server *Server) error {
+	am.Server = server
+	return nil
+}
+
 func (am *AppsManager) StartApp(appName string) error {
 	if am.Apps[appName] != nil {
 		return am.Apps[appName].Start()
@@ -78,6 +143,17 @@ func (am *AppsManager) StopApp(appName string) error {
 		name = strings.ToLower(name)
 		if name == strings.ToLower(appName) {
 			return app.Stop()
+		}
+	}
+	return ErrAppNameNotFound
+}
+
+func (am *AppsManager) ResumeApp(appName string) error {
+	for _, app := range am.Apps {
+		name := app.GetAppName()
+		name = strings.ToLower(name)
+		if name == strings.ToLower(appName) {
+			return app.Resume()
 		}
 	}
 	return ErrAppNameNotFound

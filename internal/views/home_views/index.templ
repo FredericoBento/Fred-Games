@@ -1,15 +1,25 @@
 package home_views
 
 templ Base() {
-		<h3>This is Home</h3>
-		@Menu()
+	<div class="section">
+	  <div class="container is-max-desktop">
+			<p class="subtitle is-4">Home</p>
+			<hr>
+			@Menu()
+		</div>
+	</div>
 }
 
 templ Menu() {
-
-  <div>
-		<input type="button" value="Quick Play"/>
-		<input type="button" value="Create Room"/>
-		<input type="button" value="Join Room"/>
+	<div class="field grid">
+		<div class="cell">
+			<input class="input" type="button" value="Quick Play"/>
+		</div>
+		<div class="cell">
+			<input class="input" type="button" value="Create Room"/>
+		</div>
+		<div class="cell">
+			<input class="input" type="button" value="Join Room"/>
+		</div>
 	</div>
 }

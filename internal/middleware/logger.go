@@ -35,5 +35,19 @@ func Logger(next http.Handler) http.Handler {
 
 		logString := duration + " " + r.Method + " " + r.URL.Path + " - " + strconv.Itoa(rec.statusCode)
 		slog.Info(logString)
+
+		// If there are query parameters, log them
+		queryParams := r.URL.Query()
+		if len(queryParams) > 0 {
+			// Start logging query parameters
+			queryLogString := " - Query Parameters:"
+			for key, values := range queryParams {
+				queryLogString += "\n\t\t\t\t\t - " + key + ":"
+				for _, val := range values {
+					queryLogString += " " + val
+				}
+			}
+			slog.Info(queryLogString)
+		}
 	})
 }

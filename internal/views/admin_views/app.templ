@@ -13,7 +13,7 @@ templ AdminAppCard(a app.App) {
             <span class="tag is-success">Running</span>
           } else {
             if a.GetStatus().HasStartedOnce() {
-              <span class="tag is-danger">Stopped</span>
+              <span class="tag is-warning">Stopped</span>
             } else {
               <span class="tag is-danger">Off</span>
             }
@@ -29,8 +29,8 @@ templ AdminAppCard(a app.App) {
     <footer class="card-footer">
       if a.GetStatus().IsActive() {
         <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=stop"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Stop</button>
-        // <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">More</button>
         <button class="card-footer-item">Restart</button>
+        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
       } else {
         if a.GetStatus().HasStartedOnce() {
           <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=resume"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Resume</button>

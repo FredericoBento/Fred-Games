@@ -32,14 +32,11 @@ hr {
   /* color: white; */
 }
 
-/* .center { */
-/* margin: auto; */
-/* width: 50%; */
-/* border: 3px solid green; */
-/* padding: 10px; */
-/* } */
-
-
+.logs-content {
+  height: 6rem !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
 
 .w-100 {
   width: 100%;

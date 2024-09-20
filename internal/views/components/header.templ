@@ -23,9 +23,8 @@ templ HeaderNavbar(links map[string]string) {
   <nav class="breadcrumb is-centered header-menu" aria-label="breadcrumbs">
     <ul>
       for name, link := range links {
-        <li><a href={ templ.SafeURL(link) }>{name}</a></li>
-        // <li class="is-active"><a href="#" aria-current="page">Dashboard</a></li>
-        }
+        <li><a hx-target="#contents" hx-get={ link }>{name}</a></li>
+      }
     </ul>
   </nav>
 }

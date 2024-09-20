@@ -67,3 +67,11 @@ func (da *DummyApp) GetStatus() app.AppStatusChecker {
 func (da *DummyApp) GetAppName() string {
 	return da.name
 }
+
+func (da *DummyApp) GetLogs() ([]app.PrettyLogs, error) {
+	logs, err := app.GetAppLogs(da.name)
+	if err != nil {
+		return nil, err
+	}
+	return logs, nil
+}

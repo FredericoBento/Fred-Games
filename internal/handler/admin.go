@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/FredericoBento/HandGame/internal/app"
+	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/admin_views"
 	"github.com/a-h/templ"
@@ -25,18 +26,20 @@ var (
 )
 
 type AdminHandler struct {
-	appManager *app.AppsManager
-	menu       map[string]string
+	appManager  *app.AppsManager
+	menu        map[string]string
+	userService *services.UserService
 }
 
-func NewAdminHandler(am *app.AppsManager) *AdminHandler {
+func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *AdminHandler {
 	navlinks := make(map[string]string, 0)
 	navlinks["Dashboard"] = "/admin/dashboard"
 	navlinks["Users"] = "/admin/users"
 
 	return &AdminHandler{
-		appManager: am,
-		menu:       navlinks,
+		appManager:  am,
+		menu:        navlinks,
+		userService: userService,
 	}
 }
 
@@ -57,6 +60,9 @@ func (ah *AdminHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	case "dashboard":
 		ah.GetDashboard(w, r)
+
+	case "users":
+		ah.GetUsers(w, r)
 
 	default:
 		w.WriteHeader(http.StatusNotFound)
@@ -105,6 +111,20 @@ func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 		title:   "Dashboard",
 		content: admin_views.Dashboard(ah.appManager.Apps),
 	})
+}
+
+func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := ah.userService.GetAllUsers()
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+
+	ah.View(w, r, adminViewProps{
+		title:   "Users",
+		content: admin_views.UsersPage(&users),
+	})
+
 }
 
 func (ah *AdminHandler) moreApp(w http.ResponseWriter, r *http.Request, appID string) {

@@ -1,24 +1,5 @@
 package auth_views
 
-templ SignUpFormOld() {
-  <form class="container sign-up">
-    <h3>Sign Up</h3>
-    <hr>
-
-    <label for="username">Username</label>
-    <input name="username" id="username" type="text" required/>
-
-    <label for="password">Password</label>
-    <input name="password" id="password" type="password" required/>
-
-    <label for="repeat_password">Repeat Password</label>
-    <input name="repeat_password" id="repeat_password" type="password" required/>
-
-    <input class="button-primary" type="submit" value="Sign Up"/>
-    <a href="" hx-get="/sign-in" hx-swap="outerHTML" hx-target=".sign-up" hx-push-url="true">Already a user? Log In</a>
-  </form>
-}
-
 templ SignUpForm() {
 <section class="section sign-in">
   <form hx-post="/sign-up" hx-swap="outerHTML" class="container is-max-desktop">
@@ -28,21 +9,21 @@ templ SignUpForm() {
     <div class="field">
       <label class="label" for="username">Username</label>
       <div class="control">
-        <input class="input" id="usernameInput" type="text" required/>
+        <input class="input" id="usernameInput" name="username" type="text" required/>
       </div>
     </div>
 
     <div class="field">
       <label  class="label" for="password">Password</label>
       <div class="control">
-        <input  class="input" id="passwordInput" type="password" required/>
+        <input  class="input" id="passwordInput" name="password" type="password" required/>
       </div>
     </div>
 
     <div class="field">
       <label  class="label" for="password">Confirm Password</label>
       <div class="control">
-        <input  class="input" id="repeatPasswordInput" type="password" required/>
+        <input  class="input" id="repeatPasswordInput" name="repeat_password" type="password" required/>
       </div>
     </div>
 

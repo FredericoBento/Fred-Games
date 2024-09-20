@@ -1,0 +1,36 @@
+package admin_views
+
+import "github.com/FredericoBento/HandGame/internal/models"
+import "strconv"
+
+
+templ UsersPage(users *[]models.User) {
+  <section class="section users">
+    <div class="container is-max-desktop">
+      <p class="subtitle is-4">Users</p>
+      <hr>
+      @UsersTable(1, users)
+    </div>
+  </section>
+}
+
+templ UsersTable(page int, users *[]models.User) {
+  <table class="table is-max-desktop">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Password</th>
+      </tr>
+    </thead>
+    <tbody>
+    for  _, user := range *users {
+      <tr>
+        <td>{strconv.Itoa(user.ID)}</td>
+        <td>{user.Username}</td>
+        <td>{user.Password}</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+}

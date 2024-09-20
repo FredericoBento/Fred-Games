@@ -97,3 +97,11 @@ func (hga *HandGameApp) GetAppName() string {
 func (aa *HandGameApp) GetStatus() app.AppStatusChecker {
 	return aa.status
 }
+
+func (da *HandGameApp) GetLogs() ([]app.PrettyLogs, error) {
+	logs, err := app.GetAppLogs(da.name)
+	if err != nil {
+		return nil, err
+	}
+	return logs, nil
+}

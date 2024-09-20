@@ -14,29 +14,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Add a click event on buttons to open a specific modal
-  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
-    const modal = $trigger.dataset.target;
-    const $target = document.getElementById(modal);
+  function initializeModalListeners() {
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+      const modal = $trigger.dataset.target;
+      const $target = document.getElementById(modal);
 
-    $trigger.addEventListener('click', () => {
-      openModal($target);
+      $trigger.addEventListener('click', () => {
+        openModal($target);
+      });
     });
-  });
 
-  // Add a click event on various child elements to close the parent modal
-  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
-    const $target = $close.closest('.modal');
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+      const $target = $close.closest('.modal');
 
-    $close.addEventListener('click', () => {
-      closeModal($target);
+      $close.addEventListener('click', () => {
+        closeModal($target);
+      });
     });
-  });
+  }
+
+  // Initialize listeners for the first load
+  initializeModalListeners();
 
   // Add a keyboard event to close all modals
   document.addEventListener('keydown', (event) => {
-    if(event.key === "Escape") {
+    if (event.key === "Escape") {
       closeAllModals();
     }
+  });
+
+  // Reinitialize listeners after modal content is swapped by htmx
+  document.body.addEventListener('htmx:afterSwap', (event) => {
+    initializeModalListeners();
   });
 });

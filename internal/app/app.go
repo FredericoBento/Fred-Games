@@ -12,6 +12,7 @@ type App interface {
 	Resume() error
 	GetAppName() string
 	GetStatus() AppStatusChecker
+	GetLogs() ([]PrettyLogs, error)
 }
 
 type AppStatusChecker interface {

@@ -3,12 +3,15 @@ package handler
 import (
 	"net/http"
 
+	"github.com/FredericoBento/HandGame/internal/models"
+	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/auth_views"
 	"github.com/a-h/templ"
 )
 
 type AuthHandler struct {
+	userService *services.UserService
 }
 
 func NewAuthHandler() *AuthHandler {
@@ -38,6 +41,8 @@ func (ah *AuthHandler) signUp(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		ah.GetSignUp(w, r)
+	case http.MethodPost:
+		ah.PostSignUp(w, r)
 	}
 }
 
@@ -63,6 +68,35 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		title:   "Sign In",
 		content: auth_views.SignInForm(),
 	})
+}
+
+func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) {
+	type SignUpForm struct {
+		username         string
+		password         string
+		repeatedPassword string
+	}
+
+	data := SignUpForm{}
+	data.username = r.FormValue("username")
+	data.password = r.FormValue("password")
+	data.repeatedPassword = r.FormValue("repeat_password")
+
+	if data.username == "" || data.password == "" || data.repeatedPassword == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err := ah.userService.CreateUser(&models.User{ID: 0, Username: data.username, Password: data.password})
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("user created"))
+	return
+
 }
 
 type viewProps struct {

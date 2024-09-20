@@ -2,9 +2,10 @@ package admin
 
 import (
 	"errors"
+	"log/slog"
+
 	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/middleware"
-	"log/slog"
 )
 
 type AdminApp struct {
@@ -73,6 +74,7 @@ func (aa *AdminApp) setupRoutes() error {
 	)
 
 	aa.server.Router.Handle(aa.routePrefix+"/dashboard", appMiddlewares(aa.server.Handlers.AdminHandler))
+	aa.server.Router.Handle(aa.routePrefix+"/users", appMiddlewares(aa.server.Handlers.AdminHandler))
 	aa.server.Router.Handle(aa.routePrefix+"/", appMiddlewares(aa.server.Handlers.AdminHandler))
 
 	return nil
@@ -94,4 +96,12 @@ func (aa *AdminApp) GetAppName() string {
 
 func (aa *AdminApp) GetStatus() app.AppStatusChecker {
 	return aa.status
+}
+
+func (aa *AdminApp) GetLogs() ([]app.PrettyLogs, error) {
+	logs, err := app.GetAppLogs(aa.name)
+	if err != nil {
+		return nil, err
+	}
+	return logs, nil
 }

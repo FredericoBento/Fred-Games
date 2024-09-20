@@ -36,7 +36,7 @@ func Dashboard(apps map[string]app.App) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"admin-app-modal\" class=\"modal\"><div class=\"modal-background\"></div><div class=\"modal-card\" id=\"admin-app-modal-content\"></div><header class=\"modal-card-head\"><button class=\"delete\" aria-label=\"close\"></button></header></div></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"admin-app-modal\" class=\"modal\"><div class=\"modal-background\"></div><div class=\"modal-card\" id=\"admin-app-modal-content\"><header class=\"modal-card-head\"><button class=\"delete\" aria-label=\"close\"></button></header></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

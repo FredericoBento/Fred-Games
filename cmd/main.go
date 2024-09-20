@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,7 +16,11 @@ import (
 	"github.com/FredericoBento/HandGame/internal/app/admin"
 	"github.com/FredericoBento/HandGame/internal/app/dummyapp"
 	"github.com/FredericoBento/HandGame/internal/app/handgame"
+	"github.com/FredericoBento/HandGame/internal/database/sqlite"
 	"github.com/FredericoBento/HandGame/internal/handler"
+	"github.com/FredericoBento/HandGame/internal/services"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -29,6 +34,10 @@ type ServerConfig struct {
 	Port int    `json:"port"`
 }
 
+type DatabaseConfig struct {
+	Type string `json:"type"`
+}
+
 type ApplicationConfig struct {
 	Name           string `json:"name"`
 	RoutePrefix    string `json:"routePrefix"`
@@ -38,24 +47,39 @@ type ApplicationConfig struct {
 
 type Config struct {
 	Server       ServerConfig                 `json:"server"`
+	Database     DatabaseConfig               `son:"database"`
 	Applications map[string]ApplicationConfig `json:"applications"`
 }
 
+const (
+	dbFile = "./simple.db"
+)
+
 func main() {
-
-	appManager := app.NewAppsManager()
-
-	authHandler := handler.NewAuthHandler()
-	homeHandler := handler.NewHomeHandler()
-	adminHandler := handler.NewAdminHandler(appManager)
-
-	serverHandlers := app.NewServerHandlers(authHandler, homeHandler, adminHandler)
-
 	config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(exitCode)
 	}
+
+	db, err := getDB(config.Database)
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(exitCode)
+	}
+	defer db.Close()
+
+	appManager := app.NewAppsManager()
+
+	userRepository := sqlite.NewSQLiteUserRepository(db)
+
+	userService := services.NewUserService(userRepository)
+
+	authHandler := handler.NewAuthHandler()
+	homeHandler := handler.NewHomeHandler()
+	adminHandler := handler.NewAdminHandler(appManager, userService)
+
+	serverHandlers := app.NewServerHandlers(authHandler, homeHandler, adminHandler)
 
 	server := app.NewServer(
 		app.WithHost(config.Server.Host),
@@ -93,6 +117,22 @@ func main() {
 	}
 
 	catchInterrupt(appManager)
+}
+
+func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
+	switch databaseConfig.Type {
+	case "sqlite":
+		db, err = sql.Open("sqlite3", dbFile)
+		if err != nil {
+			return nil, err
+		}
+		err = sqlite.CreateTables(db)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return db, nil
 }
 
 func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {

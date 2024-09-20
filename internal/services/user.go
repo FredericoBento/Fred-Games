@@ -25,7 +25,7 @@ type UserService struct {
 func NewUserService(repo database.UserRepository) *UserService {
 	lo, err := logger.NewServiceLogger("UserService", "", false)
 	if err != nil {
-		slog.Error(ErrCouldNotCreateLogger.Error(), err)
+		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
 	}
 	return &UserService{
@@ -37,6 +37,7 @@ func NewUserService(repo database.UserRepository) *UserService {
 func (us *UserService) GetAllUsers() ([]models.User, error) {
 	users, err := us.repo.GetAll()
 	if err != nil {
+		us.log.Error(err.Error())
 		return nil, ErrCouldNotGetAllUsers
 	}
 
@@ -51,6 +52,7 @@ func (us *UserService) GetAllUsers() ([]models.User, error) {
 func (us *UserService) UserExists(username string) (bool, error) {
 	_, err := us.repo.GetByUsername(username)
 	if err != nil {
+		us.log.Error(err.Error())
 		return false, err
 	}
 	return true, nil
@@ -59,6 +61,7 @@ func (us *UserService) UserExists(username string) (bool, error) {
 func (us *UserService) CreateUser(user *models.User) error {
 	exist, err := us.UserExists(user.Username)
 	if err != nil {
+		us.log.Error(err.Error())
 		return err
 	}
 

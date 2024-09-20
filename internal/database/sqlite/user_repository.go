@@ -76,6 +76,7 @@ func (r *SQLiteUserRepository) Create(user *models.User) error {
 }
 
 func (r *SQLiteUserRepository) GetByUsername(username string) (*models.User, error) {
+	r.log.Info("hhhh")
 	query := "SELECT * FROM users WHERE username = ?"
 	rows, err := r.DB.Query(query, username)
 	if err != nil {

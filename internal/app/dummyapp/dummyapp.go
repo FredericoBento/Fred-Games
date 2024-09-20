@@ -23,7 +23,7 @@ type DummyApp struct {
 func NewDummyApp(name, routePrefix string, server *app.Server) *DummyApp {
 	lo, err := app.NewAppLogger(name, "", false)
 	if err != nil {
-		slog.Error(ErrCouldNotCreateLogger.Error(), err)
+		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
 	}
 
@@ -54,7 +54,7 @@ func (da *DummyApp) Resume() error {
 	if da.status.HasStartedOnce() == false {
 		return ErrHasNotStartedYet
 	}
-	da.log.Info("Resuming %d App...", da.name)
+	da.log.Info("Resuming %d App..." + da.name)
 	da.status.SetActive()
 	da.log.Info(" - Ok")
 	return nil

@@ -24,7 +24,7 @@ var (
 func NewAdminApp(name, routePrefix string, server *app.Server) *AdminApp {
 	lo, err := app.NewAppLogger(name, "", false)
 	if err != nil {
-		slog.Error(ErrCouldNotCreateLogger.Error(), err)
+		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
 	}
 

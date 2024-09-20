@@ -16,4 +16,4 @@ clean:
 	@rm build/${BINARY_NAME}
 
 test:
-	@go test -v ./... -count=1
+	@go test -v ./internal/... -count=1

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/FredericoBento/HandGame/internal/models"
@@ -14,8 +15,10 @@ type AuthHandler struct {
 	userService *services.UserService
 }
 
-func NewAuthHandler() *AuthHandler {
-	return &AuthHandler{}
+func NewAuthHandler(userService *services.UserService) *AuthHandler {
+	return &AuthHandler{
+		userService: userService,
+	}
 }
 
 func (ah *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +90,7 @@ func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := ah.userService.CreateUser(&models.User{ID: 0, Username: data.username, Password: data.password})
+	err := ah.userService.CreateUser(context.TODO(), &models.User{ID: 0, Username: data.username, Password: data.password})
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return

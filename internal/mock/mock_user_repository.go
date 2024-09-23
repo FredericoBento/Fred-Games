@@ -1,6 +1,10 @@
 package mock
 
-import "github.com/FredericoBento/HandGame/internal/models"
+import (
+	"context"
+
+	"github.com/FredericoBento/HandGame/internal/models"
+)
 
 type MockUserRepository struct {
 	GetByUsernameResult *models.User
@@ -12,17 +16,17 @@ type MockUserRepository struct {
 	GetAllError  error
 }
 
-func (m *MockUserRepository) GetByUsername(username string) (*models.User, error) {
+func (m *MockUserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
 	if m.GetByUsernameError != nil {
 		return nil, m.GetByUsernameError
 	}
 	return m.GetByUsernameResult, nil
 }
 
-func (m *MockUserRepository) Create(user *models.User) error {
+func (m *MockUserRepository) Create(ctx context.Context, user *models.User) error {
 	return m.CreateError
 }
 
-func (m *MockUserRepository) GetAll() ([]models.User, error) {
+func (m *MockUserRepository) GetAll(ctx context.Context) ([]models.User, error) {
 	return m.GetAllResult, m.GetAllError
 }

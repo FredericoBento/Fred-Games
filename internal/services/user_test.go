@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"testing"
@@ -21,7 +22,7 @@ func TestUserExists(t *testing.T) {
 			log:  logger,
 		}
 
-		exists, err := userService.UserExists("existing_user")
+		exists, err := userService.UserExists(context.TODO(), "existing_user")
 		if !exists {
 			t.Errorf("expected user to exist, got %v", exists)
 		}
@@ -44,7 +45,7 @@ func TestUserExists(t *testing.T) {
 			log:  logger,
 		}
 
-		exists, err := userService.UserExists("non_existing_user")
+		exists, err := userService.UserExists(context.TODO(), "non_existing_user")
 		if exists {
 			t.Errorf("expected user to not exist, got %v", exists)
 		}

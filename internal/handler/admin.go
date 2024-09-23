@@ -120,6 +120,10 @@ func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for _, u := range users {
+		slog.Warn(u.Username)
+	}
+
 	ah.View(w, r, adminViewProps{
 		title:   "Users",
 		content: admin_views.UsersPage(&users),
@@ -226,7 +230,6 @@ func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props admin
 
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
-		slog.Warn("here")
 	} else {
 		views.Page(props.title, "", hh.menu, props.content).Render(r.Context(), w)
 	}

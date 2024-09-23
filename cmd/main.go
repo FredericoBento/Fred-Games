@@ -11,11 +11,13 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/app/admin"
 	"github.com/FredericoBento/HandGame/internal/app/dummyapp"
 	"github.com/FredericoBento/HandGame/internal/app/handgame"
+	"github.com/FredericoBento/HandGame/internal/database/repository"
 	"github.com/FredericoBento/HandGame/internal/database/sqlite"
 	"github.com/FredericoBento/HandGame/internal/handler"
 	"github.com/FredericoBento/HandGame/internal/services"
@@ -70,12 +72,16 @@ func main() {
 	defer db.Close()
 
 	appManager := app.NewAppsManager()
+	if err = db.Ping(); err != nil {
+		slog.Warn("dead", err.Error())
+	} else {
+		slog.Warn("alive")
+	}
+	userRepository := repository.NewSQLiteUserRepository(db)
 
-	userRepository := sqlite.NewSQLiteUserRepository(db)
+	userService := services.NewUserService(userRepository, time.Minute*10)
 
-	userService := services.NewUserService(userRepository)
-
-	authHandler := handler.NewAuthHandler()
+	authHandler := handler.NewAuthHandler(userService)
 	homeHandler := handler.NewHomeHandler()
 	adminHandler := handler.NewAdminHandler(appManager, userService)
 
@@ -130,6 +136,8 @@ func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
 		if err != nil {
 			return nil, err
 		}
+	default:
+		return nil, errors.New("database type/driver not found")
 	}
 
 	return db, nil

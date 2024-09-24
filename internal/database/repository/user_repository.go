@@ -79,7 +79,6 @@ func (r *SQLiteUserRepository) Create(ctx context.Context, user *models.User) er
 }
 
 func (r *SQLiteUserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) {
-	r.log.Debug("Got called with " + username)
 	query := "SELECT * FROM users WHERE username = ?"
 	rows, err := r.DB.Query(query, username)
 	if err != nil {

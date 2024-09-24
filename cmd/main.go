@@ -20,6 +20,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/database/repository"
 	"github.com/FredericoBento/HandGame/internal/database/sqlite"
 	"github.com/FredericoBento/HandGame/internal/handler"
+	"github.com/FredericoBento/HandGame/internal/middleware"
 	"github.com/FredericoBento/HandGame/internal/services"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -72,16 +73,15 @@ func main() {
 	defer db.Close()
 
 	appManager := app.NewAppsManager()
-	if err = db.Ping(); err != nil {
-		slog.Warn("dead", err.Error())
-	} else {
-		slog.Warn("alive")
-	}
+
 	userRepository := repository.NewSQLiteUserRepository(db)
 
 	userService := services.NewUserService(userRepository, time.Minute*10)
+	authService := services.NewAuthService(userService)
 
-	authHandler := handler.NewAuthHandler(userService)
+	middleware.SetAuthService(authService)
+
+	authHandler := handler.NewAuthHandler(authService, userService)
 	homeHandler := handler.NewHomeHandler()
 	adminHandler := handler.NewAdminHandler(appManager, userService)
 

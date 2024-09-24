@@ -71,6 +71,7 @@ func (aa *AdminApp) setupRoutes() error {
 	appMiddlewares := middleware.StackMiddleware(
 		middleware.Logger,
 		middleware.SecureHeadersMiddleware,
+		middleware.RequiredAdmin,
 	)
 
 	aa.server.Router.Handle(aa.routePrefix+"/dashboard", appMiddlewares(aa.server.Handlers.AdminHandler))

@@ -17,3 +17,6 @@ clean:
 
 test:
 	@go test -v ./internal/... -count=1
+
+fuser:
+	fuser -k 8080/tcp

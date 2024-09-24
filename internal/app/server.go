@@ -29,8 +29,7 @@ type Server struct {
 	Router      *http.ServeMux
 	AuthRouter  *http.ServeMux
 	AdminRouter *http.ServeMux
-	// HandGameRouter *http.ServeMux
-	Handlers *ServerHandlers
+	Handlers    *ServerHandlers
 }
 
 type ServerOption func(*Server)
@@ -106,6 +105,7 @@ func (s *Server) setupRoutes() error {
 
 	s.AuthRouter.Handle("/sign-in", s.Handlers.AuthHandler)
 	s.AuthRouter.Handle("/sign-up", s.Handlers.AuthHandler)
+	s.AuthRouter.Handle("/logout", s.Handlers.AuthHandler)
 
 	s.Router.Handle("/", AuthHandlerMiddlewares(s.AuthRouter))
 

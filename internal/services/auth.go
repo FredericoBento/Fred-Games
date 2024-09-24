@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 	"log/slog"
 	"sync"
 	"time"
@@ -22,6 +23,7 @@ var (
 
 const (
 	sessionExpiryTime = 120 * time.Second
+	cookieName        = "session_token"
 )
 
 type Session struct {
@@ -36,19 +38,25 @@ type AuthService struct {
 	log         *slog.Logger
 }
 
-func (s *AuthService) NewAuthService() *AuthService {
+func NewAuthService(userService *UserService) *AuthService {
+	if userService == nil {
+		log.Fatal("no user service provided")
+	}
+
 	lo, err := logger.NewServiceLogger("AuthService", "", false)
 	if err != nil {
 		lo = slog.Default()
 	}
 
 	return &AuthService{
-		sessions: make(map[string]Session),
-		log:      lo,
+		sessions:    make(map[string]Session),
+		userService: userService,
+		mu:          sync.Mutex{},
+		log:         lo,
 	}
 }
 
-func (s *AuthService) Authenticate(ctx context.Context, username, password string) (*models.User, error) {
+func (s *AuthService) Authenticate(ctx context.Context, username string, password string) (*models.User, error) {
 	user, err := s.userService.GetUserByUsername(ctx, username)
 	if err != nil {
 		s.log.Error(err.Error())
@@ -111,6 +119,10 @@ func (s *AuthService) DestroySession(ctx context.Context, token string) {
 	defer s.mu.Unlock()
 
 	delete(s.sessions, token)
+}
+
+func (s *AuthService) GetCookieName() string {
+	return cookieName
 }
 
 func (s *Session) IsExpired() bool {

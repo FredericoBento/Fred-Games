@@ -25,22 +25,23 @@ var (
 
 type UserService struct {
 	repo  repository.UserRepository
-	cache sync.Map
+	cache *sync.Map
 	ttl   time.Duration
 	log   *slog.Logger
 }
 
 func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserService {
-	lo, err := logger.NewServiceLogger("UserService", "", false)
+	lo, err := logger.NewServiceLogger("UserService", "", true)
 	if err != nil {
 		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
 	}
 
 	return &UserService{
-		repo: repo,
-		ttl:  ttl,
-		log:  lo,
+		repo:  repo,
+		cache: &sync.Map{},
+		ttl:   ttl,
+		log:   lo,
 	}
 }
 
@@ -119,9 +120,12 @@ func (us *UserService) evictAfter(key string, ttl time.Duration) {
 
 func (us *UserService) getUserInCache(username string) (*models.User, error) {
 	if cachedUser, ok := us.cache.Load(username); ok {
+		slog.Default().Debug("ok")
 		if user, valid := cachedUser.(*models.User); valid {
+			slog.Default().Debug("in cache")
 			return user, nil
 		}
 	}
+	slog.Default().Debug("not in cache")
 	return nil, ErrUserNotCached
 }

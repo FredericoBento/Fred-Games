@@ -59,6 +59,7 @@ func (hga *HandGameApp) setupRoutes() error {
 	appMiddlewares := middleware.StackMiddleware(
 		middleware.Logger,
 		middleware.SecureHeadersMiddleware,
+		middleware.RequiredLogged,
 	)
 
 	hga.server.Router.Handle(hga.routePrefix+"/home", appMiddlewares(hga.server.Handlers.HomeHandler))

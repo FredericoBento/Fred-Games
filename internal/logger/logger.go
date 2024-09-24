@@ -13,6 +13,7 @@ import (
 const (
 	defaultAppLoggerFilePath             = "./logs/apps/"
 	defaultServiceLoggerFilePath         = "./logs/services/"
+	defaultHandlerLoggerFilePath         = "./logs/handler/"
 	defaultSQLiteRepostoryLoggerFilePath = "./logs/database/sqlite/"
 )
 
@@ -78,6 +79,21 @@ func NewServiceLogger(name string, path string, showOnConsole bool) (*slog.Logge
 		createFilePath(path)
 	}
 
+	return buildLogger(name, path, showOnConsole)
+
+}
+
+func NewHandlerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		path = defaultHandlerLoggerFilePath
+		createFilePath(path)
+	}
+
+	return buildLogger(name, path, showOnConsole)
+
+}
+
+func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
 	file, err := os.OpenFile(path+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		return nil, err

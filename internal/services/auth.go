@@ -128,3 +128,7 @@ func (s *AuthService) GetCookieName() string {
 func (s *Session) IsExpired() bool {
 	return s.expiry.Before(time.Now())
 }
+
+func (s *AuthService) IsAdmin(username string) bool {
+	return username == "fred"
+}

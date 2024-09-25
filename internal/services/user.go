@@ -21,6 +21,7 @@ var (
 	ErrUserAlreadyExists    = errors.New("user already exists")
 	ErrCouldNotGetUser      = errors.New("could not retrieve user from repository")
 	ErrUserNotCached        = errors.New("user was not found in cache")
+	ErrCouldNotContactDB    = errors.New("call to repository resulted in a error, could not contact db")
 )
 
 type UserService struct {
@@ -83,7 +84,7 @@ func (us *UserService) UserExists(ctx context.Context, username string) (bool, e
 
 	if err != nil {
 		us.log.Error(err.Error())
-		return false, err
+		return false, ErrCouldNotContactDB
 	}
 
 	return true, nil
@@ -120,12 +121,11 @@ func (us *UserService) evictAfter(key string, ttl time.Duration) {
 
 func (us *UserService) getUserInCache(username string) (*models.User, error) {
 	if cachedUser, ok := us.cache.Load(username); ok {
-		slog.Default().Debug("ok")
 		if user, valid := cachedUser.(*models.User); valid {
-			slog.Default().Debug("in cache")
+			us.log.Info("user cache hit")
 			return user, nil
 		}
 	}
-	slog.Default().Debug("not in cache")
+	us.log.Info("user cache miss")
 	return nil, ErrUserNotCached
 }

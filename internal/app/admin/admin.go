@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/FredericoBento/HandGame/internal/app"
+	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/middleware"
 )
 
@@ -22,7 +23,7 @@ var (
 )
 
 func NewAdminApp(name, routePrefix string, server *app.Server) *AdminApp {
-	lo, err := app.NewAppLogger(name, "", false)
+	lo, err := logger.NewAppLogger(name, "", false)
 	if err != nil {
 		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
@@ -99,8 +100,8 @@ func (aa *AdminApp) GetStatus() app.AppStatusChecker {
 	return aa.status
 }
 
-func (aa *AdminApp) GetLogs() ([]app.PrettyLogs, error) {
-	logs, err := app.GetAppLogs(aa.name)
+func (aa *AdminApp) GetLogs() ([]logger.PrettyLogs, error) {
+	logs, err := logger.GetAppLogs(aa.name)
 	if err != nil {
 		return nil, err
 	}

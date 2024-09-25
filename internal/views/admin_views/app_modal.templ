@@ -1,6 +1,7 @@
 package admin_views
 
 import "github.com/FredericoBento/HandGame/internal/app"
+import "github.com/FredericoBento/HandGame/internal/logger"
 
 templ AppModal(app app.App) {
 	  <div class="modal-card" id="admin-app-modal-content">
@@ -30,7 +31,7 @@ templ AppModal(app app.App) {
 			</div>
 }
 
-templ AppModalLogs(logs []app.PrettyLogs, err error) {
+templ AppModalLogs(logs []logger.PrettyLogs, err error) {
 	<div>
 		<h1 class="subtitle">Logs</h1>
 	  <hr class="header-line">

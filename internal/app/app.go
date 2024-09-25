@@ -4,6 +4,8 @@ import (
 	"errors"
 	"log/slog"
 	"strings"
+
+	"github.com/FredericoBento/HandGame/internal/logger"
 )
 
 type App interface {
@@ -12,7 +14,7 @@ type App interface {
 	Resume() error
 	GetAppName() string
 	GetStatus() AppStatusChecker
-	GetLogs() ([]PrettyLogs, error)
+	GetLogs() ([]logger.PrettyLogs, error)
 }
 
 type AppStatusChecker interface {

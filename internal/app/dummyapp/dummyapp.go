@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/FredericoBento/HandGame/internal/app"
+	"github.com/FredericoBento/HandGame/internal/logger"
 )
 
 var (
@@ -21,7 +22,7 @@ type DummyApp struct {
 }
 
 func NewDummyApp(name, routePrefix string, server *app.Server) *DummyApp {
-	lo, err := app.NewAppLogger(name, "", false)
+	lo, err := logger.NewAppLogger(name, "", false)
 	if err != nil {
 		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()
@@ -68,8 +69,8 @@ func (da *DummyApp) GetAppName() string {
 	return da.name
 }
 
-func (da *DummyApp) GetLogs() ([]app.PrettyLogs, error) {
-	logs, err := app.GetAppLogs(da.name)
+func (da *DummyApp) GetLogs() ([]logger.PrettyLogs, error) {
+	logs, err := logger.GetAppLogs(da.name)
 	if err != nil {
 		return nil, err
 	}

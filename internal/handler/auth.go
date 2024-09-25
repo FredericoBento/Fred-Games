@@ -125,7 +125,7 @@ func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	// w.WriteHeader(http.StatusCreated)
 	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 
 }
@@ -137,7 +137,7 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c, err := r.Cookie(ah.authService.GetCookieName())
-	if err != nil {
+	if err != nil && err != http.ErrNoCookie {
 		ah.log.Error(err.Error())
 	} else {
 

@@ -24,31 +24,46 @@ type PrettyLogs struct {
 	Msg    string      `json:"msg"`
 }
 
-func NewAppLogger(name string, filePath string, showOnConsole bool) (*slog.Logger, error) {
-	if filePath == "" {
-		filePath = defaultAppLoggerFilePath
+func NewAppLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		path = defaultAppLoggerFilePath
+		createFilePath(path)
 	}
 
-	file, err := os.OpenFile(filePath+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return nil, err
+	return buildLogger(name, path, showOnConsole)
+}
+
+func NewServiceLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		path = defaultServiceLoggerFilePath
+		createFilePath(path)
 	}
 
-	var logger *slog.Logger
-	if showOnConsole {
-		multiWriter := io.MultiWriter(file, os.Stdout)
-		logger = slog.New(slog.NewJSONHandler(multiWriter, &slog.HandlerOptions{
-			AddSource: true,
-		}))
-	} else {
-		logger = slog.New(slog.NewJSONHandler(file, &slog.HandlerOptions{
-			AddSource: true,
-		}))
+	return buildLogger(name, path, showOnConsole)
+
+}
+
+func NewHandlerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		path = defaultHandlerLoggerFilePath
+		createFilePath(path)
 	}
 
-	// logger = logger.With("App", name)
+	return buildLogger(name, path, showOnConsole)
 
-	return logger, nil
+}
+
+func NewRepositoryLogger(dbType, name, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		switch dbType {
+		case "sqlite":
+			path = defaultSQLiteRepostoryLoggerFilePath
+			createFilePath(path)
+
+		}
+	}
+
+	return buildLogger(name, path, showOnConsole)
 }
 
 func GetAppLogs(appName string) ([]PrettyLogs, error) {
@@ -73,57 +88,7 @@ func GetAppLogs(appName string) ([]PrettyLogs, error) {
 	return logs, nil
 }
 
-func NewServiceLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
-	if path == "" {
-		path = defaultServiceLoggerFilePath
-		createFilePath(path)
-	}
-
-	return buildLogger(name, path, showOnConsole)
-
-}
-
-func NewHandlerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
-	if path == "" {
-		path = defaultHandlerLoggerFilePath
-		createFilePath(path)
-	}
-
-	return buildLogger(name, path, showOnConsole)
-
-}
-
 func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
-	file, err := os.OpenFile(path+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return nil, err
-	}
-
-	var logger *slog.Logger
-	if showOnConsole {
-		multiWriter := io.MultiWriter(file, os.Stdout)
-		logger = slog.New(slog.NewJSONHandler(multiWriter, &slog.HandlerOptions{
-			AddSource: true,
-		}))
-	} else {
-		logger = slog.New(slog.NewJSONHandler(file, &slog.HandlerOptions{
-			AddSource: true,
-		}))
-	}
-
-	return logger, nil
-}
-
-func NewRepositoryLogger(dbType, name, path string, showOnConsole bool) (*slog.Logger, error) {
-	if path == "" {
-		switch dbType {
-		case "sqlite":
-			path = defaultSQLiteRepostoryLoggerFilePath
-			createFilePath(path)
-
-		}
-	}
-
 	file, err := os.OpenFile(path+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		return nil, err

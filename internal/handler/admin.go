@@ -3,11 +3,13 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/FredericoBento/HandGame/internal/app"
+	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/admin_views"
@@ -29,9 +31,23 @@ type AdminHandler struct {
 	appManager  *app.AppsManager
 	menu        map[string]string
 	userService *services.UserService
+	log         *slog.Logger
 }
 
 func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *AdminHandler {
+	if am == nil {
+		log.Fatal("AdminHandler: app manager not provided")
+	}
+	if userService == nil {
+		log.Fatal("AdminHandler: user service not provided")
+	}
+
+	lo, err := logger.NewHandlerLogger("AdminHandler", "", false)
+	if err != nil {
+		lo = slog.Default()
+		lo.Error("could not create admin handler logger, using slog.default")
+	}
+
 	navlinks := make(map[string]string, 0)
 	navlinks["Dashboard"] = "/admin/dashboard"
 	navlinks["Users"] = "/admin/users"
@@ -40,6 +56,7 @@ func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *Ad
 		appManager:  am,
 		menu:        navlinks,
 		userService: userService,
+		log:         lo,
 	}
 }
 
@@ -116,12 +133,8 @@ func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := ah.userService.GetAllUsers()
 	if err != nil {
-		slog.Error(err.Error())
+		ah.log.Error(err.Error())
 		return
-	}
-
-	for _, u := range users {
-		slog.Warn(u.Username)
 	}
 
 	ah.View(w, r, adminViewProps{
@@ -154,7 +167,7 @@ func (ah *AdminHandler) startApp(w http.ResponseWriter, r *http.Request, appID s
 			} else {
 				err := app.Start()
 				if err != nil {
-					slog.Error(err.Error())
+					ah.log.Error(err.Error())
 					http.Error(w, ErrAppCouldNotStart.Error(), http.StatusInternalServerError)
 				}
 			}
@@ -179,7 +192,7 @@ func (ah *AdminHandler) stopApp(w http.ResponseWriter, r *http.Request, appID st
 			} else {
 				err := app.Stop()
 				if err != nil {
-					slog.Error(err.Error())
+					ah.log.Error(err.Error())
 					http.Error(w, ErrAppCouldNotStop.Error(), http.StatusInternalServerError)
 				}
 			}
@@ -204,7 +217,7 @@ func (ah *AdminHandler) resumeApp(w http.ResponseWriter, r *http.Request, appID 
 			} else {
 				err := app.Resume()
 				if err != nil {
-					slog.Error(err.Error())
+					ah.log.Error(err.Error())
 					http.Error(w, ErrAppCouldNotResume.Error(), http.StatusInternalServerError)
 				}
 			}

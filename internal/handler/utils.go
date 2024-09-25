@@ -9,3 +9,11 @@ func IsHTMX(r *http.Request) bool {
 		return false
 	}
 }
+
+func Redirect(w http.ResponseWriter, r *http.Request, route string) {
+	if IsHTMX(r) {
+		w.Header().Add("HX-Redirect", route)
+	} else {
+		http.Redirect(w, r, route, http.StatusSeeOther)
+	}
+}

@@ -11,7 +11,7 @@
       "name": "Admin",
       "routePrefix": "/admin",
       "active": 1,
-      "startAtStartup": 0
+      "startAtStartup": 1
     },
     "HandGame": {
       "name": "HandGame",
@@ -22,7 +22,7 @@
     "DummyApp": {
       "name": "DummyApp",
       "routePrefix": "/dummyapp",
-      "active": 1,
+      "active": 0,
       "startAtStartup": 0
     }
   }

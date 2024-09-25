@@ -16,6 +16,7 @@ func NewHomeHandler() *HomeHandler {
 	navlinks := make(map[string]string, 0)
 	navlinks["Home"] = "/handgame/home"
 	navlinks["Settings"] = "/handgame/settings"
+
 	return &HomeHandler{
 		menu: navlinks,
 	}

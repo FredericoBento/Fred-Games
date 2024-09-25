@@ -2,7 +2,6 @@ package logger
 
 import (
 	"encoding/json"
-	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -15,6 +14,7 @@ const (
 	defaultServiceLoggerFilePath         = "./logs/services/"
 	defaultHandlerLoggerFilePath         = "./logs/handler/"
 	defaultSQLiteRepostoryLoggerFilePath = "./logs/database/sqlite/"
+	defaultServerLoggerFilePath          = "./logs/httpserver/"
 )
 
 type PrettyLogs struct {
@@ -51,6 +51,15 @@ func NewHandlerLogger(name string, path string, showOnConsole bool) (*slog.Logge
 
 	return buildLogger(name, path, showOnConsole)
 
+}
+
+func NewServerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
+	if path == "" {
+		path = defaultServerLoggerFilePath
+		createFilePath(path)
+	}
+
+	return buildLogger(name, path, showOnConsole)
 }
 
 func NewRepositoryLogger(dbType, name, path string, showOnConsole bool) (*slog.Logger, error) {
@@ -95,17 +104,21 @@ func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, er
 	}
 
 	var logger *slog.Logger
+	var multiHandler *MultiHandler
+
+	jsonHandler := slog.NewJSONHandler(file, &slog.HandlerOptions{
+		AddSource: true,
+	})
+
 	if showOnConsole {
-		multiWriter := io.MultiWriter(file, os.Stdout)
-		logger = slog.New(slog.NewJSONHandler(multiWriter, &slog.HandlerOptions{
-			AddSource: true,
-		}))
+		// textHandler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{})
+		textHandler := slog.Default().Handler()
+		multiHandler = NewMultiHandler(textHandler, jsonHandler)
 	} else {
-		logger = slog.New(slog.NewJSONHandler(file, &slog.HandlerOptions{
-			AddSource: true,
-		}))
+		multiHandler = NewMultiHandler(jsonHandler)
 	}
 
+	logger = slog.New(multiHandler)
 	return logger, nil
 }
 

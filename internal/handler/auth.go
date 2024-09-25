@@ -28,7 +28,7 @@ func NewAuthHandler(authService *services.AuthService, userService *services.Use
 	if userService == nil {
 		log.Fatal("user service not provided")
 	}
-	lo, err := logger.NewHandlerLogger("AuthHandler", "", false)
+	lo, err := logger.NewHandlerLogger("AuthHandler", "", true)
 	if err != nil {
 		lo = slog.Default()
 	}
@@ -78,19 +78,17 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c, err := r.Cookie(ah.authService.GetCookieName())
-	if err != nil {
-		ah.log.Error(err.Error())
-	} else {
-
-		user, err := ah.authService.ValidateSession(context.TODO(), c.Value)
-		if err != nil {
-			ah.log.Error(err.Error())
-		}
-
-		if user != nil {
-			if user.Username == "fred" {
-				http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+	token, err := ah.authService.GetToken(r)
+	if err == nil && token != "" {
+		user, err := ah.authService.ValidateSession(context.TODO(), token)
+		if err == nil && user != nil {
+			if ah.authService.IsAdmin(user.Username) {
+				// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+				Redirect(w, r, "/admin/")
+				return
+			} else {
+				// http.Redirect(w, r, "/home/", http.StatusSeeOther)
+				Redirect(w, r, "/home/")
 				return
 			}
 		}
@@ -145,11 +143,13 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 	if err == nil && token != "" {
 		user, err := ah.authService.ValidateSession(context.TODO(), token)
 		if err == nil && user != nil {
-			if user.Username == "fred" {
-				http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+			if ah.authService.IsAdmin(user.Username) {
+				// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+				Redirect(w, r, "/admin/")
 				return
 			} else {
-				http.Redirect(w, r, "/home/", http.StatusSeeOther)
+				// http.Redirect(w, r, "/home/", http.StatusSeeOther)
+				Redirect(w, r, "/home/")
 				return
 			}
 		}
@@ -178,7 +178,7 @@ func (ah *AuthHandler) GetLogout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ah.authService.DestroySession(context.Background(), token)
-	ah.Redirect(w, r, "/sign-in")
+	Redirect(w, r, "/sign-in")
 }
 
 func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
@@ -232,10 +232,10 @@ func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &cookie)
 
 		if ah.authService.IsAdmin(u.Username) {
-			ah.Redirect(w, r, "/admin/")
+			Redirect(w, r, "/admin/")
 			return
 		}
-		ah.Redirect(w, r, "/home/")
+		Redirect(w, r, "/home/")
 		return
 	}
 }
@@ -251,13 +251,5 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewPr
 	} else {
 		var aux map[string]string
 		views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
-	}
-}
-
-func (ah *AuthHandler) Redirect(w http.ResponseWriter, r *http.Request, route string) {
-	if IsHTMX(r) {
-		w.Header().Add("HX-Redirect", route)
-	} else {
-		http.Redirect(w, r, route, http.StatusSeeOther)
 	}
 }

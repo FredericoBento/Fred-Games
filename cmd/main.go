@@ -107,7 +107,7 @@ func main() {
 				slog.Error(err.Error())
 			} else {
 				appManager.AddApp(app)
-				if appConfig.StartAtStartup != 1 {
+				if appConfig.StartAtStartup == 1 {
 					err = appManager.StartApp(app.GetAppName())
 					if err != nil {
 						slog.Error(err.Error())

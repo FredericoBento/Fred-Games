@@ -24,7 +24,7 @@ var (
 )
 
 const (
-	sessionExpiryTime = 1 * time.Minute
+	sessionExpiryTime = 120 * time.Minute
 	cookieName        = "session_token"
 )
 

@@ -2,17 +2,17 @@ package app
 
 import (
 	"errors"
-	"github.com/FredericoBento/HandGame/internal/middleware"
 	"log/slog"
 	"net/http"
 	"strconv"
+
+	"github.com/FredericoBento/HandGame/internal/logger"
+	"github.com/FredericoBento/HandGame/internal/middleware"
 )
 
 var (
-	ErrAuthHandlerNotFound = errors.New("AuthHandler was not found")
-
-	ErrServerCouldNotRan = errors.New("Server could not be ran")
-
+	ErrAuthHandlerNotFound       = errors.New("AuthHandler was not found")
+	ErrServerCouldNotRan         = errors.New("Server could not be ran")
 	ErrServerCouldNotSetupRoutes = errors.New("Server could not setup http routes with handlers")
 )
 
@@ -30,6 +30,7 @@ type Server struct {
 	AuthRouter  *http.ServeMux
 	AdminRouter *http.ServeMux
 	Handlers    *ServerHandlers
+	log         *slog.Logger
 }
 
 type ServerOption func(*Server)
@@ -53,12 +54,17 @@ func WithHandlers(handlers *ServerHandlers) ServerOption {
 }
 
 func NewServer(opts ...ServerOption) *Server {
+	lo, err := logger.NewServerLogger("server", "", true)
+	if err != nil {
+		lo = slog.Default()
+	}
 	server := &Server{
 		HttpServer:  nil,
 		Router:      http.NewServeMux(),
 		AuthRouter:  http.NewServeMux(),
 		AdminRouter: http.NewServeMux(),
 		Handlers:    nil,
+		log:         lo,
 	}
 	for _, option := range opts {
 		option(server)
@@ -76,12 +82,12 @@ func NewServerHandlers(authH http.Handler, homeH http.Handler, adminH http.Handl
 }
 
 func (s *Server) Init() error {
-	slog.Info("Initiating Server...")
+	s.log.Info("Initiating Server...")
 
 	err := s.setupRoutes()
 	if err != nil {
-		slog.Error("Server could not be initiated")
-		slog.Error(err.Error())
+		s.log.Error("Server could not be initiated")
+		s.log.Error(err.Error())
 		return ErrServerCouldNotSetupRoutes
 	}
 
@@ -93,24 +99,37 @@ func (s *Server) setupRoutes() error {
 		return ErrAuthHandlerNotFound
 	}
 
-	AuthHandlerMiddlewares := middleware.StackMiddleware(
+	standardMiddlewares := middleware.StackMiddleware(
 		middleware.Logger,
 		middleware.SecureHeadersMiddleware,
 	)
 
-	HomeHandlerMiddlewares := middleware.StackMiddleware(
-		middleware.Logger,
-		middleware.SecureHeadersMiddleware,
+	authHandlerMiddlewares := middleware.StackMiddleware(
+		standardMiddlewares,
 	)
 
+	adminHandlerMiddlewares := middleware.StackMiddleware(
+		standardMiddlewares,
+		middleware.RequiredAdmin,
+	)
+
+	// Auth Routes
 	s.AuthRouter.Handle("/sign-in", s.Handlers.AuthHandler)
 	s.AuthRouter.Handle("/sign-up", s.Handlers.AuthHandler)
 	s.AuthRouter.Handle("/logout", s.Handlers.AuthHandler)
 
-	s.Router.Handle("/", AuthHandlerMiddlewares(s.AuthRouter))
+	s.Router.Handle("/", authHandlerMiddlewares(s.AuthRouter))
 
+	// Admin Routes
+	s.AdminRouter.Handle("/dashboard", s.Handlers.AdminHandler)
+	s.AdminRouter.Handle("/users", s.Handlers.AdminHandler)
+	s.AdminRouter.Handle("/", s.Handlers.AdminHandler)
+
+	s.Router.Handle("/admin", adminHandlerMiddlewares(s.AdminRouter))
+
+	// Fileserver
 	fs := http.FileServer(http.Dir("./assets"))
-	s.Router.Handle("/assets/", HomeHandlerMiddlewares(http.StripPrefix("/assets", fs)))
+	s.Router.Handle("/assets/", standardMiddlewares(http.StripPrefix("/assets", fs)))
 
 	return nil
 }
@@ -118,7 +137,7 @@ func (s *Server) setupRoutes() error {
 func (s *Server) Run() error {
 	addr := s.Host + ":" + strconv.Itoa(s.Port)
 
-	slog.Info("Server is running on " + addr)
+	s.log.Info("Server is running on " + addr)
 
 	s.HttpServer = &http.Server{
 		Addr:    addr,
@@ -137,7 +156,7 @@ func (s *Server) Run() error {
 }
 
 func (s *Server) Shutdown() error {
-	slog.Info("Server is shuting down...")
+	s.log.Warn("Server is shuting down...")
 	return s.HttpServer.Close()
 }
 

@@ -32,7 +32,7 @@ type UserService struct {
 }
 
 func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserService {
-	lo, err := logger.NewServiceLogger("UserService", "", true)
+	lo, err := logger.NewServiceLogger("UserService", "", false)
 	if err != nil {
 		slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
 		lo = slog.Default()

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"log/slog"
+	"net/http"
 	"sync"
 	"time"
 
@@ -19,10 +20,11 @@ var (
 	ErrIncorrectCredentials    = errors.New("wrong credentials provided")
 	ErrSessionExpired          = errors.New("session has expired")
 	ErrTokenDoesNotExists      = errors.New("token invalid, does not exist")
+	ErrNoToken                 = errors.New("token not found")
 )
 
 const (
-	sessionExpiryTime = 120 * time.Second
+	sessionExpiryTime = 1 * time.Minute
 	cookieName        = "session_token"
 )
 
@@ -43,7 +45,7 @@ func NewAuthService(userService *UserService) *AuthService {
 		log.Fatal("no user service provided")
 	}
 
-	lo, err := logger.NewServiceLogger("AuthService", "", false)
+	lo, err := logger.NewServiceLogger("AuthService", "", true)
 	if err != nil {
 		lo = slog.Default()
 	}
@@ -131,4 +133,21 @@ func (s *Session) IsExpired() bool {
 
 func (s *AuthService) IsAdmin(username string) bool {
 	return username == "fred"
+}
+
+func (s *AuthService) GetToken(r *http.Request) (string, error) {
+	c, err := r.Cookie(s.GetCookieName())
+
+	if err == nil && c != nil {
+		return c.Value, nil
+	}
+
+	token := r.Header.Get("Authorization")
+
+	if token == "" {
+		return "", ErrNoToken
+	}
+
+	return token, nil
+
 }

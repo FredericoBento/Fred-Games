@@ -24,13 +24,15 @@ func RequiredLogged(next http.Handler) http.Handler {
 
 		c, err := r.Cookie(authService.GetCookieName())
 		if err != nil {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			// http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 
 		_, ok := authService.ValidateSession(context.TODO(), c.Value)
 		if ok != nil {
-			http.Error(w, "Forbidden, invalid token", http.StatusForbidden)
+			// http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 
@@ -46,13 +48,15 @@ func RequiredAdmin(next http.Handler) http.Handler {
 
 		c, err := r.Cookie(authService.GetCookieName())
 		if err != nil {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			// http.Error(w, "Forbidden", http.StatusForbidden)
+			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 
 		user, ok := authService.ValidateSession(context.TODO(), c.Value)
 		if ok != nil {
-			http.Error(w, "Forbidden, invalid token", http.StatusForbidden)
+			// http.Error(w, "Forbidden, invalid token", http.StatusForbidden)
+			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -24,6 +26,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/services"
 
 	_ "github.com/mattn/go-sqlite3"
+	_ "net/http/pprof"
 )
 
 var (
@@ -59,6 +62,7 @@ const (
 )
 
 func main() {
+	pprofRun()
 	config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
 	if err != nil {
 		slog.Error(err.Error())
@@ -204,4 +208,10 @@ func catchInterrupt(am *app.AppsManager) {
 	}
 
 	os.Exit(exitCodeInterrupt)
+}
+
+func pprofRun() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 }

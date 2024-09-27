@@ -25,12 +25,15 @@ func NewAuthHandler(authService *services.AuthService, userService *services.Use
 	if authService == nil {
 		log.Fatal("auth service not provided")
 	}
+
 	if userService == nil {
 		log.Fatal("user service not provided")
 	}
+
 	lo, err := logger.NewHandlerLogger("AuthHandler", "", true)
 	if err != nil {
 		lo = slog.Default()
+		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
 	return &AuthHandler{
@@ -94,10 +97,8 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ah.View(w, r, viewProps{
-		title:   "Sign Up",
-		content: auth_views.SignUpForm(),
-	})
+	ah.returnSignUpForm(w, r, auth_views.SignUpFormData{})
+	return
 }
 
 func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) {
@@ -136,6 +137,11 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 
 	if ah.authService == nil {
 		ah.log.Error("NO AUTH SERVICE")
+		w.WriteHeader(http.StatusInternalServerError)
+		data := auth_views.SignInFormData{
+			GeneralErr: "A server error has ocurred, try again later",
+		}
+		ah.returnSignInForm(w, r, data)
 		return
 	}
 
@@ -144,21 +150,103 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		user, err := ah.authService.ValidateSession(context.TODO(), token)
 		if err == nil && user != nil {
 			if ah.authService.IsAdmin(user.Username) {
-				// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
 				Redirect(w, r, "/admin/")
 				return
 			} else {
-				// http.Redirect(w, r, "/home/", http.StatusSeeOther)
 				Redirect(w, r, "/home/")
 				return
 			}
 		}
 	}
 
-	ah.View(w, r, viewProps{
-		title:   "Sign In",
-		content: auth_views.SignInForm(),
-	})
+	ah.returnSignInForm(w, r, auth_views.SignInFormData{})
+	return
+}
+
+func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
+	data := auth_views.SignInFormData{}
+
+	data.Username = r.FormValue("username")
+	data.Password = r.FormValue("password")
+
+	data.UsernameErr = ""
+	data.PasswordErr = ""
+	data.GeneralErr = ""
+
+	if data.Username == "" {
+		data.UsernameErr = "This username is invalid"
+	}
+
+	if data.Password == "" {
+		data.PasswordErr = "This password is invalid"
+	}
+
+	if data.UsernameErr != "" || data.PasswordErr != "" {
+		w.WriteHeader(http.StatusBadRequest)
+		ah.returnSignInForm(w, r, data)
+		return
+	}
+
+	exists, err := ah.userService.UserExists(context.Background(), data.Username)
+	if err != nil {
+		ah.log.Error(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		data.GeneralErr = "A server error ocurred, try again later"
+		ah.returnSignInForm(w, r, data)
+		return
+	}
+
+	if !exists {
+		w.WriteHeader(http.StatusBadRequest)
+		data.UsernameErr = "This user does not exist"
+		ah.returnSignInForm(w, r, data)
+		return
+	}
+
+	u, err := ah.authService.Authenticate(context.TODO(), data.Username, data.Password)
+	if err != nil {
+		ah.log.Error(err.Error())
+		switch err {
+		case services.ErrIncorrectCredentials:
+			w.WriteHeader(http.StatusBadRequest)
+			data.GeneralErr = "Incorrect Credentials"
+
+		case services.ErrCouldNotFindUser:
+			w.WriteHeader(http.StatusBadRequest)
+			data.UsernameErr = "This user was not found"
+
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+			data.GeneralErr = "A server error ocurred, try again later"
+		}
+
+		ah.returnSignInForm(w, r, data)
+		return
+	}
+
+	if u != nil {
+		token, err := ah.authService.CreateSession(u)
+		if err != nil {
+			ah.log.Error(err.Error())
+			data.GeneralErr = "A server error ocurred, try again later"
+			ah.returnSignInForm(w, r, data)
+			return
+		}
+
+		cookie := http.Cookie{
+			Name:  "session_token",
+			Value: token,
+		}
+
+		http.SetCookie(w, &cookie)
+
+		if ah.authService.IsAdmin(u.Username) {
+			Redirect(w, r, "/admin/")
+			return
+		}
+		Redirect(w, r, "/home/")
+		return
+	}
 }
 
 func (ah *AuthHandler) GetLogout(w http.ResponseWriter, r *http.Request) {
@@ -181,65 +269,6 @@ func (ah *AuthHandler) GetLogout(w http.ResponseWriter, r *http.Request) {
 	Redirect(w, r, "/sign-in")
 }
 
-func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
-	type SignInForm struct {
-		username string
-		password string
-	}
-
-	data := SignInForm{}
-	data.username = r.FormValue("username")
-	data.password = r.FormValue("password")
-
-	if data.username == "" || data.password == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	exists, err := ah.userService.UserExists(context.Background(), data.username)
-	if err != nil {
-		ah.log.Error(err.Error())
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	if !exists {
-		ah.log.Error("user does not exist")
-		w.Write([]byte("user does not exist"))
-		return
-	}
-
-	u, err := ah.authService.Authenticate(context.TODO(), data.username, data.password)
-	if err != nil {
-		ah.log.Error(err.Error())
-		w.Write([]byte(err.Error()))
-		return
-	}
-
-	if u != nil {
-		token, err := ah.authService.CreateSession(u)
-		if err != nil {
-			ah.log.Error(err.Error())
-			w.Write([]byte(err.Error()))
-			return
-		}
-
-		cookie := http.Cookie{
-			Name:  "session_token",
-			Value: token,
-		}
-
-		http.SetCookie(w, &cookie)
-
-		if ah.authService.IsAdmin(u.Username) {
-			Redirect(w, r, "/admin/")
-			return
-		}
-		Redirect(w, r, "/home/")
-		return
-	}
-}
-
 type viewProps struct {
 	title   string
 	content templ.Component
@@ -252,4 +281,20 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewPr
 		var aux map[string]string
 		views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
 	}
+}
+
+func (ah *AuthHandler) returnSignInForm(w http.ResponseWriter, r *http.Request, data auth_views.SignInFormData) {
+
+	ah.View(w, r, viewProps{
+		title:   "Sign In",
+		content: auth_views.SignInForm(data),
+	})
+}
+
+func (ah *AuthHandler) returnSignUpForm(w http.ResponseWriter, r *http.Request, data auth_views.SignUpFormData) {
+	ah.View(w, r, viewProps{
+		title:   "Sign Up",
+		content: auth_views.SignUpForm(data),
+	})
+
 }

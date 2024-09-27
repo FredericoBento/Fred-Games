@@ -21,6 +21,8 @@ var (
 	ErrUserAlreadyExists    = errors.New("user already exists")
 	ErrCouldNotGetUser      = errors.New("could not retrieve user from repository")
 	ErrUserNotCached        = errors.New("user was not found in cache")
+	ErrUserExistsFailed     = errors.New("failed to check if user exists")
+	ErrInvalidLogger        = errors.New("invalid logger passed")
 	ErrCouldNotContactDB    = errors.New("call to repository resulted in a error, could not contact db")
 )
 
@@ -46,6 +48,13 @@ func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserServ
 	}
 }
 
+func (us *UserService) ChangeLogger(logger *slog.Logger) error {
+	if logger == nil {
+		return ErrInvalidLogger
+	}
+	us.log = logger
+	return nil
+}
 func (us *UserService) GetAllUsers() ([]models.User, error) {
 	users, err := us.repo.GetAll(context.TODO())
 	if err != nil {
@@ -93,7 +102,8 @@ func (us *UserService) UserExists(ctx context.Context, username string) (bool, e
 func (us *UserService) CreateUser(ctx context.Context, user *models.User) error {
 	exist, err := us.UserExists(ctx, user.Username)
 	if err != nil {
-		return err
+		us.log.Error(err.Error())
+		return ErrUserExistsFailed
 	}
 
 	if exist {
@@ -108,9 +118,9 @@ func (us *UserService) CreateUser(ctx context.Context, user *models.User) error 
 	return nil
 }
 
-func (us *UserService) ComparePassword(password1 string, password2 string) (bool, error) {
+func (us *UserService) ComparePassword(password string, hashedPassword string) (bool, error) {
 	// Hash if needed
-	return password1 == password2, nil
+	return password == hashedPassword, nil
 
 }
 

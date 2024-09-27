@@ -1,0 +1,3679 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>cmd: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/FredericoBento/HandGame/cmd/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/FredericoBento/HandGame/internal/app/admin/admin.go (0.0%)</option>
+				
+				<option value="file2">github.com/FredericoBento/HandGame/internal/app/app.go (0.0%)</option>
+				
+				<option value="file3">github.com/FredericoBento/HandGame/internal/app/dummyapp/dummyapp.go (0.0%)</option>
+				
+				<option value="file4">github.com/FredericoBento/HandGame/internal/app/handgame/handgame.go (0.0%)</option>
+				
+				<option value="file5">github.com/FredericoBento/HandGame/internal/app/server.go (0.0%)</option>
+				
+				<option value="file6">github.com/FredericoBento/HandGame/internal/database/repository/user_repository.go (27.7%)</option>
+				
+				<option value="file7">github.com/FredericoBento/HandGame/internal/database/sqlite/sqlite.go (85.7%)</option>
+				
+				<option value="file8">github.com/FredericoBento/HandGame/internal/handler/admin.go (0.0%)</option>
+				
+				<option value="file9">github.com/FredericoBento/HandGame/internal/handler/auth.go (0.0%)</option>
+				
+				<option value="file10">github.com/FredericoBento/HandGame/internal/handler/home.go (0.0%)</option>
+				
+				<option value="file11">github.com/FredericoBento/HandGame/internal/handler/utils.go (0.0%)</option>
+				
+				<option value="file12">github.com/FredericoBento/HandGame/internal/logger/logger.go (40.8%)</option>
+				
+				<option value="file13">github.com/FredericoBento/HandGame/internal/logger/multihandler.go (44.4%)</option>
+				
+				<option value="file14">github.com/FredericoBento/HandGame/internal/middleware/auth.go (0.0%)</option>
+				
+				<option value="file15">github.com/FredericoBento/HandGame/internal/middleware/block_routes.go (0.0%)</option>
+				
+				<option value="file16">github.com/FredericoBento/HandGame/internal/middleware/logger.go (0.0%)</option>
+				
+				<option value="file17">github.com/FredericoBento/HandGame/internal/middleware/middleware.go (0.0%)</option>
+				
+				<option value="file18">github.com/FredericoBento/HandGame/internal/middleware/secure_headers.go (0.0%)</option>
+				
+				<option value="file19">github.com/FredericoBento/HandGame/internal/mock/db.go (0.0%)</option>
+				
+				<option value="file20">github.com/FredericoBento/HandGame/internal/mock/mock_logger.go (0.0%)</option>
+				
+				<option value="file21">github.com/FredericoBento/HandGame/internal/mock/mock_user_repository.go (80.0%)</option>
+				
+				<option value="file22">github.com/FredericoBento/HandGame/internal/mock/mock_user_service.go (0.0%)</option>
+				
+				<option value="file23">github.com/FredericoBento/HandGame/internal/services/auth.go (0.0%)</option>
+				
+				<option value="file24">github.com/FredericoBento/HandGame/internal/services/user.go (51.0%)</option>
+				
+				<option value="file25">github.com/FredericoBento/HandGame/internal/utils/utils.go (0.0%)</option>
+				
+				<option value="file26">github.com/FredericoBento/HandGame/internal/views/admin_views/app_modal_templ.go (0.0%)</option>
+				
+				<option value="file27">github.com/FredericoBento/HandGame/internal/views/admin_views/app_templ.go (0.0%)</option>
+				
+				<option value="file28">github.com/FredericoBento/HandGame/internal/views/admin_views/dashboard_templ.go (0.0%)</option>
+				
+				<option value="file29">github.com/FredericoBento/HandGame/internal/views/admin_views/users_templ.go (0.0%)</option>
+				
+				<option value="file30">github.com/FredericoBento/HandGame/internal/views/auth_views/sign_in_form_templ.go (0.0%)</option>
+				
+				<option value="file31">github.com/FredericoBento/HandGame/internal/views/auth_views/sign_up_form_templ.go (0.0%)</option>
+				
+				<option value="file32">github.com/FredericoBento/HandGame/internal/views/components/footer_templ.go (0.0%)</option>
+				
+				<option value="file33">github.com/FredericoBento/HandGame/internal/views/components/head_templ.go (0.0%)</option>
+				
+				<option value="file34">github.com/FredericoBento/HandGame/internal/views/components/header_templ.go (0.0%)</option>
+				
+				<option value="file35">github.com/FredericoBento/HandGame/internal/views/home_views/index_templ.go (0.0%)</option>
+				
+				<option value="file36">github.com/FredericoBento/HandGame/internal/views/layout_templ.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "database/sql"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "log"
+        "log/slog"
+        "net/http"
+        "os"
+        "os/signal"
+        "strconv"
+        "strings"
+        "syscall"
+        "time"
+
+        "github.com/FredericoBento/HandGame/internal/app"
+        "github.com/FredericoBento/HandGame/internal/app/admin"
+        "github.com/FredericoBento/HandGame/internal/app/dummyapp"
+        "github.com/FredericoBento/HandGame/internal/app/handgame"
+        "github.com/FredericoBento/HandGame/internal/database/repository"
+        "github.com/FredericoBento/HandGame/internal/database/sqlite"
+        "github.com/FredericoBento/HandGame/internal/handler"
+        "github.com/FredericoBento/HandGame/internal/middleware"
+        "github.com/FredericoBento/HandGame/internal/services"
+
+        _ "github.com/mattn/go-sqlite3"
+        _ "net/http/pprof"
+)
+
+var (
+        exitCode                  = 1
+        exitCodeInterrupt         = 2
+        ErrCouldNotReadConfigFile = errors.New("Could not read config.json, give full path")
+)
+
+type ServerConfig struct {
+        Host string `json:"host"`
+        Port int    `json:"port"`
+}
+
+type DatabaseConfig struct {
+        Type string `json:"type"`
+}
+
+type ApplicationConfig struct {
+        Name           string `json:"name"`
+        RoutePrefix    string `json:"routePrefix"`
+        Active         int    `json:"active"`
+        StartAtStartup int    `json:"startAtStartup"`
+}
+
+type Config struct {
+        Server       ServerConfig                 `json:"server"`
+        Database     DatabaseConfig               `son:"database"`
+        Applications map[string]ApplicationConfig `json:"applications"`
+}
+
+const (
+        dbFile = "./simple.db"
+)
+
+func main() <span class="cov0" title="0">{
+        pprofRun()
+        config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(err.Error())
+                os.Exit(exitCode)
+        }</span>
+
+        <span class="cov0" title="0">db, err := getDB(config.Database)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(err.Error())
+                os.Exit(exitCode)
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        appManager := app.NewAppsManager()
+
+        userRepository := repository.NewSQLiteUserRepository(db)
+
+        userService := services.NewUserService(userRepository, time.Minute*10)
+        authService := services.NewAuthService(userService)
+
+        middleware.SetAuthService(authService)
+
+        authHandler := handler.NewAuthHandler(authService, userService)
+        homeHandler := handler.NewHomeHandler()
+        adminHandler := handler.NewAdminHandler(appManager, userService)
+
+        serverHandlers := app.NewServerHandlers(authHandler, homeHandler, adminHandler)
+
+        server := app.NewServer(
+                app.WithHost(config.Server.Host),
+                app.WithPort(config.Server.Port),
+                app.WithHandlers(serverHandlers),
+        )
+
+        err = appManager.SetServer(server)
+
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("Couldnt setup app manager server")
+                os.Exit(exitCode)
+        }</span>
+
+        <span class="cov0" title="0">for _, appConfig := range config.Applications </span><span class="cov0" title="0">{
+                if appConfig.Active == 1 </span><span class="cov0" title="0">{
+                        app, err := createApp(appConfig, server)
+                        if err != nil </span><span class="cov0" title="0">{
+                                slog.Error(err.Error())
+                        }</span> else<span class="cov0" title="0"> {
+                                appManager.AddApp(app)
+                                if appConfig.StartAtStartup == 1 </span><span class="cov0" title="0">{
+                                        err = appManager.StartApp(app.GetAppName())
+                                        if err != nil </span><span class="cov0" title="0">{
+                                                slog.Error(err.Error())
+                                        }</span>
+                                }
+                        }
+                }
+        }
+
+        <span class="cov0" title="0">err = appManager.StartServer()
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(err.Error())
+        }</span>
+
+        <span class="cov0" title="0">catchInterrupt(appManager)</span>
+}
+
+func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) <span class="cov0" title="0">{
+        switch databaseConfig.Type </span>{
+        case "sqlite":<span class="cov0" title="0">
+                db, err = sql.Open("sqlite3", dbFile)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">err = sqlite.CreateTables(db)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+        default:<span class="cov0" title="0">
+                return nil, errors.New("database type/driver not found")</span>
+        }
+
+        <span class="cov0" title="0">return db, nil</span>
+}
+
+func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) <span class="cov0" title="0">{
+        switch strings.ToLower(appConfig.Name) </span>{
+        case "handgame":<span class="cov0" title="0">
+                return handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server), nil</span>
+
+        case "admin":<span class="cov0" title="0">
+                return admin.NewAdminApp(appConfig.Name, appConfig.RoutePrefix, server), nil</span>
+
+        case "dummyapp":<span class="cov0" title="0">
+                return dummyapp.NewDummyApp(appConfig.Name, appConfig.RoutePrefix, server), nil</span>
+
+        default:<span class="cov0" title="0">
+                return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")</span>
+        }
+}
+
+func loadConfig(filename string) (*Config, error) <span class="cov0" title="0">{
+        raw, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, ErrCouldNotReadConfigFile
+        }</span>
+        <span class="cov0" title="0">config := &amp;Config{}
+        if err = json.Unmarshal(raw, config); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return config, nil</span>
+}
+
+func catchInterrupt(am *app.AppsManager) <span class="cov0" title="0">{
+        channel := make(chan os.Signal, 1)
+
+        signal.Notify(channel, syscall.SIGINT)
+
+        &lt;-channel
+        var appsStillRunning []string
+        appsStillRunning = make([]string, 0)
+
+        for _, app := range am.Apps </span><span class="cov0" title="0">{
+                if app.Stop() != nil </span><span class="cov0" title="0">{
+                        slog.Error("Could not stop " + app.GetAppName())
+                        appsStillRunning = append(appsStillRunning, app.GetAppName())
+                }</span>
+        }
+
+        <span class="cov0" title="0">numApps := len(appsStillRunning)
+        if numApps &gt; 0 </span><span class="cov0" title="0">{
+                var answer string
+                var err error
+                for answer == "" || answer != "y" &amp;&amp; answer != "n" &amp;&amp; err != nil </span><span class="cov0" title="0">{
+                        slog.Warn("There are still running " + strconv.Itoa(numApps) + ", do you want to forcefully close them? (y/n)")
+                        _, err = fmt.Scan(&amp;answer)
+                }</span>
+                <span class="cov0" title="0">if answer == "y" </span><span class="cov0" title="0">{
+                        os.Exit(exitCodeInterrupt)
+                }</span> else<span class="cov0" title="0"> {
+                        slog.Error("I dont know what to do...")
+                }</span>
+        }
+
+        <span class="cov0" title="0">os.Exit(exitCodeInterrupt)</span>
+}
+
+func pprofRun() <span class="cov0" title="0">{
+        go func() </span><span class="cov0" title="0">{
+                log.Println(http.ListenAndServe("localhost:6060", nil))
+        }</span>()
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package admin
+
+import (
+        "errors"
+        "log/slog"
+
+        "github.com/FredericoBento/HandGame/internal/app"
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/middleware"
+)
+
+type AdminApp struct {
+        name        string
+        routePrefix string
+        server      *app.Server
+        status      *app.AppStatus
+        log         *slog.Logger
+}
+
+var (
+        ErrAppIsAlreadyActive   = errors.New("Admin App is already active")
+        ErrCouldNotCreateLogger = errors.New("could not create app logger")
+)
+
+func NewAdminApp(name, routePrefix string, server *app.Server) *AdminApp <span class="cov0" title="0">{
+        lo, err := logger.NewAppLogger(name, "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
+                lo = slog.Default()
+        }</span>
+
+        <span class="cov0" title="0">return &amp;AdminApp{
+                name:        name,
+                routePrefix: routePrefix,
+                server:      server,
+                status:      app.NewAppStatus(),
+                log:         lo,
+        }</span>
+}
+
+func (aa *AdminApp) Start() error <span class="cov0" title="0">{
+        if aa.status.IsActive() </span><span class="cov0" title="0">{
+                return ErrAppIsAlreadyActive
+        }</span>
+
+        <span class="cov0" title="0">aa.log.Info("Starting " + aa.name + " App...")
+        if err := aa.setupRoutes(); err != nil </span><span class="cov0" title="0">{
+                aa.status.SetError(err)
+                return err
+        }</span>
+        <span class="cov0" title="0">aa.status.SetActive()
+
+        aa.log.Info(" - Ok")
+        return nil</span>
+}
+
+func (aa *AdminApp) Stop() error <span class="cov0" title="0">{
+        aa.log.Info("Stopping" + aa.name + " App...")
+        aa.server.BlockAppRoutes(aa.routePrefix)
+
+        aa.log.Info(" - Ok")
+        aa.status.SetInactive()
+
+        return nil
+}</span>
+
+func (aa *AdminApp) setupRoutes() error <span class="cov0" title="0">{
+        if aa.server.Router == nil </span><span class="cov0" title="0">{
+                return app.ErrServerRouterNotFound
+        }</span>
+
+        <span class="cov0" title="0">appMiddlewares := middleware.StackMiddleware(
+                middleware.Logger,
+                middleware.SecureHeadersMiddleware,
+                middleware.RequiredAdmin,
+        )
+
+        aa.server.Router.Handle(aa.routePrefix+"/dashboard", appMiddlewares(aa.server.Handlers.AdminHandler))
+        aa.server.Router.Handle(aa.routePrefix+"/users", appMiddlewares(aa.server.Handlers.AdminHandler))
+        aa.server.Router.Handle(aa.routePrefix+"/", appMiddlewares(aa.server.Handlers.AdminHandler))
+
+        return nil</span>
+}
+
+func (aa *AdminApp) Resume() error <span class="cov0" title="0">{
+        aa.log.Warn("Resuming " + aa.name + "App...")
+        aa.server.UnblockAppRoutes(aa.routePrefix)
+
+        aa.log.Info(" - Ok")
+        aa.status.SetActive()
+
+        return nil
+}</span>
+
+func (aa *AdminApp) GetAppName() string <span class="cov0" title="0">{
+        return aa.name
+}</span>
+
+func (aa *AdminApp) GetStatus() app.AppStatusChecker <span class="cov0" title="0">{
+        return aa.status
+}</span>
+
+func (aa *AdminApp) GetLogs() ([]logger.PrettyLogs, error) <span class="cov0" title="0">{
+        logs, err := logger.GetAppLogs(aa.name)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return logs, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package app
+
+import (
+        "errors"
+        "log/slog"
+        "strings"
+
+        "github.com/FredericoBento/HandGame/internal/logger"
+)
+
+type App interface {
+        Start() error
+        Stop() error
+        Resume() error
+        GetAppName() string
+        GetStatus() AppStatusChecker
+        GetLogs() ([]logger.PrettyLogs, error)
+}
+
+type AppStatusChecker interface {
+        IsActive() bool
+        IsInactive() bool
+        HasStartedOnce() bool
+        SetActive()
+        SetInactive()
+        SetError(error)
+        GetErrors() []error
+        HasErrors() bool
+}
+
+type AppStatus struct {
+        value          string
+        statusErrors   []error
+        hasStartedOnce bool
+}
+
+func NewAppStatus() *AppStatus <span class="cov0" title="0">{
+        return &amp;AppStatus{
+                value:          "inactive",
+                statusErrors:   make([]error, 0),
+                hasStartedOnce: false,
+        }
+}</span>
+
+func (as *AppStatus) IsActive() bool <span class="cov0" title="0">{
+        return as.value == statusActive
+}</span>
+
+func (as *AppStatus) IsInactive() bool <span class="cov0" title="0">{
+        return as.value == statusInactive
+}</span>
+
+func (as *AppStatus) SetInactive() <span class="cov0" title="0">{
+        as.value = statusInactive
+}</span>
+
+func (as *AppStatus) SetActive() <span class="cov0" title="0">{
+        as.value = statusActive
+        as.hasStartedOnce = true
+}</span>
+
+func (as *AppStatus) SetError(e error) <span class="cov0" title="0">{
+        as.statusErrors = append(as.statusErrors, e)
+}</span>
+
+func (as *AppStatus) GetErrors() []error <span class="cov0" title="0">{
+        return as.statusErrors
+}</span>
+
+func (as *AppStatus) HasErrors() bool <span class="cov0" title="0">{
+        return len(as.statusErrors) &gt; 0
+}</span>
+
+func (as *AppStatus) HasStartedOnce() bool <span class="cov0" title="0">{
+        return as.hasStartedOnce
+}</span>
+
+type AppsManager struct {
+        Apps   map[string]App
+        Server *Server
+}
+
+type AppsManagerOption func(*AppsManager)
+
+const (
+        statusInactive           = "inactive"
+        statusActive             = "active"
+        statusInactiveWithErrors = "inactive with errors"
+        statusActiveWithErrors   = "active with errors"
+)
+
+var (
+        ErrAppNameNotFound = errors.New("Could not find requested app by such name")
+        ErrAppNameInUse    = errors.New("App name is alread in use")
+)
+
+func NewAppsManager(opts ...AppsManagerOption) *AppsManager <span class="cov0" title="0">{
+        appsManager := &amp;AppsManager{
+                Apps:   make(map[string]App),
+                Server: nil,
+        }
+
+        for _, option := range opts </span><span class="cov0" title="0">{
+                option(appsManager)
+        }</span>
+
+        <span class="cov0" title="0">return appsManager</span>
+}
+
+func WithApp(app App) AppsManagerOption <span class="cov0" title="0">{
+        return func(am *AppsManager) </span><span class="cov0" title="0">{
+                am.Apps[app.GetAppName()] = app
+        }</span>
+}
+
+func WithServer(server *Server) AppsManagerOption <span class="cov0" title="0">{
+        return func(am *AppsManager) </span><span class="cov0" title="0">{
+                am.Server = server
+        }</span>
+}
+
+func (am *AppsManager) AddApp(app App) error <span class="cov0" title="0">{
+        if am.Apps[app.GetAppName()] != nil </span><span class="cov0" title="0">{
+                return ErrAppNameInUse
+        }</span>
+
+        <span class="cov0" title="0">am.Apps[app.GetAppName()] = app
+        return nil</span>
+}
+
+func (am *AppsManager) SetServer(server *Server) error <span class="cov0" title="0">{
+        am.Server = server
+        return nil
+}</span>
+
+func (am *AppsManager) StartApp(appName string) error <span class="cov0" title="0">{
+        if am.Apps[appName] != nil </span><span class="cov0" title="0">{
+                return am.Apps[appName].Start()
+        }</span>
+        <span class="cov0" title="0">return ErrAppNameNotFound</span>
+}
+
+func (am *AppsManager) StopApp(appName string) error <span class="cov0" title="0">{
+        for _, app := range am.Apps </span><span class="cov0" title="0">{
+                name := app.GetAppName()
+                name = strings.ToLower(name)
+                if name == strings.ToLower(appName) </span><span class="cov0" title="0">{
+                        return app.Stop()
+                }</span>
+        }
+        <span class="cov0" title="0">return ErrAppNameNotFound</span>
+}
+
+func (am *AppsManager) ResumeApp(appName string) error <span class="cov0" title="0">{
+        for _, app := range am.Apps </span><span class="cov0" title="0">{
+                name := app.GetAppName()
+                name = strings.ToLower(name)
+                if name == strings.ToLower(appName) </span><span class="cov0" title="0">{
+                        return app.Resume()
+                }</span>
+        }
+        <span class="cov0" title="0">return ErrAppNameNotFound</span>
+}
+
+func (am *AppsManager) StartAll() ([]string, error) <span class="cov0" title="0">{
+        unableToStart := make([]string, 0)
+        for _, app := range am.Apps </span><span class="cov0" title="0">{
+                err := app.Start()
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error("Could not start " + app.GetAppName() + " App: " + err.Error())
+                        unableToStart = append(unableToStart, app.GetAppName())
+                }</span>
+        }
+        <span class="cov0" title="0">if len(unableToStart) &gt; 0 </span><span class="cov0" title="0">{
+                return unableToStart, errors.New("Some apps could not be started")
+        }</span>
+        <span class="cov0" title="0">return nil, nil</span>
+}
+
+func (am *AppsManager) StartServer() error <span class="cov0" title="0">{
+        err := am.Server.Init()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return am.Server.Run()</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package dummyapp
+
+import (
+        "errors"
+        "log/slog"
+
+        "github.com/FredericoBento/HandGame/internal/app"
+        "github.com/FredericoBento/HandGame/internal/logger"
+)
+
+var (
+        ErrHasNotStartedYet     = errors.New("app hasnt started yet")
+        ErrCouldNotCreateLogger = errors.New("could not create app logger")
+)
+
+type DummyApp struct {
+        name        string
+        routePrefix string
+        status      *app.AppStatus
+        server      *app.Server
+        log         *slog.Logger
+}
+
+func NewDummyApp(name, routePrefix string, server *app.Server) *DummyApp <span class="cov0" title="0">{
+        lo, err := logger.NewAppLogger(name, "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
+                lo = slog.Default()
+        }</span>
+
+        <span class="cov0" title="0">return &amp;DummyApp{
+                name:        name,
+                routePrefix: routePrefix,
+                status:      app.NewAppStatus(),
+                server:      server,
+                log:         lo,
+        }</span>
+}
+
+func (da *DummyApp) Start() error <span class="cov0" title="0">{
+        da.log.Info("Starting " + da.name + " App...")
+        da.status.SetActive()
+        da.log.Info(" - Ok")
+        return nil
+}</span>
+
+func (da *DummyApp) Stop() error <span class="cov0" title="0">{
+        da.log.Info("Stopping " + da.name + " App...")
+        da.status.SetInactive()
+        da.log.Info(" - Ok")
+        return nil
+}</span>
+
+func (da *DummyApp) Resume() error <span class="cov0" title="0">{
+        if da.status.HasStartedOnce() == false </span><span class="cov0" title="0">{
+                return ErrHasNotStartedYet
+        }</span>
+        <span class="cov0" title="0">da.log.Info("Resuming %d App..." + da.name)
+        da.status.SetActive()
+        da.log.Info(" - Ok")
+        return nil</span>
+}
+
+func (da *DummyApp) GetStatus() app.AppStatusChecker <span class="cov0" title="0">{
+        return da.status
+}</span>
+
+func (da *DummyApp) GetAppName() string <span class="cov0" title="0">{
+        return da.name
+}</span>
+
+func (da *DummyApp) GetLogs() ([]logger.PrettyLogs, error) <span class="cov0" title="0">{
+        logs, err := logger.GetAppLogs(da.name)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return logs, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package handgame
+
+import (
+        "errors"
+        "log/slog"
+
+        "github.com/FredericoBento/HandGame/internal/app"
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/middleware"
+)
+
+var (
+        ErrServerRouterNotFound = errors.New("Could not find server router")
+        ErrHasNotStartedYet     = errors.New("app hasnt started yet")
+        ErrCouldNotCreateLogger = errors.New("could not create app logger")
+)
+
+type HandGameApp struct {
+        name        string
+        routePrefix string
+        status      *app.AppStatus
+        server      *app.Server
+        log         *slog.Logger
+}
+
+func NewHandGameApp(name, routePrefix string, server *app.Server) *HandGameApp <span class="cov0" title="0">{
+        lo, err := logger.NewAppLogger(name, "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
+                lo = slog.Default()
+        }</span>
+
+        <span class="cov0" title="0">return &amp;HandGameApp{
+                name:        name,
+                routePrefix: routePrefix,
+                status:      app.NewAppStatus(),
+                server:      server,
+                log:         lo,
+        }</span>
+}
+
+func (hga *HandGameApp) Start() error <span class="cov0" title="0">{
+        hga.log.Info("Starting HandGame App...")
+        err := hga.setupRoutes()
+        if err != nil </span><span class="cov0" title="0">{
+                hga.log.Error(" - Failed")
+                hga.log.Error(err.Error())
+                return err
+        }</span>
+        <span class="cov0" title="0">hga.log.Info(" - Ok")
+        hga.status.SetActive()
+        return nil</span>
+}
+
+func (hga *HandGameApp) setupRoutes() error <span class="cov0" title="0">{
+        if hga.server.Router == nil </span><span class="cov0" title="0">{
+                return ErrServerRouterNotFound
+        }</span>
+
+        <span class="cov0" title="0">appMiddlewares := middleware.StackMiddleware(
+                middleware.Logger,
+                middleware.SecureHeadersMiddleware,
+                middleware.RequiredLogged,
+        )
+
+        hga.server.Router.Handle(hga.routePrefix+"/home", appMiddlewares(hga.server.Handlers.HomeHandler))
+
+        return nil</span>
+}
+
+func (hga *HandGameApp) Stop() error <span class="cov0" title="0">{
+        hga.log.Warn("Stopping HandGame App...")
+        hga.server.BlockAppRoutes(hga.routePrefix)
+
+        hga.log.Info(" - Ok")
+        hga.status.SetInactive()
+
+        return nil
+}</span>
+
+func (hga *HandGameApp) Resume() error <span class="cov0" title="0">{
+        if hga.status.HasStartedOnce() == false </span><span class="cov0" title="0">{
+                hga.log.Error(ErrHasNotStartedYet.Error())
+                return ErrHasNotStartedYet
+        }</span>
+        <span class="cov0" title="0">hga.log.Warn("Resuming HandGame App...")
+        hga.server.UnblockAppRoutes(hga.routePrefix)
+
+        hga.log.Info(" - Ok")
+        hga.status.SetActive()
+
+        return nil</span>
+}
+
+func (hga *HandGameApp) GetAppName() string <span class="cov0" title="0">{
+        return hga.name
+}</span>
+
+func (aa *HandGameApp) GetStatus() app.AppStatusChecker <span class="cov0" title="0">{
+        return aa.status
+}</span>
+
+func (da *HandGameApp) GetLogs() ([]logger.PrettyLogs, error) <span class="cov0" title="0">{
+        logs, err := logger.GetAppLogs(da.name)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return logs, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package app
+
+import (
+        "errors"
+        "log/slog"
+        "net/http"
+        "strconv"
+
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/middleware"
+)
+
+var (
+        ErrAuthHandlerNotFound       = errors.New("AuthHandler was not found")
+        ErrServerCouldNotRan         = errors.New("Server could not be ran")
+        ErrServerCouldNotSetupRoutes = errors.New("Server could not setup http routes with handlers")
+)
+
+type ServerHandlers struct {
+        AuthHandler  http.Handler
+        HomeHandler  http.Handler
+        AdminHandler http.Handler
+}
+
+type Server struct {
+        Host        string
+        Port        int
+        HttpServer  *http.Server
+        Router      *http.ServeMux
+        AuthRouter  *http.ServeMux
+        AdminRouter *http.ServeMux
+        Handlers    *ServerHandlers
+        log         *slog.Logger
+}
+
+type ServerOption func(*Server)
+
+func WithHost(host string) ServerOption <span class="cov0" title="0">{
+        return func(s *Server) </span><span class="cov0" title="0">{
+                s.Host = host
+        }</span>
+}
+
+func WithPort(port int) ServerOption <span class="cov0" title="0">{
+        return func(s *Server) </span><span class="cov0" title="0">{
+                s.Port = port
+        }</span>
+}
+
+func WithHandlers(handlers *ServerHandlers) ServerOption <span class="cov0" title="0">{
+        return func(s *Server) </span><span class="cov0" title="0">{
+                s.Handlers = handlers
+        }</span>
+}
+
+func NewServer(opts ...ServerOption) *Server <span class="cov0" title="0">{
+        lo, err := logger.NewServerLogger("server", "", true)
+        if err != nil </span><span class="cov0" title="0">{
+                lo = slog.Default()
+        }</span>
+        <span class="cov0" title="0">server := &amp;Server{
+                HttpServer:  nil,
+                Router:      http.NewServeMux(),
+                AuthRouter:  http.NewServeMux(),
+                AdminRouter: http.NewServeMux(),
+                Handlers:    nil,
+                log:         lo,
+        }
+        for _, option := range opts </span><span class="cov0" title="0">{
+                option(server)
+        }</span>
+
+        <span class="cov0" title="0">return server</span>
+}
+
+func NewServerHandlers(authH http.Handler, homeH http.Handler, adminH http.Handler) *ServerHandlers <span class="cov0" title="0">{
+        return &amp;ServerHandlers{
+                AuthHandler:  authH,
+                HomeHandler:  homeH,
+                AdminHandler: adminH,
+        }
+}</span>
+
+func (s *Server) Init() error <span class="cov0" title="0">{
+        s.log.Info("Initiating Server...")
+
+        err := s.setupRoutes()
+        if err != nil </span><span class="cov0" title="0">{
+                s.log.Error("Server could not be initiated")
+                s.log.Error(err.Error())
+                return ErrServerCouldNotSetupRoutes
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *Server) setupRoutes() error <span class="cov0" title="0">{
+        if s.Handlers.AuthHandler == nil </span><span class="cov0" title="0">{
+                return ErrAuthHandlerNotFound
+        }</span>
+
+        <span class="cov0" title="0">standardMiddlewares := middleware.StackMiddleware(
+                middleware.Logger,
+                middleware.SecureHeadersMiddleware,
+        )
+
+        authHandlerMiddlewares := middleware.StackMiddleware(
+                standardMiddlewares,
+        )
+
+        adminHandlerMiddlewares := middleware.StackMiddleware(
+                standardMiddlewares,
+                middleware.RequiredAdmin,
+        )
+
+        // Auth Routes
+        s.AuthRouter.Handle("/sign-in", s.Handlers.AuthHandler)
+        s.AuthRouter.Handle("/sign-up", s.Handlers.AuthHandler)
+        s.AuthRouter.Handle("/logout", s.Handlers.AuthHandler)
+
+        s.Router.Handle("/", authHandlerMiddlewares(s.AuthRouter))
+
+        // Admin Routes
+        s.AdminRouter.Handle("/dashboard", s.Handlers.AdminHandler)
+        s.AdminRouter.Handle("/users", s.Handlers.AdminHandler)
+        s.AdminRouter.Handle("/", s.Handlers.AdminHandler)
+
+        s.Router.Handle("/admin", adminHandlerMiddlewares(s.AdminRouter))
+
+        // Fileserver
+        fs := http.FileServer(http.Dir("./assets"))
+        s.Router.Handle("/assets/", standardMiddlewares(http.StripPrefix("/assets", fs)))
+
+        return nil</span>
+}
+
+func (s *Server) Run() error <span class="cov0" title="0">{
+        addr := s.Host + ":" + strconv.Itoa(s.Port)
+
+        s.log.Info("Server is running on " + addr)
+
+        s.HttpServer = &amp;http.Server{
+                Addr:    addr,
+                Handler: middleware.BlockRoutes(s.Router),
+        }
+
+        go func() </span><span class="cov0" title="0">{
+                err := s.HttpServer.ListenAndServe()
+                // defer s.HttpServer.Close()
+                if err != nil </span><span class="cov0" title="0">{
+                        slog.Error(err.Error())
+                }</span>
+        }()
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (s *Server) Shutdown() error <span class="cov0" title="0">{
+        s.log.Warn("Server is shuting down...")
+        return s.HttpServer.Close()
+}</span>
+
+func (s *Server) BlockAppRoutes(appPrefix string) <span class="cov0" title="0">{
+        middleware.BlockRoute(appPrefix)
+}</span>
+
+func (s *Server) UnblockAppRoutes(appPrefix string) <span class="cov0" title="0">{
+        middleware.UnblockRoute(appPrefix)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package repository
+
+import (
+        "context"
+        "database/sql"
+        "errors"
+        "log/slog"
+
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/models"
+)
+
+var (
+        ErrCouldNotStartTransaction = errors.New("could not start transaction")
+        ErrCouldNotInsertUser       = errors.New("could not insert user")
+        ErrCouldNotRollback         = errors.New("could not rollback transaction")
+        ErrCouldNotCreateLogger     = errors.New("could not create logger for sqlite user repository")
+        ErrCouldNotGetByUsername    = errors.New("could not get user by username")
+)
+
+type SQLiteUserRepository struct {
+        DB  *sql.DB
+        log *slog.Logger
+}
+
+func NewSQLiteUserRepository(db *sql.DB) *SQLiteUserRepository <span class="cov8" title="1">{
+        lo, err := logger.NewRepositoryLogger("sqlite", "users", "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
+                lo = slog.Default()
+        }</span>
+        <span class="cov8" title="1">return &amp;SQLiteUserRepository{
+                DB:  db,
+                log: lo,
+        }</span>
+}
+
+func (r *SQLiteUserRepository) GetAll(ctx context.Context) ([]models.User, error) <span class="cov8" title="1">{
+        rows, err := r.DB.Query("SELECT * from users")
+        if err != nil </span><span class="cov0" title="0">{
+                r.log.Error(err.Error())
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">defer rows.Close()
+        var users []models.User
+
+        for rows.Next() </span><span class="cov8" title="1">{
+                var user models.User
+                err = rows.Scan(&amp;user.ID, &amp;user.Username, &amp;user.Password)
+                if err != nil </span><span class="cov0" title="0">{
+                        r.log.Error(err.Error())
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">users = append(users, user)</span>
+        }
+        <span class="cov8" title="1">return users, nil</span>
+}
+
+func (r *SQLiteUserRepository) Create(ctx context.Context, user *models.User) error <span class="cov0" title="0">{
+        t, err := r.DB.Begin()
+        if err != nil </span><span class="cov0" title="0">{
+                r.log.Error(err.Error())
+                return ErrCouldNotStartTransaction
+        }</span>
+        <span class="cov0" title="0">query := "INSERT INTO users(username, password) VALUES(?, ?)"
+        _, err = t.Exec(query, user.Username, user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                if err = t.Rollback(); err != nil </span><span class="cov0" title="0">{
+                        r.log.Error(err.Error())
+                        return ErrCouldNotRollback
+                }</span>
+                <span class="cov0" title="0">r.log.Error(err.Error())
+                return ErrCouldNotInsertUser</span>
+        }
+
+        <span class="cov0" title="0">t.Commit()
+
+        return nil</span>
+}
+
+func (r *SQLiteUserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) <span class="cov0" title="0">{
+        query := "SELECT * FROM users WHERE username = ?"
+        rows, err := r.DB.Query(query, username)
+        if err != nil </span><span class="cov0" title="0">{
+                r.log.Error(err.Error())
+                return nil, ErrCouldNotGetByUsername
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+        var user models.User
+        if !rows.Next() </span><span class="cov0" title="0">{
+                return nil, sql.ErrNoRows
+        }</span>
+
+        <span class="cov0" title="0">err = rows.Scan(&amp;user.ID, &amp;user.Username, &amp;user.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                r.log.Error(err.Error())
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package sqlite
+
+import "database/sql"
+
+func CreateTables(db *sql.DB) error <span class="cov8" title="1">{
+        var err error
+
+        if err = createUserTable(db); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func createUserTable(db *sql.DB) error <span class="cov8" title="1">{
+        query := `
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL
+            );`
+
+        _, err := db.Exec(query)
+
+        return err
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package handler
+
+import (
+        "errors"
+        "fmt"
+        "log"
+        "log/slog"
+        "net/http"
+        "strings"
+
+        "github.com/FredericoBento/HandGame/internal/app"
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/services"
+        "github.com/FredericoBento/HandGame/internal/views"
+        "github.com/FredericoBento/HandGame/internal/views/admin_views"
+        "github.com/a-h/templ"
+)
+
+var (
+        ErrAppAlreadyStarted  = errors.New("app is already running")
+        ErrAppCouldNotStart   = errors.New("a server error ocurred, could not start app")
+        ErrAppAlreadyStopped  = errors.New("app is already inactive")
+        ErrAppCouldNotStop    = errors.New("a server error ocurred, could not stop app")
+        ErrAppAlreadyActive   = errors.New("app is already active, there is no need to resume")
+        ErrAppCouldNotResume  = errors.New("a server error ocurred, could not resume app")
+        ErrAppNotFound        = errors.New("app not found")
+        ErrAppCouldNotGetMore = errors.New("could not get more info of app")
+)
+
+type AdminHandler struct {
+        appManager  *app.AppsManager
+        menu        map[string]string
+        userService *services.UserService
+        log         *slog.Logger
+}
+
+func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *AdminHandler <span class="cov0" title="0">{
+        if am == nil </span><span class="cov0" title="0">{
+                log.Fatal("AdminHandler: app manager not provided")
+        }</span>
+        <span class="cov0" title="0">if userService == nil </span><span class="cov0" title="0">{
+                log.Fatal("AdminHandler: user service not provided")
+        }</span>
+
+        <span class="cov0" title="0">lo, err := logger.NewHandlerLogger("AdminHandler", "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                lo = slog.Default()
+                lo.Error("could not create admin handler logger, using slog.default")
+        }</span>
+
+        <span class="cov0" title="0">navlinks := make(map[string]string, 0)
+        navlinks["Dashboard"] = "/admin/dashboard"
+        navlinks["Users"] = "/admin/users"
+
+        return &amp;AdminHandler{
+                appManager:  am,
+                menu:        navlinks,
+                userService: userService,
+                log:         lo,
+        }</span>
+}
+
+func (ah *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov0" title="0">
+                ah.Get(w, r)</span>
+        }
+}
+
+func (ah *AdminHandler) Get(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        route := strings.Split(r.URL.Path, "/")
+        switch route[len(route)-1] </span>{
+
+        case "":<span class="cov0" title="0">
+                http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+                return</span>
+
+        case "dashboard":<span class="cov0" title="0">
+                ah.GetDashboard(w, r)</span>
+
+        case "users":<span class="cov0" title="0">
+                ah.GetUsers(w, r)</span>
+
+        default:<span class="cov0" title="0">
+                w.WriteHeader(http.StatusNotFound)
+                fmt.Fprint(w, "404 page not found")
+                return</span>
+
+        }
+}
+
+func (ah *AdminHandler) Post(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        route := strings.Split(r.URL.Path, "/")
+        switch route[len(route)-1] </span>{
+        case "dashboard":<span class="cov0" title="0">
+                ah.GetDashboard(w, r)</span>
+        }
+}
+
+func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        appID := r.URL.Query().Get("appid")
+        if appID != "" </span><span class="cov0" title="0">{
+                action := r.URL.Query().Get("action")
+                switch action </span>{
+                case "start":<span class="cov0" title="0">
+                        ah.startApp(w, r, appID)
+                        return</span>
+
+                case "stop":<span class="cov0" title="0">
+                        ah.stopApp(w, r, appID)
+                        return</span>
+
+                case "resume":<span class="cov0" title="0">
+                        ah.resumeApp(w, r, appID)
+                        return</span>
+
+                case "more":<span class="cov0" title="0">
+                        ah.moreApp(w, r, appID)
+                        return</span>
+
+                default:<span class="cov0" title="0">
+                        http.Error(w, "Action not found", http.StatusBadRequest)
+                        return</span>
+                }
+        }
+
+        <span class="cov0" title="0">ah.View(w, r, adminViewProps{
+                title:   "Dashboard",
+                content: admin_views.Dashboard(ah.appManager.Apps),
+        })</span>
+}
+
+func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        users, err := ah.userService.GetAllUsers()
+        if err != nil </span><span class="cov0" title="0">{
+                ah.log.Error(err.Error())
+                return
+        }</span>
+
+        <span class="cov0" title="0">ah.View(w, r, adminViewProps{
+                title:   "Users",
+                content: admin_views.UsersPage(&amp;users),
+        })</span>
+
+}
+
+func (ah *AdminHandler) moreApp(w http.ResponseWriter, r *http.Request, appID string) <span class="cov0" title="0">{
+        for name, app := range ah.appManager.Apps </span><span class="cov0" title="0">{
+                if name == appID </span><span class="cov0" title="0">{
+                        ah.View(w, r, adminViewProps{
+                                title:   "App Modal",
+                                content: admin_views.AppModal(app),
+                        })
+                        return
+                }</span>
+        }
+
+        <span class="cov0" title="0">http.Error(w, ErrAppNotFound.Error(), http.StatusNotFound)
+        return</span>
+}
+
+func (ah *AdminHandler) startApp(w http.ResponseWriter, r *http.Request, appID string) <span class="cov0" title="0">{
+        for name, app := range ah.appManager.Apps </span><span class="cov0" title="0">{
+                if name == appID </span><span class="cov0" title="0">{
+                        if app.GetStatus().IsActive() </span><span class="cov0" title="0">{
+                                http.Error(w, ErrAppAlreadyStarted.Error(), http.StatusBadRequest)
+                        }</span> else<span class="cov0" title="0"> {
+                                err := app.Start()
+                                if err != nil </span><span class="cov0" title="0">{
+                                        ah.log.Error(err.Error())
+                                        http.Error(w, ErrAppCouldNotStart.Error(), http.StatusInternalServerError)
+                                }</span>
+                        }
+
+                        <span class="cov0" title="0">ah.View(w, r, adminViewProps{
+                                title:   "Dashboard",
+                                content: admin_views.Dashboard(ah.appManager.Apps),
+                        })
+                        return</span>
+                }
+        }
+
+        <span class="cov0" title="0">http.Error(w, ErrAppCouldNotStart.Error(), http.StatusNotFound)
+        return</span>
+}
+
+func (ah *AdminHandler) stopApp(w http.ResponseWriter, r *http.Request, appID string) <span class="cov0" title="0">{
+        for name, app := range ah.appManager.Apps </span><span class="cov0" title="0">{
+                if name == appID </span><span class="cov0" title="0">{
+                        if app.GetStatus().IsInactive() </span><span class="cov0" title="0">{
+                                http.Error(w, ErrAppAlreadyStopped.Error(), http.StatusBadRequest)
+                        }</span> else<span class="cov0" title="0"> {
+                                err := app.Stop()
+                                if err != nil </span><span class="cov0" title="0">{
+                                        ah.log.Error(err.Error())
+                                        http.Error(w, ErrAppCouldNotStop.Error(), http.StatusInternalServerError)
+                                }</span>
+                        }
+
+                        <span class="cov0" title="0">ah.View(w, r, adminViewProps{
+                                title:   "Dashboard",
+                                content: admin_views.Dashboard(ah.appManager.Apps),
+                        })
+                        return</span>
+                }
+        }
+
+        <span class="cov0" title="0">http.Error(w, ErrAppCouldNotStop.Error(), http.StatusNotFound)
+        return</span>
+}
+
+func (ah *AdminHandler) resumeApp(w http.ResponseWriter, r *http.Request, appID string) <span class="cov0" title="0">{
+        for name, app := range ah.appManager.Apps </span><span class="cov0" title="0">{
+                if name == appID </span><span class="cov0" title="0">{
+                        if app.GetStatus().IsActive() </span><span class="cov0" title="0">{
+                                http.Error(w, ErrAppAlreadyActive.Error(), http.StatusBadRequest)
+                        }</span> else<span class="cov0" title="0"> {
+                                err := app.Resume()
+                                if err != nil </span><span class="cov0" title="0">{
+                                        ah.log.Error(err.Error())
+                                        http.Error(w, ErrAppCouldNotResume.Error(), http.StatusInternalServerError)
+                                }</span>
+                        }
+
+                        <span class="cov0" title="0">ah.View(w, r, adminViewProps{
+                                title:   "Dashboard",
+                                content: admin_views.Dashboard(ah.appManager.Apps),
+                        })
+                        return</span>
+                }
+        }
+
+        <span class="cov0" title="0">http.Error(w, ErrAppCouldNotResume.Error(), http.StatusNotFound)
+        return</span>
+}
+
+type adminViewProps struct {
+        title   string
+        content templ.Component
+}
+
+func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props adminViewProps) <span class="cov0" title="0">{
+
+        if IsHTMX(r) </span><span class="cov0" title="0">{
+                props.content.Render(r.Context(), w)
+        }</span> else<span class="cov0" title="0"> {
+                views.Page(props.title, "", hh.menu, props.content).Render(r.Context(), w)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package handler
+
+import (
+        "context"
+        "log"
+        "log/slog"
+        "net/http"
+        "time"
+
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/models"
+        "github.com/FredericoBento/HandGame/internal/services"
+        "github.com/FredericoBento/HandGame/internal/views"
+        "github.com/FredericoBento/HandGame/internal/views/auth_views"
+        "github.com/a-h/templ"
+)
+
+type AuthHandler struct {
+        authService *services.AuthService
+        userService *services.UserService
+        log         *slog.Logger
+}
+
+func NewAuthHandler(authService *services.AuthService, userService *services.UserService) *AuthHandler <span class="cov0" title="0">{
+        if authService == nil </span><span class="cov0" title="0">{
+                log.Fatal("auth service not provided")
+        }</span>
+
+        <span class="cov0" title="0">if userService == nil </span><span class="cov0" title="0">{
+                log.Fatal("user service not provided")
+        }</span>
+
+        <span class="cov0" title="0">lo, err := logger.NewHandlerLogger("AuthHandler", "", true)
+        if err != nil </span><span class="cov0" title="0">{
+                lo = slog.Default()
+                lo.Error("could not create admin handler logger, using slog.default")
+        }</span>
+
+        <span class="cov0" title="0">return &amp;AuthHandler{
+                authService: authService,
+                userService: userService,
+                log:         lo,
+        }</span>
+}
+
+func (ah *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.URL.Path </span>{
+        case "/sign-in":<span class="cov0" title="0">
+                ah.signIn(w, r)</span>
+        case "/sign-up":<span class="cov0" title="0">
+                ah.signUp(w, r)</span>
+        case "/logout":<span class="cov0" title="0">
+                ah.GetLogout(w, r)</span>
+        default:<span class="cov0" title="0">
+                w.WriteHeader(http.StatusNotFound)
+                w.Write([]byte("404 - Not Found"))</span>
+        }
+}
+
+func (ah *AuthHandler) signIn(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov0" title="0">
+                ah.GetSignIn(w, r)</span>
+        case http.MethodPost:<span class="cov0" title="0">
+                ah.PostSignIn(w, r)</span>
+        }
+}
+
+func (ah *AuthHandler) signUp(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov0" title="0">
+                ah.GetSignUp(w, r)</span>
+        case http.MethodPost:<span class="cov0" title="0">
+                ah.PostSignUp(w, r)</span>
+        }
+}
+
+func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusMethodNotAllowed)
+                return
+        }</span>
+
+        <span class="cov0" title="0">token, err := ah.authService.GetToken(r)
+        if err == nil &amp;&amp; token != "" </span><span class="cov0" title="0">{
+                user, err := ah.authService.ValidateSession(context.TODO(), token)
+                if err == nil &amp;&amp; user != nil </span><span class="cov0" title="0">{
+                        if ah.authService.IsAdmin(user.Username) </span><span class="cov0" title="0">{
+                                // http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+                                Redirect(w, r, "/admin/")
+                                return
+                        }</span> else<span class="cov0" title="0"> {
+                                // http.Redirect(w, r, "/home/", http.StatusSeeOther)
+                                Redirect(w, r, "/home/")
+                                return
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">ah.View(w, r, viewProps{
+                title:   "Sign Up",
+                content: auth_views.SignUpForm(),
+        })</span>
+}
+
+func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        type SignUpForm struct {
+                username         string
+                password         string
+                repeatedPassword string
+        }
+
+        data := SignUpForm{}
+        data.username = r.FormValue("username")
+        data.password = r.FormValue("password")
+        data.repeatedPassword = r.FormValue("repeat_password")
+
+        if data.username == "" || data.password == "" || data.repeatedPassword == "" </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov0" title="0">err := ah.userService.CreateUser(context.TODO(), &amp;models.User{ID: 0, Username: data.username, Password: data.password})
+        if err != nil </span><span class="cov0" title="0">{
+                w.Write([]byte(err.Error()))
+                return
+        }</span>
+
+        // w.WriteHeader(http.StatusCreated)
+        <span class="cov0" title="0">http.Redirect(w, r, "/sign-in", http.StatusSeeOther)</span>
+
+}
+
+func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        if r.Method != http.MethodGet </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusMethodNotAllowed)
+                return
+        }</span>
+
+        <span class="cov0" title="0">if ah.authService == nil </span><span class="cov0" title="0">{
+                ah.log.Error("NO AUTH SERVICE")
+                return
+        }</span>
+
+        <span class="cov0" title="0">token, err := ah.authService.GetToken(r)
+        if err == nil &amp;&amp; token != "" </span><span class="cov0" title="0">{
+                user, err := ah.authService.ValidateSession(context.TODO(), token)
+                if err == nil &amp;&amp; user != nil </span><span class="cov0" title="0">{
+                        if ah.authService.IsAdmin(user.Username) </span><span class="cov0" title="0">{
+                                // http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+                                Redirect(w, r, "/admin/")
+                                return
+                        }</span> else<span class="cov0" title="0"> {
+                                // http.Redirect(w, r, "/home/", http.StatusSeeOther)
+                                Redirect(w, r, "/home/")
+                                return
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">ah.View(w, r, viewProps{
+                title:   "Sign In",
+                content: auth_views.SignInForm(),
+        })</span>
+}
+
+func (ah *AuthHandler) GetLogout(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        token, err := ah.authService.GetToken(r)
+        if err != nil </span><span class="cov0" title="0">{
+                http.Error(w, "No token, could not logout", http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov0" title="0">c, err := r.Cookie(ah.authService.GetCookieName())
+        if err != http.ErrNoCookie &amp;&amp; c != nil </span><span class="cov0" title="0">{
+                c.Value = ""
+                c.Expires = time.Now()
+                http.SetCookie(w, c)
+        }</span> else <span class="cov0" title="0">{
+                // delete with other method in case of no cookie auth
+        }</span>
+
+        <span class="cov0" title="0">ah.authService.DestroySession(context.Background(), token)
+        Redirect(w, r, "/sign-in")</span>
+}
+
+func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        type SignInForm struct {
+                username string
+                password string
+        }
+
+        data := SignInForm{}
+        data.username = r.FormValue("username")
+        data.password = r.FormValue("password")
+
+        if data.username == "" || data.password == "" </span><span class="cov0" title="0">{
+                w.WriteHeader(http.StatusBadRequest)
+                return
+        }</span>
+
+        <span class="cov0" title="0">exists, err := ah.userService.UserExists(context.Background(), data.username)
+        if err != nil </span><span class="cov0" title="0">{
+                ah.log.Error(err.Error())
+                w.Write([]byte(err.Error()))
+                return
+        }</span>
+
+        <span class="cov0" title="0">if !exists </span><span class="cov0" title="0">{
+                ah.log.Error("user does not exist")
+                w.Write([]byte("user does not exist"))
+                return
+        }</span>
+
+        <span class="cov0" title="0">u, err := ah.authService.Authenticate(context.TODO(), data.username, data.password)
+        if err != nil </span><span class="cov0" title="0">{
+                ah.log.Error(err.Error())
+                w.Write([]byte(err.Error()))
+                return
+        }</span>
+
+        <span class="cov0" title="0">if u != nil </span><span class="cov0" title="0">{
+                token, err := ah.authService.CreateSession(u)
+                if err != nil </span><span class="cov0" title="0">{
+                        ah.log.Error(err.Error())
+                        w.Write([]byte(err.Error()))
+                        return
+                }</span>
+
+                <span class="cov0" title="0">cookie := http.Cookie{
+                        Name:  "session_token",
+                        Value: token,
+                }
+
+                http.SetCookie(w, &amp;cookie)
+
+                if ah.authService.IsAdmin(u.Username) </span><span class="cov0" title="0">{
+                        Redirect(w, r, "/admin/")
+                        return
+                }</span>
+                <span class="cov0" title="0">Redirect(w, r, "/home/")
+                return</span>
+        }
+}
+
+type viewProps struct {
+        title   string
+        content templ.Component
+}
+
+func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewProps) <span class="cov0" title="0">{
+        if IsHTMX(r) </span><span class="cov0" title="0">{
+                props.content.Render(r.Context(), w)
+        }</span> else<span class="cov0" title="0"> {
+                var aux map[string]string
+                views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package handler
+
+import (
+        "net/http"
+
+        "github.com/FredericoBento/HandGame/internal/views"
+        "github.com/FredericoBento/HandGame/internal/views/home_views"
+        "github.com/a-h/templ"
+)
+
+type HomeHandler struct {
+        menu map[string]string
+}
+
+func NewHomeHandler() *HomeHandler <span class="cov0" title="0">{
+        navlinks := make(map[string]string, 0)
+        navlinks["Home"] = "/handgame/home"
+        navlinks["Settings"] = "/handgame/settings"
+
+        return &amp;HomeHandler{
+                menu: navlinks,
+        }
+}</span>
+
+func (hh *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        switch r.Method </span>{
+        case http.MethodGet:<span class="cov0" title="0">
+                hh.Get(w, r)</span>
+        }
+}
+
+func (hh *HomeHandler) Get(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+
+        hh.View(w, r, homeViewProps{
+                title:       "Sign In",
+                headerTitle: "HandGame",
+                content:     home_views.Base(),
+        })
+}</span>
+
+type homeViewProps struct {
+        title       string
+        headerTitle string
+        content     templ.Component
+}
+
+func (hh *HomeHandler) View(w http.ResponseWriter, r *http.Request, props homeViewProps) <span class="cov0" title="0">{
+
+        if IsHTMX(r) </span><span class="cov0" title="0">{
+                props.content.Render(r.Context(), w)
+        }</span> else<span class="cov0" title="0"> {
+                views.Page(props.title, props.headerTitle, hh.menu, props.content).Render(r.Context(), w)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package handler
+
+import "net/http"
+
+func IsHTMX(r *http.Request) bool <span class="cov0" title="0">{
+        if r.Header.Get("Hx-Request") == "true" </span><span class="cov0" title="0">{
+                return true
+        }</span> else<span class="cov0" title="0"> {
+                return false
+        }</span>
+}
+
+func Redirect(w http.ResponseWriter, r *http.Request, route string) <span class="cov0" title="0">{
+        if IsHTMX(r) </span><span class="cov0" title="0">{
+                w.Header().Add("HX-Redirect", route)
+        }</span> else<span class="cov0" title="0"> {
+                http.Redirect(w, r, route, http.StatusSeeOther)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package logger
+
+import (
+        "encoding/json"
+        "log/slog"
+        "os"
+        "path/filepath"
+        "strings"
+        "time"
+)
+
+const (
+        defaultAppLoggerFilePath             = "./logs/apps/"
+        defaultServiceLoggerFilePath         = "./logs/services/"
+        defaultHandlerLoggerFilePath         = "./logs/handler/"
+        defaultSQLiteRepostoryLoggerFilePath = "./logs/database/sqlite/"
+        defaultServerLoggerFilePath          = "./logs/httpserver/"
+)
+
+type PrettyLogs struct {
+        Time   time.Time   `json:"time"`
+        Level  string      `json:"level"`
+        Source slog.Source `json:"source"`
+        Msg    string      `json:"msg"`
+}
+
+func NewAppLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov0" title="0">{
+        if path == "" </span><span class="cov0" title="0">{
+                path = defaultAppLoggerFilePath
+                createFilePath(path)
+        }</span>
+
+        <span class="cov0" title="0">return buildLogger(name, path, showOnConsole)</span>
+}
+
+func NewServiceLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov8" title="1">{
+        if path == "" </span><span class="cov8" title="1">{
+                path = defaultServiceLoggerFilePath
+                createFilePath(path)
+        }</span>
+
+        <span class="cov8" title="1">return buildLogger(name, path, showOnConsole)</span>
+
+}
+
+func NewHandlerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov0" title="0">{
+        if path == "" </span><span class="cov0" title="0">{
+                path = defaultHandlerLoggerFilePath
+                createFilePath(path)
+        }</span>
+
+        <span class="cov0" title="0">return buildLogger(name, path, showOnConsole)</span>
+
+}
+
+func NewServerLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov0" title="0">{
+        if path == "" </span><span class="cov0" title="0">{
+                path = defaultServerLoggerFilePath
+                createFilePath(path)
+        }</span>
+
+        <span class="cov0" title="0">return buildLogger(name, path, showOnConsole)</span>
+}
+
+func NewRepositoryLogger(dbType, name, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov8" title="1">{
+        if path == "" </span><span class="cov8" title="1">{
+                switch dbType </span>{
+                case "sqlite":<span class="cov8" title="1">
+                        path = defaultSQLiteRepostoryLoggerFilePath
+                        createFilePath(path)</span>
+
+                }
+        }
+
+        <span class="cov8" title="1">return buildLogger(name, path, showOnConsole)</span>
+}
+
+func GetAppLogs(appName string) ([]PrettyLogs, error) <span class="cov0" title="0">{
+        logContent, err := os.ReadFile("./logs/apps/" + appName + ".log")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var logs []PrettyLogs
+        var logAux PrettyLogs
+        for _, line := range strings.Split(string(logContent), "\n") </span><span class="cov0" title="0">{
+                if line == "" </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+                <span class="cov0" title="0">err = json.Unmarshal([]byte(line), &amp;logAux)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">logs = append(logs, logAux)</span>
+        }
+
+        <span class="cov0" title="0">return logs, nil</span>
+}
+
+func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) <span class="cov8" title="1">{
+        file, err := os.OpenFile(path+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">var logger *slog.Logger
+        var multiHandler *MultiHandler
+
+        jsonHandler := slog.NewJSONHandler(file, &amp;slog.HandlerOptions{
+                AddSource: true,
+        })
+
+        if showOnConsole </span><span class="cov0" title="0">{
+                // textHandler := slog.NewTextHandler(os.Stdout, &amp;slog.HandlerOptions{})
+                textHandler := slog.Default().Handler()
+                multiHandler = NewMultiHandler(textHandler, jsonHandler)
+        }</span> else<span class="cov8" title="1"> {
+                multiHandler = NewMultiHandler(jsonHandler)
+        }</span>
+
+        <span class="cov8" title="1">logger = slog.New(multiHandler)
+        return logger, nil</span>
+}
+
+func createFilePath(path string) (*os.File, error) <span class="cov8" title="1">{
+        if err := os.MkdirAll(filepath.Dir(path), 0770); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return os.Create(path)</span>
+}
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package logger
+
+import (
+        "context"
+        "log/slog"
+)
+
+type MultiHandler struct {
+        handlers []slog.Handler
+}
+
+// NewMultiHandler creates a MultiHandler that sends logs to multiple handlers.
+func NewMultiHandler(handlers ...slog.Handler) *MultiHandler <span class="cov8" title="1">{
+        return &amp;MultiHandler{handlers: handlers}
+}</span>
+
+// Handle forwards the log record to all the handlers.
+func (h *MultiHandler) Handle(ctx context.Context, r slog.Record) error <span class="cov8" title="1">{
+        for _, handler := range h.handlers </span><span class="cov8" title="1">{
+                if handler.Enabled(ctx, r.Level) </span><span class="cov8" title="1">{ // Check if this handler is enabled for the log level
+                        if err := handler.Handle(ctx, r); err != nil </span><span class="cov0" title="0">{
+                                return err
+                        }</span>
+                }
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+// WithAttrs clones the handlers with the additional attributes.
+func (h *MultiHandler) WithAttrs(attrs []slog.Attr) slog.Handler <span class="cov0" title="0">{
+        newHandlers := make([]slog.Handler, len(h.handlers))
+        for i, handler := range h.handlers </span><span class="cov0" title="0">{
+                newHandlers[i] = handler.WithAttrs(attrs)
+        }</span>
+        <span class="cov0" title="0">return &amp;MultiHandler{handlers: newHandlers}</span>
+}
+
+// WithGroup clones the handlers with the additional group.
+func (h *MultiHandler) WithGroup(name string) slog.Handler <span class="cov0" title="0">{
+        newHandlers := make([]slog.Handler, len(h.handlers))
+        for i, handler := range h.handlers </span><span class="cov0" title="0">{
+                newHandlers[i] = handler.WithGroup(name)
+        }</span>
+        <span class="cov0" title="0">return &amp;MultiHandler{handlers: newHandlers}</span>
+}
+
+func (h *MultiHandler) Enabled(ctx context.Context, level slog.Level) bool <span class="cov8" title="1">{
+        for _, handler := range h.handlers </span><span class="cov8" title="1">{
+                if handler.Enabled(ctx, level) </span><span class="cov8" title="1">{ // Check if the handler is enabled for the level, with the context
+                        return true
+                }</span>
+        }
+        <span class="cov0" title="0">return false</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package middleware
+
+import (
+        "context"
+        "log"
+        "net/http"
+
+        "github.com/FredericoBento/HandGame/internal/services"
+)
+
+var (
+        authService *services.AuthService
+)
+
+func SetAuthService(service *services.AuthService) <span class="cov0" title="0">{
+        authService = service
+}</span>
+
+func RequiredLogged(next http.Handler) http.Handler <span class="cov0" title="0">{
+        if authService == nil </span><span class="cov0" title="0">{
+                log.Fatal("authservice not setup")
+        }</span>
+        <span class="cov0" title="0">return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+
+                c, err := r.Cookie(authService.GetCookieName())
+                if err != nil </span><span class="cov0" title="0">{
+                        // http.Error(w, "Forbidden", http.StatusForbidden)
+                        http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">_, ok := authService.ValidateSession(context.TODO(), c.Value)
+                if ok != nil </span><span class="cov0" title="0">{
+                        // http.Error(w, "Forbidden", http.StatusForbidden)
+                        http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">next.ServeHTTP(w, r)</span>
+        })
+}
+
+func RequiredAdmin(next http.Handler) http.Handler <span class="cov0" title="0">{
+        if authService == nil </span><span class="cov0" title="0">{
+                log.Fatal("authservice not setup")
+        }</span>
+        <span class="cov0" title="0">return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+
+                c, err := r.Cookie(authService.GetCookieName())
+                if err != nil </span><span class="cov0" title="0">{
+                        // http.Error(w, "Forbidden", http.StatusForbidden)
+                        http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">user, ok := authService.ValidateSession(context.TODO(), c.Value)
+                if ok != nil </span><span class="cov0" title="0">{
+                        // http.Error(w, "Forbidden, invalid token", http.StatusForbidden)
+                        http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">if user.Username == "fred" </span><span class="cov0" title="0">{
+                        next.ServeHTTP(w, r)
+                }</span> else<span class="cov0" title="0"> {
+                        http.Error(w, "Forbidden, not an admin", http.StatusForbidden)
+                        return
+                }</span>
+
+        })
+}
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package middleware
+
+import (
+        "net/http"
+        "strings"
+)
+
+var (
+        blockedRoutesPrefixes = make([]string, 0)
+)
+
+func BlockRoutes(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                for _, prefix := range blockedRoutesPrefixes </span><span class="cov0" title="0">{
+                        if strings.HasPrefix(r.URL.Path, prefix) </span><span class="cov0" title="0">{
+                                http.Error(w, "This Application route has been blocked by the server", http.StatusBadRequest)
+                                return
+                        }</span>
+                }
+
+                <span class="cov0" title="0">next.ServeHTTP(w, r)</span>
+        })
+}
+
+func BlockRoute(prefix string) <span class="cov0" title="0">{
+        blockedRoutesPrefixes = append(blockedRoutesPrefixes, prefix)
+}</span>
+
+func UnblockRoute(prefix string) <span class="cov0" title="0">{
+        for i, route := range blockedRoutesPrefixes </span><span class="cov0" title="0">{
+                if route == prefix </span><span class="cov0" title="0">{
+                        blockedRoutesPrefixes = append(blockedRoutesPrefixes[:i], blockedRoutesPrefixes[i+1:]...)
+                }</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package middleware
+
+import (
+        "log/slog"
+        "net/http"
+        "strconv"
+        "time"
+)
+
+type statusRecorder struct {
+        http.ResponseWriter
+        statusCode int
+}
+
+// NewStatusRecorder initializes a new statusRecorder with the default status code set to 200 (OK).
+func NewStatusRecorder(w http.ResponseWriter) *statusRecorder <span class="cov0" title="0">{
+        // Default status code should be 200 if nothing is written explicitly
+        return &amp;statusRecorder{w, http.StatusOK}
+}</span>
+
+func (rec *statusRecorder) WriteHeader(code int) <span class="cov0" title="0">{
+        rec.statusCode = code
+        rec.ResponseWriter.WriteHeader(code)
+}</span>
+
+func Logger(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                start := time.Now()
+
+                rec := NewStatusRecorder(w)
+
+                next.ServeHTTP(rec, r)
+
+                duration := time.Since(start).String()
+
+                logString := duration + " " + r.Method + " " + r.URL.Path + " - " + strconv.Itoa(rec.statusCode)
+                slog.Info(logString)
+
+                // If there are query parameters, log them
+                queryParams := r.URL.Query()
+                if len(queryParams) &gt; 0 </span><span class="cov0" title="0">{
+                        // Start logging query parameters
+                        queryLogString := " - Query Parameters:"
+                        for key, values := range queryParams </span><span class="cov0" title="0">{
+                                queryLogString += "\n\t\t\t\t\t - " + key + ":"
+                                for _, val := range values </span><span class="cov0" title="0">{
+                                        queryLogString += " " + val
+                                }</span>
+                        }
+                        <span class="cov0" title="0">slog.Info(queryLogString)</span>
+                }
+        })
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package middleware
+
+import "net/http"
+
+type Middleware func(http.Handler) http.Handler
+
+func StackMiddleware(xs ...Middleware) Middleware <span class="cov0" title="0">{
+        return func(next http.Handler) http.Handler </span><span class="cov0" title="0">{
+                for i := len(xs) - 1; i &gt;= 0; i-- </span><span class="cov0" title="0">{
+                        x := xs[i]
+                        next = x(next)
+                }</span>
+
+                <span class="cov0" title="0">return next</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package middleware
+
+import "net/http"
+
+func SecureHeadersMiddleware(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                w.Header().Set("X-XSS-Protection", "1; mode-block")
+                w.Header().Set("X-Frame-Options", "deny")
+
+                next.ServeHTTP(w, r)
+        }</span>)
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package mock
+
+import (
+        "database/sql"
+        "github.com/FredericoBento/HandGame/internal/database/sqlite"
+)
+
+type MockSQLiteDB struct {
+        DB *sql.DB
+}
+
+func NewMockSQLiteDB() (*sql.DB, error) <span class="cov0" title="0">{
+        db, err := sql.Open("sqlite3", ":memory:")
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">err = sqlite.CreateTables(db)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return db, nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package mock
+
+type MockIoWriter struct {
+}
+
+func (w MockIoWriter) Write(p []byte) (n int, err error) <span class="cov0" title="0">{
+        return len(p), nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package mock
+
+import (
+        "context"
+
+        "github.com/FredericoBento/HandGame/internal/models"
+)
+
+type MockUserRepository struct {
+        GetByUsernameResult *models.User
+        GetByUsernameError  error
+
+        CreateError error
+
+        GetAllResult []models.User
+        GetAllError  error
+}
+
+func (m *MockUserRepository) GetByUsername(ctx context.Context, username string) (*models.User, error) <span class="cov8" title="1">{
+        if m.GetByUsernameError != nil </span><span class="cov8" title="1">{
+                return nil, m.GetByUsernameError
+        }</span>
+        <span class="cov8" title="1">return m.GetByUsernameResult, nil</span>
+}
+
+func (m *MockUserRepository) Create(ctx context.Context, user *models.User) error <span class="cov8" title="1">{
+        return m.CreateError
+}</span>
+
+func (m *MockUserRepository) GetAll(ctx context.Context) ([]models.User, error) <span class="cov0" title="0">{
+        return m.GetAllResult, m.GetAllError
+}</span>
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package mock
+
+import "context"
+
+type MockUserService struct {
+        UserExistsResult bool
+        UserExistsError  error
+}
+
+func (m *MockUserService) UserExists(ctx context.Context, username string) (bool, error) <span class="cov0" title="0">{
+        return m.UserExistsResult, m.UserExistsError
+}</span>
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package services
+
+import (
+        "context"
+        "errors"
+        "log"
+        "log/slog"
+        "net/http"
+        "sync"
+        "time"
+
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/models"
+        "github.com/google/uuid"
+)
+
+var (
+        ErrCouldNotComparePassword = errors.New("could not compare password")
+        ErrCouldNotFindUser        = errors.New("could not find user")
+        ErrIncorrectCredentials    = errors.New("wrong credentials provided")
+        ErrSessionExpired          = errors.New("session has expired")
+        ErrTokenDoesNotExists      = errors.New("token invalid, does not exist")
+        ErrNoToken                 = errors.New("token not found")
+)
+
+const (
+        sessionExpiryTime = 120 * time.Minute
+        cookieName        = "session_token"
+)
+
+type Session struct {
+        username string
+        expiry   time.Time
+}
+
+type AuthService struct {
+        sessions    map[string]Session
+        userService *UserService
+        mu          sync.Mutex
+        log         *slog.Logger
+}
+
+func NewAuthService(userService *UserService) *AuthService <span class="cov0" title="0">{
+        if userService == nil </span><span class="cov0" title="0">{
+                log.Fatal("no user service provided")
+        }</span>
+
+        <span class="cov0" title="0">lo, err := logger.NewServiceLogger("AuthService", "", true)
+        if err != nil </span><span class="cov0" title="0">{
+                lo = slog.Default()
+        }</span>
+
+        <span class="cov0" title="0">return &amp;AuthService{
+                sessions:    make(map[string]Session),
+                userService: userService,
+                mu:          sync.Mutex{},
+                log:         lo,
+        }</span>
+}
+
+func (s *AuthService) Authenticate(ctx context.Context, username string, password string) (*models.User, error) <span class="cov0" title="0">{
+        user, err := s.userService.GetUserByUsername(ctx, username)
+        if err != nil </span><span class="cov0" title="0">{
+                s.log.Error(err.Error())
+                return nil, ErrCouldNotFindUser
+        }</span>
+
+        <span class="cov0" title="0">passwordCheck, err := s.userService.ComparePassword(user.Password, password)
+        if err != nil </span><span class="cov0" title="0">{
+                s.log.Error(err.Error())
+                return nil, ErrCouldNotComparePassword
+        }</span>
+
+        <span class="cov0" title="0">if passwordCheck != true </span><span class="cov0" title="0">{
+                return nil, ErrIncorrectCredentials
+        }</span>
+
+        <span class="cov0" title="0">return user, nil</span>
+
+}
+
+func (s *AuthService) CreateSession(user *models.User) (string, error) <span class="cov0" title="0">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+
+        sessionToken := uuid.NewString()
+        session := Session{
+                username: user.Username,
+                expiry:   time.Now().Add(sessionExpiryTime),
+        }
+
+        s.sessions[sessionToken] = session
+
+        return sessionToken, nil
+}</span>
+
+func (s *AuthService) ValidateSession(ctx context.Context, token string) (*models.User, error) <span class="cov0" title="0">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+
+        session, exists := s.sessions[token]
+        if !exists </span><span class="cov0" title="0">{
+                return nil, ErrTokenDoesNotExists
+        }</span>
+
+        <span class="cov0" title="0">if session.IsExpired() </span><span class="cov0" title="0">{
+                return nil, ErrSessionExpired
+        }</span>
+
+        <span class="cov0" title="0">user, err := s.userService.GetUserByUsername(ctx, session.username)
+        if err != nil </span><span class="cov0" title="0">{
+                s.log.Error(err.Error())
+                return nil, ErrCouldNotFindUser
+        }</span>
+
+        <span class="cov0" title="0">return user, nil</span>
+}
+
+func (s *AuthService) DestroySession(ctx context.Context, token string) <span class="cov0" title="0">{
+        s.mu.Lock()
+        defer s.mu.Unlock()
+
+        delete(s.sessions, token)
+}</span>
+
+func (s *AuthService) GetCookieName() string <span class="cov0" title="0">{
+        return cookieName
+}</span>
+
+func (s *Session) IsExpired() bool <span class="cov0" title="0">{
+        return s.expiry.Before(time.Now())
+}</span>
+
+func (s *AuthService) IsAdmin(username string) bool <span class="cov0" title="0">{
+        return username == "fred"
+}</span>
+
+func (s *AuthService) GetToken(r *http.Request) (string, error) <span class="cov0" title="0">{
+        c, err := r.Cookie(s.GetCookieName())
+
+        if err == nil &amp;&amp; c != nil </span><span class="cov0" title="0">{
+                return c.Value, nil
+        }</span>
+
+        <span class="cov0" title="0">token := r.Header.Get("Authorization")
+
+        if token == "" </span><span class="cov0" title="0">{
+                return "", ErrNoToken
+        }</span>
+
+        <span class="cov0" title="0">return token, nil</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package services
+
+import (
+        "context"
+        "database/sql"
+        "errors"
+        "log/slog"
+        "sync"
+        "time"
+
+        "github.com/FredericoBento/HandGame/internal/database/repository"
+        "github.com/FredericoBento/HandGame/internal/logger"
+        "github.com/FredericoBento/HandGame/internal/models"
+)
+
+var (
+        ErrCouldNotGetAllUsers  = errors.New("could not retrive all users from users repository")
+        ErrNoUsersFound         = errors.New("no users were found")
+        ErrCouldNotCreateLogger = errors.New("could not create user_service logger")
+        ErrCouldNotCreateUser   = errors.New("could not create user")
+        ErrUserAlreadyExists    = errors.New("user already exists")
+        ErrCouldNotGetUser      = errors.New("could not retrieve user from repository")
+        ErrUserNotCached        = errors.New("user was not found in cache")
+        ErrUserExistsFailed     = errors.New("failed to check if user exists")
+        ErrInvalidLogger        = errors.New("invalid logger passed")
+        ErrCouldNotContactDB    = errors.New("call to repository resulted in a error, could not contact db")
+)
+
+type UserService struct {
+        repo  repository.UserRepository
+        cache *sync.Map
+        ttl   time.Duration
+        log   *slog.Logger
+}
+
+func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserService <span class="cov8" title="1">{
+        lo, err := logger.NewServiceLogger("UserService", "", false)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error(ErrCouldNotCreateLogger.Error() + " " + err.Error())
+                lo = slog.Default()
+        }</span>
+
+        <span class="cov8" title="1">return &amp;UserService{
+                repo:  repo,
+                cache: &amp;sync.Map{},
+                ttl:   ttl,
+                log:   lo,
+        }</span>
+}
+
+func (us *UserService) ChangeLogger(logger *slog.Logger) error <span class="cov8" title="1">{
+        if logger == nil </span><span class="cov8" title="1">{
+                return ErrInvalidLogger
+        }</span>
+        <span class="cov8" title="1">us.log = logger
+        return nil</span>
+}
+func (us *UserService) GetAllUsers() ([]models.User, error) <span class="cov0" title="0">{
+        users, err := us.repo.GetAll(context.TODO())
+        if err != nil </span><span class="cov0" title="0">{
+                us.log.Error(err.Error())
+                return nil, ErrCouldNotGetAllUsers
+        }</span>
+
+        <span class="cov0" title="0">return users, nil</span>
+
+}
+
+func (us *UserService) GetUserByUsername(ctx context.Context, username string) (*models.User, error) <span class="cov0" title="0">{
+        user, err := us.getUserInCache(username)
+        if err == nil &amp;&amp; user != nil </span><span class="cov0" title="0">{
+                return user, nil
+        }</span>
+
+        <span class="cov0" title="0">user, err = us.repo.GetByUsername(ctx, username)
+        if err != nil </span><span class="cov0" title="0">{
+                us.log.Error(err.Error())
+                return nil, ErrCouldNotGetUser
+        }</span>
+
+        <span class="cov0" title="0">us.cache.Store(user.Username, user)
+        go us.evictAfter(user.Username, us.ttl)
+
+        return user, nil</span>
+}
+
+func (us *UserService) UserExists(ctx context.Context, username string) (bool, error) <span class="cov8" title="1">{
+        _, err := us.repo.GetByUsername(ctx, username)
+        if err == sql.ErrNoRows </span><span class="cov8" title="1">{
+                // us.log.Error(err.Error())
+                return false, nil
+        }</span>
+
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+                us.log.Error(err.Error())
+                return false, ErrCouldNotContactDB
+        }</span>
+
+        <span class="cov8" title="1">return true, nil</span>
+}
+
+func (us *UserService) CreateUser(ctx context.Context, user *models.User) error <span class="cov8" title="1">{
+        exist, err := us.UserExists(ctx, user.Username)
+        if err != nil </span><span class="cov8" title="1">{
+                us.log.Error(err.Error())
+                return ErrUserExistsFailed
+        }</span>
+
+        <span class="cov8" title="1">if exist </span><span class="cov8" title="1">{
+                return ErrUserAlreadyExists
+        }</span>
+
+        <span class="cov8" title="1">err = us.repo.Create(ctx, user)
+        if err != nil </span><span class="cov8" title="1">{
+                us.log.Error(err.Error())
+                return ErrCouldNotCreateUser
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (us *UserService) ComparePassword(password string, hashedPassword string) (bool, error) <span class="cov8" title="1">{
+        // Hash if needed
+        return password == hashedPassword, nil
+
+}</span>
+
+func (us *UserService) evictAfter(key string, ttl time.Duration) <span class="cov0" title="0">{
+        time.Sleep(ttl)
+        us.cache.Delete(key)
+}</span>
+
+func (us *UserService) getUserInCache(username string) (*models.User, error) <span class="cov0" title="0">{
+        if cachedUser, ok := us.cache.Load(username); ok </span><span class="cov0" title="0">{
+                if user, valid := cachedUser.(*models.User); valid </span><span class="cov0" title="0">{
+                        us.log.Info("user cache hit")
+                        return user, nil
+                }</span>
+        }
+        <span class="cov0" title="0">us.log.Info("user cache miss")
+        return nil, ErrUserNotCached</span>
+}
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package utils
+
+import "fmt"
+
+func IntToWord(num int) (string, error) <span class="cov0" title="0">{
+        // Define a map of integer to string representation
+        numberWords := map[int]string{
+                0:  "zero",
+                1:  "one",
+                2:  "two",
+                3:  "three",
+                4:  "four",
+                5:  "five",
+                6:  "six",
+                7:  "seven",
+                8:  "eight",
+                9:  "nine",
+                10: "ten",
+        }
+
+        // Check if the number is in the map
+        if word, exists := numberWords[num]; exists </span><span class="cov0" title="0">{
+                return word, nil
+        }</span>
+        <span class="cov0" title="0">return "", fmt.Errorf("number %d is not supported", num)</span>
+}
+
+func GetColumnsToUse(number int) string <span class="cov0" title="0">{
+        if number == 0 </span><span class="cov0" title="0">{
+                return "one"
+        }</span>
+        <span class="cov0" title="0">fNumber := float64(12 / number)
+        if fNumber &lt;= 1 </span><span class="cov0" title="0">{
+                return "one"
+        }</span>
+        <span class="cov0" title="0">numberStr, err := IntToWord(int(fNumber))
+        if err != nil </span><span class="cov0" title="0">{
+                return "one"
+        }</span>
+        <span class="cov0" title="0">return numberStr</span>
+}
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package admin_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import "github.com/FredericoBento/HandGame/internal/app"
+import "github.com/FredericoBento/HandGame/internal/logger"
+
+func AppModal(app app.App) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"modal-card\" id=\"admin-app-modal-content\"&gt;&lt;header class=\"modal-card-head\"&gt;&lt;p class=\"modal-card-title\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">var templ_7745c5c3_Var2 string
+                templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(app.GetAppName())
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app_modal.templ`, Line: 9, Col: 53}
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if app.GetStatus().IsActive() </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-success\"&gt;Running&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        if app.GetStatus().HasStartedOnce() </span><span class="cov0" title="0">{
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-danger\"&gt;Stopped&lt;/span&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-danger\"&gt;Off&lt;/span&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        }
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/p&gt;&lt;button class=\"delete\" aria-label=\"close\"&gt;&lt;/button&gt;&lt;/header&gt;&lt;section class=\"modal-card-body\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = AppModalLogs(app.GetLogs()).Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/section&gt;&lt;footer class=\"modal-card-foot\"&gt;&lt;/footer&gt;&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func AppModalLogs(logs []logger.PrettyLogs, err error) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var3 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var3 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div&gt;&lt;h1 class=\"subtitle\"&gt;Logs&lt;/h1&gt;&lt;hr class=\"header-line\"&gt;&lt;div class=\"content logs-content\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;p&gt;Couldnt retrieve logs ")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var4 string
+                        templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(err.Error())
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app_modal.templ`, Line: 40, Col: 41}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/p&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        for _, log := range logs </span><span class="cov0" title="0">{
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"columns is-vcentered mb-0\"&gt;&lt;span class=\"column is-2\"&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">templ_7745c5c3_Err = LogTypeTag(log.Level).Render(ctx, templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/span&gt; &lt;span class=\"column is-4\"&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">var templ_7745c5c3_Var5 string
+                                templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(log.Time.Format("02-01-2006 15:04"))
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app_modal.templ`, Line: 46, Col: 71}
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/span&gt; &lt;span class=\"column is-4\"&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">var templ_7745c5c3_Var6 string
+                                templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(log.Msg)
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app_modal.templ`, Line: 47, Col: 44}
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/span&gt;&lt;/div&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        }
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func LogTypeTag(logType string) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var7 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var7 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                switch logType </span>{
+                case "INFO":<span class="cov0" title="0">
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-info\"&gt;Info&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                case "ERROR":<span class="cov0" title="0">
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-danger\"&gt;Error&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                case "WARN":<span class="cov0" title="0">
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-warning\"&gt;Warning&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                default:<span class="cov0" title="0">
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-dark\"&gt;Unknown&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package admin_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import (
+        "github.com/FredericoBento/HandGame/internal/app"
+        "sort"
+)
+
+func AdminAppCard(a app.App) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"card\" id=\"")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">var templ_7745c5c3_Var2 string
+                templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(a.GetAppName())
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 9, Col: 38}
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"&gt;&lt;header class=\"card-header\"&gt;&lt;p class=\"card-header-title is-flex is-justify-content-space-between\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">var templ_7745c5c3_Var3 string
+                templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(a.GetAppName())
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 11, Col: 92}
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if a.GetStatus().IsActive() </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-success\"&gt;Running&lt;/span&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        if a.GetStatus().HasStartedOnce() </span><span class="cov0" title="0">{
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-warning\"&gt;Stopped&lt;/span&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;span class=\"tag is-danger\"&gt;Off&lt;/span&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        }
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/p&gt;&lt;/header&gt;&lt;footer class=\"card-footer\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if a.GetStatus().IsActive() </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;button hx-get=\"")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var4 string
+                        templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetAppName() + "&amp;action=stop")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 31, Col: 83}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item\" hx-swap=\"outerHTML\" hx-target=\".dashboard\"&gt;Stop&lt;/button&gt; &lt;button class=\"card-footer-item\"&gt;Restart&lt;/button&gt; &lt;button hx-get=\"")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var5 string
+                        templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetAppName() + "&amp;action=more")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 33, Col: 83}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-app-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-app-modal-content\"&gt;More&lt;/button&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        if a.GetStatus().HasStartedOnce() </span><span class="cov0" title="0">{
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;button hx-get=\"")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">var templ_7745c5c3_Var6 string
+                                templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetAppName() + "&amp;action=resume")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 36, Col: 87}
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item\" hx-swap=\"outerHTML\" hx-target=\".dashboard\"&gt;Resume&lt;/button&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        } else<span class="cov0" title="0"> {
+                                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;button hx-get=\"")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">var templ_7745c5c3_Var7 string
+                                templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetAppName() + "&amp;action=start")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 38, Col: 86}
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item\" hx-swap=\"outerHTML\" hx-target=\".dashboard\"&gt;Start&lt;/button&gt;")
+                                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                        return templ_7745c5c3_Err
+                                }</span>
+                        }
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" &lt;button class=\"card-footer-item\"&gt;Restart&lt;/button&gt; &lt;button hx-get=\"")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var8 string
+                        templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetAppName() + "&amp;action=more")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 41, Col: 83}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-app-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-app-modal-content\"&gt;More&lt;/button&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/footer&gt;&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func ListAppCards(apps map[string]app.App) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var9 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var9 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"grid\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">appsKeys := make([]string, 0, len(apps))
+
+                for appKey := range apps </span><span class="cov0" title="0">{
+                        appsKeys = append(appsKeys, appKey)
+                }</span>
+                <span class="cov0" title="0">sort.Strings(appsKeys)
+                for _, key := range appsKeys </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"cell\"&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">templ_7745c5c3_Err = AdminAppCard(apps[key]).Render(ctx, templ_7745c5c3_Buffer)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file28" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package admin_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import "github.com/FredericoBento/HandGame/internal/app"
+
+func Dashboard(apps map[string]app.App) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;section class=\"section dashboard\"&gt;&lt;div class=\"container is-max-desktop\"&gt;&lt;p class=\"subtitle is-4\"&gt;Dashboard&lt;/p&gt;&lt;hr&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = ListAppCards(apps).Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;&lt;div id=\"admin-app-modal\" class=\"modal\"&gt;&lt;div class=\"modal-background\"&gt;&lt;/div&gt;&lt;div class=\"modal-card\" id=\"admin-app-modal-content\"&gt;&lt;header class=\"modal-card-head\"&gt;&lt;button class=\"delete\" aria-label=\"close\"&gt;&lt;/button&gt;&lt;/header&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file29" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package admin_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import "github.com/FredericoBento/HandGame/internal/models"
+import "strconv"
+
+func UsersPage(users *[]models.User) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;section class=\"section users\"&gt;&lt;div class=\"container is-max-desktop\"&gt;&lt;p class=\"subtitle is-4\"&gt;Users&lt;/p&gt;&lt;hr&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = UsersTable(1, users).Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;&lt;/section&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func UsersTable(page int, users *[]models.User) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var2 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var2 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;table class=\"table is-max-desktop\"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Username&lt;/th&gt;&lt;th&gt;Password&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt; &lt;tbody&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">for _, user := range *users </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;tr&gt;&lt;td&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var3 string
+                        templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(user.ID))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/users.templ`, Line: 29, Col: 34}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/td&gt;&lt;td&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var4 string
+                        templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Username)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/users.templ`, Line: 30, Col: 26}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/td&gt;&lt;td&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var5 string
+                        templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(user.Password)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/users.templ`, Line: 31, Col: 26}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/td&gt;&lt;/tr&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/tbody&gt;&lt;/table&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file30" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package auth_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func SignInForm() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;section class=\"section sign-in\"&gt;&lt;form hx-post=\"/sign-in\" hx-swap=\"outerHTML\" class=\"container is-max-desktop\"&gt;&lt;h2 class=\"subtitle is-4\"&gt;Log In&lt;/h2&gt;&lt;hr&gt;&lt;div class=\"field\"&gt;&lt;label class=\"label\" for=\"username\"&gt;Username&lt;/label&gt; &lt;input class=\"input\" type=\"text\" name=\"username\" required&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;label class=\"label\" for=\"password\"&gt;Password&lt;/label&gt; &lt;input class=\"input\" type=\"password\" name=\"password\" required&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;input class=\"button is-success w-100\" type=\"submit\" value=\"Log In\"&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;a href=\"\" hx-get=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\"&gt;Don't have an account? Sign Up&lt;/a&gt;&lt;/div&gt;&lt;/form&gt;&lt;/section&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file31" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package auth_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func SignUpForm() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;section class=\"section sign-in\"&gt;&lt;form hx-post=\"/sign-up\" hx-swap=\"outerHTML\" class=\"container is-max-desktop\"&gt;&lt;h2 class=\"subtitle is-4\"&gt;Sign Up&lt;/h2&gt;&lt;hr&gt;&lt;div class=\"field\"&gt;&lt;label class=\"label\" for=\"username\"&gt;Username&lt;/label&gt;&lt;div class=\"control\"&gt;&lt;input class=\"input\" name=\"username\" type=\"text\" required&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;label class=\"label\" for=\"password\"&gt;Password&lt;/label&gt;&lt;div class=\"control\"&gt;&lt;input class=\"input\" name=\"password\" type=\"password\" required&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;label class=\"label\" for=\"password\"&gt;Confirm Password&lt;/label&gt;&lt;div class=\"control\"&gt;&lt;input class=\"input\" name=\"repeat_password\" type=\"password\" required&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;div class=\"control\"&gt;&lt;input class=\"button is-success w-100\" type=\"submit\" value=\"Sign Up\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=\"field\"&gt;&lt;div class=\"control\"&gt;&lt;a href=\"\" hx-get=\"/sign-in\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\"&gt;Already a user? Log In&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/form&gt;&lt;/section&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package components
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func FooterOld() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;footer id=\"footer\"&gt;&lt;hr&gt;&lt;p&gt;Author: Frederico Bento&lt;/p&gt;&lt;/footer&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func Footer() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var2 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var2 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;footer class=\"footer mt-auto\" id=\"footer\"&gt;&lt;div class=\"content has-text-centered\"&gt;&lt;p&gt;&lt;strong&gt;Fred Apps&lt;/strong&gt; by Frederico Bento.&lt;/p&gt;&lt;/div&gt;&lt;/footer&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file33" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package components
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func Head() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;head&gt;&lt;link rel=\"icon\" type=\"image/x-svg\" href=\"/assets/svgs/favicon.svg\"&gt;&lt;link rel=\"stylesheet\" href=\"/assets/css/style.css\" type=\"text/css\"&gt;&lt;link rel=\"stylesheet\" href=\"/assets/css/bulma.min.css\" type=\"text/css\"&gt;&lt;script defer src=\"/assets/scripts/modal.js\"&gt;&lt;/script&gt;&lt;script defer src=\"/assets/scripts/htmx.min.js\"&gt;&lt;/script&gt;&lt;meta charset=\"UTF-8\"&gt;&lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"&gt;&lt;title&gt;Fred Apps&lt;/title&gt;&lt;/head&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file34" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package components
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func Header(headerTitle string, navbarLinks map[string]string) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;section class=\"hero\"&gt;&lt;div class=\"hero-body\"&gt;&lt;div class=\"container has-text-centered\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if headerTitle == "" </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;p class=\"title\"&gt;Fred Apps&lt;/p&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                } else<span class="cov0" title="0"> {
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;p class=\"title\"&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var2 string
+                        templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(headerTitle)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 11, Col: 40}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/p&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;&lt;/div&gt;&lt;hr class=\"header-line\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">if len(navbarLinks) &gt; 0 </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Err = HeaderNavbar(navbarLinks).Render(ctx, templ_7745c5c3_Buffer)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/section&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func HeaderNavbar(links map[string]string) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var3 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var3 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;nav class=\"breadcrumb is-centered header-menu\" aria-label=\"breadcrumbs\"&gt;&lt;ul&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">for name, link := range links </span><span class="cov0" title="0">{
+                        _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;li&gt;&lt;a hx-target=\"#contents\" hx-get=\"")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var4 string
+                        templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 26, Col: 50}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">var templ_7745c5c3_Var5 string
+                        templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(name)
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 26, Col: 58}
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                        <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/a&gt;&lt;/li&gt;")
+                        if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                                return templ_7745c5c3_Err
+                        }</span>
+                }
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/ul&gt;&lt;/nav&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file35" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package home_views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+func Base() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"section\"&gt;&lt;div class=\"container is-max-desktop\"&gt;&lt;p class=\"subtitle is-4\"&gt;Home&lt;/p&gt;&lt;hr&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = Menu().Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+func Menu() templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var2 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var2 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div class=\"field grid\"&gt;&lt;div class=\"cell\"&gt;&lt;input class=\"input\" type=\"button\" value=\"Quick Play\"&gt;&lt;/div&gt;&lt;div class=\"cell\"&gt;&lt;input class=\"input\" type=\"button\" value=\"Create Room\"&gt;&lt;/div&gt;&lt;div class=\"cell\"&gt;&lt;input class=\"input\" type=\"button\" value=\"Join Room\"&gt;&lt;/div&gt;&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		<pre class="file" id="file36" style="display: none">// Code generated by templ - DO NOT EDIT.
+
+// templ: version: v0.2.771
+package views
+
+//lint:file-ignore SA4006 This context is only used if a nested component is present.
+
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import "github.com/FredericoBento/HandGame/internal/views/components"
+
+func Page(title string, headerTitle string, navlinks map[string]string, content templ.Component) templ.Component <span class="cov0" title="0">{
+        return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) </span><span class="cov0" title="0">{
+                templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+                templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+                if !templ_7745c5c3_IsBuffer </span><span class="cov0" title="0">{
+                        defer func() </span><span class="cov0" title="0">{
+                                templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+                                if templ_7745c5c3_Err == nil </span><span class="cov0" title="0">{
+                                        templ_7745c5c3_Err = templ_7745c5c3_BufErr
+                                }</span>
+                        }()
+                }
+                <span class="cov0" title="0">ctx = templ.InitializeContext(ctx)
+                templ_7745c5c3_Var1 := templ.GetChildren(ctx)
+                if templ_7745c5c3_Var1 == nil </span><span class="cov0" title="0">{
+                        templ_7745c5c3_Var1 = templ.NopComponent
+                }</span>
+                <span class="cov0" title="0">ctx = templ.ClearChildren(ctx)
+                _, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;!doctype HTML&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = components.Head().Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;html&gt;&lt;body&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = components.Header(headerTitle, navlinks).Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;div id=\"contents\"&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = content.Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/div&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">templ_7745c5c3_Err = components.Footer().Render(ctx, templ_7745c5c3_Buffer)
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("&lt;/body&gt;&lt;/html&gt;")
+                if templ_7745c5c3_Err != nil </span><span class="cov0" title="0">{
+                        return templ_7745c5c3_Err
+                }</span>
+                <span class="cov0" title="0">return templ_7745c5c3_Err</span>
+        })
+}
+
+var _ = templruntime.GeneratedTemplate
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

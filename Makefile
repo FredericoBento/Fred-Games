@@ -20,3 +20,7 @@ test:
 
 fuser:
 	fuser -k 8080/tcp
+
+test_coverage:
+	go test -v -coverprofile cover.out ./...
+	go tool cover -html=cover.out -o cover.html

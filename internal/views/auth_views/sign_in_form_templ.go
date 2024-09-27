@@ -8,7 +8,15 @@ package auth_views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func SignInForm() templ.Component {
+type SignInFormData struct {
+	Username    string
+	Password    string
+	UsernameErr string
+	PasswordErr string
+	GeneralErr  string
+}
+
+func SignInForm(data SignInFormData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -26,7 +34,72 @@ func SignInForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"section sign-in\"><form hx-post=\"/sign-in\" hx-swap=\"outerHTML\" class=\"container is-max-desktop\"><h2 class=\"subtitle is-4\">Log In</h2><hr><div class=\"field\"><label class=\"label\" for=\"username\">Username</label> <input class=\"input\" type=\"text\" name=\"username\" required></div><div class=\"field\"><label class=\"label\" for=\"password\">Password</label> <input class=\"input\" type=\"password\" name=\"password\" required></div><div class=\"field\"><input class=\"button is-success w-100\" type=\"submit\" value=\"Log In\"></div><div class=\"field\"><a href=\"\" hx-get=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\">Don't have an account? Sign Up</a></div></form></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"response-targets\"><section class=\"section sign-in\" id=\"sign-in\"><form hx-post=\"/sign-in\" hx-swap=\"outerHTML\" hx-target=\"#sign-in\" hx-target-error=\"#sign-in\" class=\"container is-max-desktop\"><h2 class=\"subtitle is-4\">Log In</h2><hr><div class=\"field\"><label class=\"label\" for=\"username\">Username</label> <input class=\"input\" type=\"text\" name=\"username\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Username)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/auth_views/sign_in_form.templ`, Line: 20, Col: 76}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" required><p class=\"help is-danger\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.UsernameErr)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/auth_views/sign_in_form.templ`, Line: 21, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><div class=\"field\"><label class=\"label\" for=\"password\">Password</label> <input class=\"input\" type=\"password\" name=\"password\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Password)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/auth_views/sign_in_form.templ`, Line: 26, Col: 81}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" required><p class=\"help is-danger\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.PasswordErr)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/auth_views/sign_in_form.templ`, Line: 27, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><div class=\"field\"><input class=\"button is-success w-100\" type=\"submit\" value=\"Log In\"><p class=\"help is-danger\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.GeneralErr)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/auth_views/sign_in_form.templ`, Line: 32, Col: 49}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div><div class=\"field\"><a href=\"\" hx-get=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\".sign-in\" hx-push-url=\"true\">Don't have an account? Sign Up</a></div></form></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

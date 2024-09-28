@@ -102,31 +102,67 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *AuthHandler) PostSignUp(w http.ResponseWriter, r *http.Request) {
-	type SignUpForm struct {
-		username         string
-		password         string
-		repeatedPassword string
-	}
-
-	data := SignUpForm{}
-	data.username = r.FormValue("username")
-	data.password = r.FormValue("password")
-	data.repeatedPassword = r.FormValue("repeat_password")
-
-	if data.username == "" || data.password == "" || data.repeatedPassword == "" {
-		w.WriteHeader(http.StatusBadRequest)
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	err := ah.userService.CreateUser(context.TODO(), &models.User{ID: 0, Username: data.username, Password: data.password})
+	data := auth_views.SignUpFormData{}
+	data.Username = r.FormValue("username")
+	password := r.FormValue("password")
+	confirmPassword := r.FormValue("repeat_password")
+
+	errFound := false
+
+	if data.Username == "" {
+		data.UsernameErr = "This field cannot be empty"
+		errFound = true
+	}
+
+	if password == "" {
+		data.PasswordErr = "This field cannot be empty"
+		errFound = true
+	}
+
+	if confirmPassword == "" {
+		data.ConfirmPasswordErr = "This field cannot be empty"
+		errFound = true
+	}
+
+	if confirmPassword != password {
+		data.PasswordErr = "Passwords do not match"
+		data.ConfirmPasswordErr = "Passwords do not match"
+		errFound = true
+	}
+
+	if errFound {
+		ah.returnSignUpForm(w, r, data)
+		return
+	}
+
+	err := ah.userService.CreateUser(context.Background(), &models.User{ID: 0, Username: data.Username, Password: password})
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		ah.log.Error(err.Error())
+		switch err {
+		case services.ErrCouldNotCreateUser:
+			w.WriteHeader(http.StatusInternalServerError)
+			data.GeneralErr = "A server error has ocurred, try again later"
+
+		case services.ErrUserAlreadyExists:
+			w.WriteHeader(http.StatusBadRequest)
+			data.UsernameErr = "This username is already taken"
+
+		case services.ErrUserExistsFailed:
+			w.WriteHeader(http.StatusInternalServerError)
+			data.GeneralErr = "A server error has ocurred, try again later"
+		}
+
+		ah.returnSignUpForm(w, r, data)
 		return
 	}
 
 	// w.WriteHeader(http.StatusCreated)
-	http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
-
+	Redirect(w, r, "/sign-in")
 }
 
 func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
@@ -164,10 +200,14 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 	data := auth_views.SignInFormData{}
 
 	data.Username = r.FormValue("username")
-	data.Password = r.FormValue("password")
+	password := r.FormValue("password")
 
 	data.UsernameErr = ""
 	data.PasswordErr = ""
@@ -177,7 +217,7 @@ func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
 		data.UsernameErr = "This username is invalid"
 	}
 
-	if data.Password == "" {
+	if password == "" {
 		data.PasswordErr = "This password is invalid"
 	}
 
@@ -203,7 +243,7 @@ func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := ah.authService.Authenticate(context.TODO(), data.Username, data.Password)
+	u, err := ah.authService.Authenticate(context.TODO(), data.Username, password)
 	if err != nil {
 		ah.log.Error(err.Error())
 		switch err {

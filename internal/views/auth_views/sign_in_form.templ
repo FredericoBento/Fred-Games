@@ -2,7 +2,6 @@ package auth_views
 
 type SignInFormData struct {
     Username string
-    Password string
     UsernameErr string
     PasswordErr string
     GeneralErr string
@@ -23,7 +22,7 @@ templ SignInForm(data SignInFormData) {
 
     <div class="field">
       <label  class="label" for="password">Password</label>
-      <input  class="input" type="password" name="password" value={ data.Password } required/>
+      <input  class="input" type="password" name="password" required/>
       <p class="help is-danger">{ data.PasswordErr }</p>
     </div>
 

@@ -1,59 +1,58 @@
 package auth_views
 
 type SignUpFormData struct {
-  Username string
-  Password string
-  ConfirmPassword string
-  UsernameErr string
-  PasswordErr string
-  GeneralErr string
+    Username string
+    UsernameErr string
+    PasswordErr string
+    ConfirmPasswordErr string
+    GeneralErr string
 }
 
 templ SignUpForm(data SignUpFormData) {
-<div hx-ext="response-targets">
-<section class="section sign-up">
-  <form hx-post="/sign-up" hx-swap="outerHTML" hx-target="#sign-in" hx-target-error="#sign-up"  class="container is-max-desktop">
-    <h2 class="subtitle is-4">Sign Up</h2>
-    <hr>
+  <div hx-ext="response-targets">
+  <section class="section sign-up" id="sign-up">
+    <form hx-post="/sign-up" hx-swap="outerHTML" hx-target="#sign-up" hx-target-error="#sign-up"  class="container is-max-desktop">
+      <h2 class="subtitle is-4">Sign Up</h2>
+      <hr>
 
-    <div class="field">
-      <label class="label" for="username">Username</label>
-      <div class="control">
-        <input class="input" name="username" type="text" value={ data.Username } required/>
-        <p class="help is-danger">{ data.UsernameErr }</p>
+      <div class="field">
+        <label class="label" for="username">Username</label>
+        <div class="control">
+          <input class="input" name="username" type="text" value={ data.Username } required/>
+          <p class="help is-danger">{ data.UsernameErr }</p>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label  class="label" for="password">Password</label>
-      <div class="control">
-        <input class="input" name="password" type="password" value={ data.Password } required/>
-        <p class="help is-danger">{ data.PasswordErr}</p>
+      <div class="field">
+        <label  class="label" for="password">Password</label>
+        <div class="control">
+          <input class="input" name="password" type="password"  required/>
+          <p class="help is-danger">{ data.PasswordErr}</p>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label  class="label" for="password">Confirm Password</label>
-      <div class="control">
-        <input  class="input" name="repeat_password" type="password" value={ data.ConfirmPassword } required/>
-        <p class="help is-danger">{ data.PasswordErr}</p>
+      <div class="field">
+        <label  class="label" for="password">Confirm Password</label>
+        <div class="control">
+          <input  class="input" name="repeat_password" type="password" required/>
+          <p class="help is-danger">{ data.ConfirmPasswordErr}</p>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <div class="control">
-        <input class="button is-success w-100" type="submit" value="Sign Up"/>
-        <p class="help is-danger">{ data.GeneralErr }</p>
+      <div class="field">
+        <div class="control">
+          <input class="button is-success w-100" type="submit" value="Sign Up"/>
+          <p class="help is-danger">{ data.GeneralErr }</p>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <div class="control">
-        <a href="" hx-get="/sign-in" hx-swap="outerHTML" hx-target=".sign-up" hx-push-url="true">Already a user? Log In</a>
+      <div class="field">
+        <div class="control">
+          <a href="" hx-get="/sign-in" hx-swap="outerHTML" hx-target=".sign-up" hx-push-url="true">Already a user? Log In</a>
+        </div>
       </div>
-    </div>
 
-  </form>
-</section>
+    </form>
+  </section>
 </div>
 }

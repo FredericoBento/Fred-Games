@@ -11,6 +11,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/database/repository"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 	ErrUserExistsFailed     = errors.New("failed to check if user exists")
 	ErrInvalidLogger        = errors.New("invalid logger passed")
 	ErrCouldNotContactDB    = errors.New("call to repository resulted in a error, could not contact db")
+	ErrCouldNotHashPassword = errors.New("could not hash password")
 )
 
 type UserService struct {
@@ -110,6 +112,13 @@ func (us *UserService) CreateUser(ctx context.Context, user *models.User) error 
 		return ErrUserAlreadyExists
 	}
 
+	hashed, err := us.HashPassword(user.Password)
+	if err != nil {
+		return ErrCouldNotCreateUser
+	}
+
+	user.Password = hashed
+
 	err = us.repo.Create(ctx, user)
 	if err != nil {
 		us.log.Error(err.Error())
@@ -118,10 +127,19 @@ func (us *UserService) CreateUser(ctx context.Context, user *models.User) error 
 	return nil
 }
 
-func (us *UserService) ComparePassword(password string, hashedPassword string) (bool, error) {
-	// Hash if needed
-	return password == hashedPassword, nil
+func (us *UserService) ComparePassword(hashedPassword string, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
+}
 
+func (us *UserService) HashPassword(password string) (string, error) {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		us.log.Error(err.Error())
+		return "", ErrCouldNotHashPassword
+	}
+
+	return string(hashed), nil
 }
 
 func (us *UserService) evictAfter(key string, ttl time.Duration) {

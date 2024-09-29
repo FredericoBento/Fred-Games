@@ -9,8 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "github.com/FredericoBento/HandGame/internal/views/components"
+import "github.com/FredericoBento/HandGame/internal/models"
 
-func Page(title string, headerTitle string, navlinks map[string]string, content templ.Component) templ.Component {
+func Page(title string, headerTitle string, navlinks []models.RouteButton, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)

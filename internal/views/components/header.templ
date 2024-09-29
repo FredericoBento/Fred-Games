@@ -1,7 +1,9 @@
 package components
 
+import "github.com/FredericoBento/HandGame/internal/models"
 
-templ Header(headerTitle string, navbarLinks map[string]string) {
+
+templ Header(headerTitle string, navbarLinks []models.RouteButton) {
   <section class="hero">
     <div class="hero-body">
       <div class="container has-text-centered">
@@ -19,11 +21,11 @@ templ Header(headerTitle string, navbarLinks map[string]string) {
   </section>
 }
 
-templ HeaderNavbar(links map[string]string) {
+templ HeaderNavbar(links []models.RouteButton) {
   <nav class="breadcrumb is-centered header-menu" aria-label="breadcrumbs">
     <ul>
-      for name, link := range links {
-        <li><a hx-target="#contents" hx-get={ link }>{name}</a></li>
+      for _, routeBtn := range links {
+        <li><a hx-target="#contents" hx-get={ routeBtn.Url }>{routeBtn.ButtonName}</a></li>
       }
     </ul>
   </nav>

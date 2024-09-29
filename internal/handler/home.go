@@ -3,22 +3,34 @@ package handler
 import (
 	"net/http"
 
+	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/home_views"
 	"github.com/a-h/templ"
 )
 
 type HomeHandler struct {
-	menu map[string]string
+	menu []models.RouteButton
 }
 
 func NewHomeHandler() *HomeHandler {
-	navlinks := make(map[string]string, 0)
-	navlinks["Home"] = "/handgame/home"
-	navlinks["Settings"] = "/handgame/settings"
+	// navlinks := make(map[string]string, 0)
+	// navlinks["Home"] = "/handgame/home"
+	// navlinks["Settings"] = "/handgame/settings"
+
+	menu := []models.RouteButton{
+		{
+			ButtonName: "Home",
+			Url:        "/handgame/home",
+		},
+		{
+			ButtonName: "Settings",
+			Url:        "/handgame/settings",
+		},
+	}
 
 	return &HomeHandler{
-		menu: navlinks,
+		menu: menu,
 	}
 }
 

@@ -8,3 +8,5 @@ require (
 )
 
 require github.com/google/uuid v1.6.0
+
+require golang.org/x/crypto v0.27.0 // indirect

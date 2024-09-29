@@ -10,6 +10,7 @@ import (
 
 	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/logger"
+	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/admin_views"
@@ -29,7 +30,7 @@ var (
 
 type AdminHandler struct {
 	appManager  *app.AppsManager
-	menu        map[string]string
+	menu        []models.RouteButton
 	userService *services.UserService
 	log         *slog.Logger
 }
@@ -48,13 +49,24 @@ func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *Ad
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
-	navlinks := make(map[string]string, 0)
-	navlinks["Dashboard"] = "/admin/dashboard"
-	navlinks["Users"] = "/admin/users"
+	// navlinks := make(map[string]string, 0)
+	// navlinks["Dashboard"] = "/admin/dashboard"
+	// navlinks["Users"] = "/admin/users"
+
+	menu := []models.RouteButton{
+		{
+			ButtonName: "Dashboard",
+			Url:        "/admin/dashboard",
+		},
+		{
+			ButtonName: "Users",
+			Url:        "/admin/users",
+		},
+	}
 
 	return &AdminHandler{
 		appManager:  am,
-		menu:        navlinks,
+		menu:        menu,
 		userService: userService,
 		log:         lo,
 	}

@@ -65,11 +65,11 @@ func (s *AuthService) Authenticate(ctx context.Context, username string, passwor
 		return nil, ErrCouldNotFindUser
 	}
 
-	passwordCheck, err := s.userService.ComparePassword(user.Password, password)
-	if err != nil {
-		s.log.Error(err.Error())
-		return nil, ErrCouldNotComparePassword
-	}
+	passwordCheck := s.userService.ComparePassword(user.Password, password)
+	// if err != nil {
+	// 	s.log.Error(err.Error())
+	// 	return nil, ErrCouldNotComparePassword
+	// }
 
 	if passwordCheck != true {
 		return nil, ErrIncorrectCredentials

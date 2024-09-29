@@ -1,9 +1,10 @@
 package views
 
 import "github.com/FredericoBento/HandGame/internal/views/components"
+import "github.com/FredericoBento/HandGame/internal/models"
 
 
-templ Page(title string, headerTitle string, navlinks map[string]string, content templ.Component) {
+templ Page(title string, headerTitle string, navlinks []models.RouteButton, content templ.Component) {
   <!DOCTYPE HTML>
   @components.Head()
   <html>

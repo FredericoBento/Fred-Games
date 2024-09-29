@@ -318,7 +318,8 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewPr
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		var aux map[string]string
+		// var aux map[string]string
+		var aux []models.RouteButton
 		views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
 	}
 }

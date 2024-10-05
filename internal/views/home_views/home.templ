@@ -1,0 +1,33 @@
+package home_views
+
+import "github.com/FredericoBento/HandGame/internal/app"
+
+templ Home(apps map[string]app.App) {
+  <section class="section apps">
+    <div class="container is-max-desktop">
+      // <p class="subtitle is-4"></p>
+      // <hr>
+      <div class="fixed-grid has-auto-count ">
+      <div class="grid is-gap-4">
+        for _, el := range apps {
+          <div class="cell">
+            @AppThumbnail(el)
+          </div>
+        }
+      </div>
+      </div>
+    </div>
+  </section>
+}
+
+templ AppThumbnail(a app.App) {
+  <div class="card app-card">
+    <div class="card-image" hx-push-url="true" hx-target="#contents" hx-get={a.GetRoute()+"/home"}>
+      <figure class="image is-5by4 thumbnail">
+        <img
+          src={"/assets/imgs/apps/"+a.GetRoute()+"/thumbnail.webp"}
+        />
+      </figure>
+    </div>
+  </div>
+}

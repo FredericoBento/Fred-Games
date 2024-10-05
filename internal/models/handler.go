@@ -1,6 +1,13 @@
 package models
 
-type RouteButton struct {
-	ButtonName string
-	Url        string
+type NavBarStructure struct {
+	StartButtons []Button
+	EndButtons   []Button
+}
+
+type Button struct {
+	ButtonName   string
+	Url          string
+	NotHxRequest bool
+	Childs       []Button
 }

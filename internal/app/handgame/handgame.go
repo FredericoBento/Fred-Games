@@ -39,21 +39,21 @@ func NewHandGameApp(name, routePrefix string, server *app.Server) *HandGameApp {
 	}
 }
 
-func (hga *HandGameApp) Start() error {
-	hga.log.Info("Starting HandGame App...")
-	err := hga.setupRoutes()
+func (a *HandGameApp) Start() error {
+	a.log.Info("Starting HandGame App...")
+	err := a.setupRoutes()
 	if err != nil {
-		hga.log.Error(" - Failed")
-		hga.log.Error(err.Error())
+		a.log.Error(" - Failed")
+		a.log.Error(err.Error())
 		return err
 	}
-	hga.log.Info(" - Ok")
-	hga.status.SetActive()
+	a.log.Info(" - Ok")
+	a.status.SetActive()
 	return nil
 }
 
-func (hga *HandGameApp) setupRoutes() error {
-	if hga.server.Router == nil {
+func (a *HandGameApp) setupRoutes() error {
+	if a.server.Router == nil {
 		return ErrServerRouterNotFound
 	}
 
@@ -63,37 +63,41 @@ func (hga *HandGameApp) setupRoutes() error {
 		middleware.RequiredLogged,
 	)
 
-	hga.server.Router.Handle(hga.routePrefix+"/home", appMiddlewares(hga.server.Handlers.HomeHandler))
+	a.server.Router.Handle(a.routePrefix+"/home", appMiddlewares(a.server.Handlers.HandGameHandler))
 
 	return nil
 }
 
-func (hga *HandGameApp) Stop() error {
-	hga.log.Warn("Stopping HandGame App...")
-	hga.server.BlockAppRoutes(hga.routePrefix)
+func (a *HandGameApp) Stop() error {
+	a.log.Warn("Stopping HandGame App...")
+	a.server.BlockAppRoutes(a.routePrefix)
 
-	hga.log.Info(" - Ok")
-	hga.status.SetInactive()
+	a.log.Info(" - Ok")
+	a.status.SetInactive()
 
 	return nil
 }
 
-func (hga *HandGameApp) Resume() error {
-	if hga.status.HasStartedOnce() == false {
-		hga.log.Error(ErrHasNotStartedYet.Error())
+func (a *HandGameApp) Resume() error {
+	if a.status.HasStartedOnce() == false {
+		a.log.Error(ErrHasNotStartedYet.Error())
 		return ErrHasNotStartedYet
 	}
-	hga.log.Warn("Resuming HandGame App...")
-	hga.server.UnblockAppRoutes(hga.routePrefix)
+	a.log.Warn("Resuming HandGame App...")
+	a.server.UnblockAppRoutes(a.routePrefix)
 
-	hga.log.Info(" - Ok")
-	hga.status.SetActive()
+	a.log.Info(" - Ok")
+	a.status.SetActive()
 
 	return nil
 }
 
-func (hga *HandGameApp) GetAppName() string {
-	return hga.name
+func (a *HandGameApp) GetName() string {
+	return a.name
+}
+
+func (a *HandGameApp) GetRoute() string {
+	return a.routePrefix
 }
 
 func (aa *HandGameApp) GetStatus() app.AppStatusChecker {

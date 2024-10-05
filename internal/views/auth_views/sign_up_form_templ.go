@@ -34,7 +34,7 @@ func SignUpForm(data SignUpFormData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"response-targets\"><section class=\"section sign-up\" id=\"sign-up\"><form hx-post=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\"#sign-up\" hx-target-error=\"#sign-up\" class=\"container is-max-desktop\"><h2 class=\"subtitle is-4\">Sign Up</h2><hr><div class=\"field\"><label class=\"label\" for=\"username\">Username</label><div class=\"control\"><input class=\"input\" name=\"username\" type=\"text\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div hx-ext=\"response-targets\"><section class=\"section sign-up\" id=\"sign-up\"><form hx-post=\"/sign-up\" hx-swap=\"outerHTML\" hx-target=\"#sign-up\" hx-target-error=\"#sign-up\" class=\"container is-max-desktop box\"><h2 class=\"subtitle is-4\">Sign Up</h2><hr><div class=\"field\"><label class=\"label\" for=\"username\">Username</label><div class=\"control\"><input class=\"input\" name=\"username\" type=\"text\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

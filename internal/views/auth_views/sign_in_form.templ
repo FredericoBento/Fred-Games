@@ -9,31 +9,31 @@ type SignInFormData struct {
 
 templ SignInForm(data SignInFormData) {
 <div hx-ext="response-targets">
-<section class="section sign-in" id="sign-in">
-  <form hx-post="/sign-in" hx-swap="outerHTML" hx-target="#sign-in" hx-target-error="#sign-in" class="container is-max-desktop">
-    <h2 class="subtitle is-4">Log In</h2>
-    <hr>
+  <section class="section sign-in" id="sign-in">
+    <form hx-post="/sign-in" hx-swap="outerHTML" hx-target="#sign-in" hx-target-error="#sign-in" class="container is-max-desktop box">
+      <h2 class="subtitle is-4">Log In</h2>
+      <hr>
 
-    <div class="field">
-      <label class="label" for="username">Username</label>
-      <input class="input" type="text" name="username" value={ data.Username } required/>
-      <p class="help is-danger">{ data.UsernameErr }</p>
-    </div>
+      <div class="field">
+        <label class="label" for="username">Username</label>
+        <input class="input" type="text" name="username" value={ data.Username } required/>
+        <p class="help is-danger">{ data.UsernameErr }</p>
+      </div>
 
-    <div class="field">
-      <label  class="label" for="password">Password</label>
-      <input  class="input" type="password" name="password" required/>
-      <p class="help is-danger">{ data.PasswordErr }</p>
-    </div>
+      <div class="field">
+        <label  class="label" for="password">Password</label>
+        <input  class="input" type="password" name="password" required/>
+        <p class="help is-danger">{ data.PasswordErr }</p>
+      </div>
 
-    <div class="field">
-      <input class="button is-success w-100" type="submit" value="Log In"/>
-      <p class="help is-danger">{ data.GeneralErr }</p>
-    </div>
-    <div class="field">
-        <a href="" hx-get="/sign-up" hx-swap="outerHTML" hx-target=".sign-in" hx-push-url="true">Don't have an account? Sign Up</a>
-    </div>
-  </form>
-</section>
-    </div>
+      <div class="field">
+        <input class="button is-success w-100" type="submit" value="Log In"/>
+        <p class="help is-danger">{ data.GeneralErr }</p>
+      </div>
+      <div class="field">
+          <a href="" hx-get="/sign-up" hx-swap="outerHTML" hx-target=".sign-in" hx-push-url="true">Don't have an account? Sign Up</a>
+      </div>
+    </form>
+  </section>
+  </div>
 }

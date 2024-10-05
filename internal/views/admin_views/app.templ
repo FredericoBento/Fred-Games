@@ -6,9 +6,10 @@ import (
 )
 
 templ AdminAppCard(a app.App) {
-  <div class="card" id={a.GetAppName()}>
+  <div class="card admin-app-card has-background-dark" id={a.GetName()}>
     <header class="card-header">
-      <p class="card-header-title is-flex is-justify-content-space-between">{ a.GetAppName() }
+      <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=goto"} hx-push-url="true" hx-target-error="#notification-space" hx-swap="innerHTML" 
+      class="card-header-title is-flex is-justify-content-space-between has-text-white-ter">{ a.GetName() }
         if a.GetStatus().IsActive() {
             <span class="tag is-success">Running</span>
           } else {
@@ -18,27 +19,22 @@ templ AdminAppCard(a app.App) {
               <span class="tag is-danger">Off</span>
             }
           }
-       </p>
+       </button>
     </header>
 
-    // <div class="card-content">
-    //   <div class="content">
-    //   </div>
-    // </div>
-
-    <footer class="card-footer">
+    <footer class="card-footer  has-text-white-ter">
       if a.GetStatus().IsActive() {
-        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=stop"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Stop</button>
+        <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=stop"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Stop</button>
         <button class="card-footer-item">Restart</button>
-        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
+        <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
       } else {
         if a.GetStatus().HasStartedOnce() {
-          <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=resume"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Resume</button>
+          <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=resume"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Resume</button>
         } else {
-          <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Start</button>
+          <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Start</button>
         }
         <button class="card-footer-item">Restart</button>
-        <button hx-get={"/admin/dashboard?appid=" + a.GetAppName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
+        <button hx-get={"/admin/dashboard?appid=" + a.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
         // <button  class="card-footer-item js-modal-trigger" data-target="admin-app-modal">More</button>
       }
     </footer>
@@ -47,22 +43,22 @@ templ AdminAppCard(a app.App) {
 }
 
 templ ListAppCards(apps map[string]app.App){
-    <div class="grid">
-    {{ appsKeys := make([]string, 0, len(apps)) }}
+      <div class="grid is-col-min-8">
+      {{ appsKeys := make([]string, 0, len(apps)) }}
 
-    {{
+      {{
 
-      for appKey := range apps {
-        appsKeys = append(appsKeys, appKey)
+        for appKey := range apps {
+          appsKeys = append(appsKeys, appKey)
+        }
+
+      }}
+
+      {{ sort.Strings(appsKeys) }} 
+      for _, key:= range appsKeys {
+        <div class="cell">
+            @AdminAppCard(apps[key])
+        </div>
       }
-
-    }}
-
-    {{ sort.Strings(appsKeys) }} 
-    for _, key:= range appsKeys {
-      <div class="cell">
-          @AdminAppCard(apps[key])
-      </div>
-    }
   </div>
 }

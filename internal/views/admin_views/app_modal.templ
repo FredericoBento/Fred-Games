@@ -6,7 +6,7 @@ import "github.com/FredericoBento/HandGame/internal/logger"
 templ AppModal(app app.App) {
 	  <div class="modal-card" id="admin-app-modal-content">
 	    <header class="modal-card-head">
-	      <p class="modal-card-title">{ app.GetAppName() }
+	      <p class="modal-card-title">{ app.GetName() }
         if app.GetStatus().IsActive() {
             <span class="tag is-success">Running</span>
           } else {

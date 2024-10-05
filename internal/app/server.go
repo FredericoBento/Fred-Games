@@ -17,9 +17,11 @@ var (
 )
 
 type ServerHandlers struct {
-	AuthHandler  http.Handler
-	HomeHandler  http.Handler
-	AdminHandler http.Handler
+	AuthHandler     http.Handler
+	HandGameHandler http.Handler
+	PongHandler     http.Handler
+	HomeHandler     http.Handler
+	AdminHandler    http.Handler
 }
 
 type Server struct {
@@ -73,11 +75,12 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func NewServerHandlers(authH http.Handler, homeH http.Handler, adminH http.Handler) *ServerHandlers {
+func NewServerHandlers(authH http.Handler, adminH http.Handler, homeH http.Handler, handGameH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
-		AuthHandler:  authH,
-		HomeHandler:  homeH,
-		AdminHandler: adminH,
+		AuthHandler:     authH,
+		AdminHandler:    adminH,
+		HomeHandler:     homeH,
+		HandGameHandler: handGameH,
 	}
 }
 
@@ -125,7 +128,10 @@ func (s *Server) setupRoutes() error {
 	s.AdminRouter.Handle("/users", s.Handlers.AdminHandler)
 	s.AdminRouter.Handle("/", s.Handlers.AdminHandler)
 
-	s.Router.Handle("/admin", adminHandlerMiddlewares(s.AdminRouter))
+	s.Router.Handle("/admin/", adminHandlerMiddlewares(s.AdminRouter))
+
+	// App Homepage
+	s.Router.Handle("/home", authHandlerMiddlewares(s.Handlers.HomeHandler))
 
 	// Fileserver
 	fs := http.FileServer(http.Dir("./assets"))

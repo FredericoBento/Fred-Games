@@ -12,7 +12,8 @@ type App interface {
 	Start() error
 	Stop() error
 	Resume() error
-	GetAppName() string
+	GetName() string
+	GetRoute() string
 	GetStatus() AppStatusChecker
 	GetLogs() ([]logger.PrettyLogs, error)
 }
@@ -20,11 +21,11 @@ type App interface {
 type AppStatusChecker interface {
 	IsActive() bool
 	IsInactive() bool
-	HasStartedOnce() bool
 	SetActive()
 	SetInactive()
 	SetError(error)
 	GetErrors() []error
+	HasStartedOnce() bool
 	HasErrors() bool
 }
 
@@ -33,6 +34,25 @@ type AppStatus struct {
 	statusErrors   []error
 	hasStartedOnce bool
 }
+
+type AppsManager struct {
+	Apps   map[string]App
+	Server *Server
+}
+
+type AppsManagerOption func(*AppsManager)
+
+const (
+	statusInactive           = "inactive"
+	statusActive             = "active"
+	statusInactiveWithErrors = "inactive with errors"
+	statusActiveWithErrors   = "active with errors"
+)
+
+var (
+	ErrAppNameNotFound = errors.New("Could not find requested app by such name")
+	ErrAppNameInUse    = errors.New("App name is alread in use")
+)
 
 func NewAppStatus() *AppStatus {
 	return &AppStatus{
@@ -75,25 +95,6 @@ func (as *AppStatus) HasStartedOnce() bool {
 	return as.hasStartedOnce
 }
 
-type AppsManager struct {
-	Apps   map[string]App
-	Server *Server
-}
-
-type AppsManagerOption func(*AppsManager)
-
-const (
-	statusInactive           = "inactive"
-	statusActive             = "active"
-	statusInactiveWithErrors = "inactive with errors"
-	statusActiveWithErrors   = "active with errors"
-)
-
-var (
-	ErrAppNameNotFound = errors.New("Could not find requested app by such name")
-	ErrAppNameInUse    = errors.New("App name is alread in use")
-)
-
 func NewAppsManager(opts ...AppsManagerOption) *AppsManager {
 	appsManager := &AppsManager{
 		Apps:   make(map[string]App),
@@ -109,7 +110,7 @@ func NewAppsManager(opts ...AppsManagerOption) *AppsManager {
 
 func WithApp(app App) AppsManagerOption {
 	return func(am *AppsManager) {
-		am.Apps[app.GetAppName()] = app
+		am.Apps[app.GetName()] = app
 	}
 }
 
@@ -120,11 +121,11 @@ func WithServer(server *Server) AppsManagerOption {
 }
 
 func (am *AppsManager) AddApp(app App) error {
-	if am.Apps[app.GetAppName()] != nil {
+	if am.Apps[app.GetName()] != nil {
 		return ErrAppNameInUse
 	}
 
-	am.Apps[app.GetAppName()] = app
+	am.Apps[app.GetName()] = app
 	return nil
 }
 
@@ -142,7 +143,7 @@ func (am *AppsManager) StartApp(appName string) error {
 
 func (am *AppsManager) StopApp(appName string) error {
 	for _, app := range am.Apps {
-		name := app.GetAppName()
+		name := app.GetName()
 		name = strings.ToLower(name)
 		if name == strings.ToLower(appName) {
 			return app.Stop()
@@ -153,7 +154,7 @@ func (am *AppsManager) StopApp(appName string) error {
 
 func (am *AppsManager) ResumeApp(appName string) error {
 	for _, app := range am.Apps {
-		name := app.GetAppName()
+		name := app.GetName()
 		name = strings.ToLower(name)
 		if name == strings.ToLower(appName) {
 			return app.Resume()
@@ -167,8 +168,8 @@ func (am *AppsManager) StartAll() ([]string, error) {
 	for _, app := range am.Apps {
 		err := app.Start()
 		if err != nil {
-			slog.Error("Could not start " + app.GetAppName() + " App: " + err.Error())
-			unableToStart = append(unableToStart, app.GetAppName())
+			slog.Error("Could not start " + app.GetName() + " App: " + err.Error())
+			unableToStart = append(unableToStart, app.GetName())
 		}
 	}
 	if len(unableToStart) > 0 {

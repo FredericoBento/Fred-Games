@@ -1,39 +1,68 @@
 :root {
-  --primary: #6B8A7A;
-  --primary-alt: #254336;
-  --secondary: #DAD3BE;
-  --secondary-alt: #B7B597;
-  --bulma-border: black !important;
+  --purple: #433878;
+  --light-purple: #7E60BF;
+  --pink: #E4B1F0;
+  --cream: #FFE1FF;
 }
 
-body {
-  margin: 0 auto;
-  padding: 0;
-  height: 100vh;
-  width: 100%;
-}
-
-body {
-  background: var(--secondary);
-}
-
-hr {
-  background-color: var(--primary) !important;
-}
 
 #footer {
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
-  /* height: 2rem; */
   padding: 20px;
-  background-color: var(--secondary-alt);
-  /* color: white; */
+  background-color: var(--light-purple);
 }
 
+body,
+html {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  /* background-image: url("/assets/imgs/gamewallpaper3.jpg") !important; */
+  height: 100%;
+  /* background-image: linear-gradient(135deg, #f5f7fa, #c3cfe2); */
+  /* background-image: linear-gradient(91.2deg, rgba(136, 80, 226, 1) 4%, rgba(16, 13, 91, 1) 96.5%); */
+  background-color: var(--purple);
+}
+
+.hero,
+.navbar {
+  background-color: #433878 !important;
+}
+
+.navbar-item:hover {
+  background: none !important;
+}
+
+.navbar-link:hover {
+  background: none !important;
+}
+
+.navbar-burger {
+  color: white !important;
+}
+
+.navbar-menu,
+.navbar-dropdown,
+.navbar-dropdown .navbar-item {
+  color: white;
+  /* background: var(--light-purple) !important; */
+  background: var(--purple) !important;
+  --bulma-navbar-dropdown-arrow: white !important;
+}
+
+/* .navbar-dropdown .navbar-item { */
+/* color: white; */
+/* background: var(--light-purple) !important; */
+/* --bulma-navbar-dropdown-arrow: white !important; */
+/* } */
+
 .logs-content {
-  height: 6rem !important;
+  height: 9rem !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
@@ -42,13 +71,42 @@ hr {
   width: 100%;
 }
 
-.header-menu ul li {
-  color: black !important;
-  text-decoration: none !important;
+.app-card .thumbnail {
+  transition: transform 0.3s ease;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+  border-radius: 10%;
+  background-color: transparent !important;
 }
 
-.header-menu ul li:hover {
-  /* border-bottom: 1px solid black !important; */
-  /* border-bottom: 1px solid var(--secondary-alt); */
-  color: var(--primary) !important;
+.app-card {
+  --bulma-card-background-color: transparent !important;
+}
+
+.app-card .thumbnail:hover {
+  animation: saber-glow 2s infinite alternate-reverse;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.card {
+  --bulma-card-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.admin-app-card {
+  /* border: 2px solid var(--light-purple); */
+  /* --bulma-card-footer-border-top: 1px solid aqua !important; */
+  --bulma-card-footer-border-top: 0px solid black !important;
+  --bulma-card-header-shadow: none !important;
+}
+
+@keyframes saber-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 0, 0.7), 0 0 20px rgba(255, 255, 0, 0.7);
+    /* Brighter Yellow */
+  }
+
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 0, 1), 0 0 40px rgba(255, 255, 0, 1);
+    /* Full brightness */
+  }
 }

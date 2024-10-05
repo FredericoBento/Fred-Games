@@ -16,17 +16,17 @@ import (
 	"time"
 
 	"github.com/FredericoBento/HandGame/internal/app"
-	"github.com/FredericoBento/HandGame/internal/app/admin"
-	"github.com/FredericoBento/HandGame/internal/app/dummyapp"
 	"github.com/FredericoBento/HandGame/internal/app/handgame"
+	"github.com/FredericoBento/HandGame/internal/app/pong"
 	"github.com/FredericoBento/HandGame/internal/database/repository"
 	"github.com/FredericoBento/HandGame/internal/database/sqlite"
 	"github.com/FredericoBento/HandGame/internal/handler"
 	"github.com/FredericoBento/HandGame/internal/middleware"
 	"github.com/FredericoBento/HandGame/internal/services"
 
-	_ "github.com/mattn/go-sqlite3"
 	_ "net/http/pprof"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -86,10 +86,11 @@ func main() {
 	middleware.SetAuthService(authService)
 
 	authHandler := handler.NewAuthHandler(authService, userService)
-	homeHandler := handler.NewHomeHandler()
 	adminHandler := handler.NewAdminHandler(appManager, userService)
+	homeHandler := handler.NewHomeHandler(appManager, authService)
+	handGameHandler := handler.NewHandGameHandler()
 
-	serverHandlers := app.NewServerHandlers(authHandler, homeHandler, adminHandler)
+	serverHandlers := app.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler)
 
 	server := app.NewServer(
 		app.WithHost(config.Server.Host),
@@ -112,7 +113,7 @@ func main() {
 			} else {
 				appManager.AddApp(app)
 				if appConfig.StartAtStartup == 1 {
-					err = appManager.StartApp(app.GetAppName())
+					err = appManager.StartApp(app.GetName())
 					if err != nil {
 						slog.Error(err.Error())
 					}
@@ -152,11 +153,8 @@ func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error)
 	case "handgame":
 		return handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server), nil
 
-	case "admin":
-		return admin.NewAdminApp(appConfig.Name, appConfig.RoutePrefix, server), nil
-
-	case "dummyapp":
-		return dummyapp.NewDummyApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+	case "pong":
+		return pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server), nil
 
 	default:
 		return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")
@@ -187,8 +185,8 @@ func catchInterrupt(am *app.AppsManager) {
 
 	for _, app := range am.Apps {
 		if app.Stop() != nil {
-			slog.Error("Could not stop " + app.GetAppName())
-			appsStillRunning = append(appsStillRunning, app.GetAppName())
+			slog.Error("Could not stop " + app.GetName())
+			appsStillRunning = append(appsStillRunning, app.GetName())
 		}
 	}
 

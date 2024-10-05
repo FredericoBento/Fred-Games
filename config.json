@@ -1,28 +1,22 @@
 {
   "server": {
-    "host": "localhost",
+    "host": "0.0.0.0",
     "port": 8080
   },
   "database": {
     "type": "sqlite"
   },
   "applications": {
-    "Admin": {
-      "name": "Admin",
-      "routePrefix": "/admin",
-      "active": 1,
-      "startAtStartup": 1
-    },
     "HandGame": {
       "name": "HandGame",
       "routePrefix": "/handgame",
       "active": 1,
-      "startAtStartup": 0
+      "startAtStartup": 1
     },
-    "DummyApp": {
-      "name": "DummyApp",
-      "routePrefix": "/dummyapp",
-      "active": 0,
+    "Pong": {
+      "name": "Pong",
+      "routePrefix": "/pong",
+      "active": 1,
       "startAtStartup": 0
     }
   }

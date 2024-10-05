@@ -30,7 +30,7 @@ var (
 
 type AdminHandler struct {
 	appManager  *app.AppsManager
-	menu        []models.RouteButton
+	navbar      models.NavBarStructure
 	userService *services.UserService
 	log         *slog.Logger
 }
@@ -49,11 +49,24 @@ func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *Ad
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
-	// navlinks := make(map[string]string, 0)
-	// navlinks["Dashboard"] = "/admin/dashboard"
-	// navlinks["Users"] = "/admin/users"
+	h := &AdminHandler{
+		appManager:  am,
+		userService: userService,
+		log:         lo,
+	}
 
-	menu := []models.RouteButton{
+	h.setupNavbar()
+
+	return h
+}
+
+func (h *AdminHandler) setupNavbar() {
+	startBtns := []models.Button{
+		{
+			ButtonName:   "Home",
+			Url:          "/home",
+			NotHxRequest: true,
+		},
 		{
 			ButtonName: "Dashboard",
 			Url:        "/admin/dashboard",
@@ -64,12 +77,24 @@ func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *Ad
 		},
 	}
 
-	return &AdminHandler{
-		appManager:  am,
-		menu:        menu,
-		userService: userService,
-		log:         lo,
+	endBtns := []models.Button{
+		{
+			ButtonName: "Account",
+			Childs: []models.Button{
+				{
+					ButtonName: "Logout",
+					Url:        "/logout",
+				},
+			},
+		},
 	}
+
+	navbar := models.NavBarStructure{
+		StartButtons: startBtns,
+		EndButtons:   endBtns,
+	}
+
+	h.navbar = navbar
 }
 
 func (ah *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +153,10 @@ func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 
 		case "more":
 			ah.moreApp(w, r, appID)
+			return
+
+		case "goto":
+			ah.gotoApp(w, r, appID)
 			return
 
 		default:
@@ -246,16 +275,40 @@ func (ah *AdminHandler) resumeApp(w http.ResponseWriter, r *http.Request, appID 
 	return
 }
 
+func (ah *AdminHandler) gotoApp(w http.ResponseWriter, r *http.Request, appID string) {
+	for name, app := range ah.appManager.Apps {
+		if name == appID {
+			if app.GetStatus().IsInactive() {
+				w.WriteHeader(http.StatusBadRequest)
+				ah.ReturnError(w, r, "App is not active")
+				return
+			}
+
+			w.Header().Add("Hx-Request", "false") // Because we want to replace the body with a full page
+			Redirect(w, r, app.GetRoute()+"/home")
+			// http.Redirect(w, r, app.GetRoute()+"/home", http.StatusSeeOther)
+			return
+		}
+	}
+}
+
 type adminViewProps struct {
 	title   string
 	content templ.Component
 }
 
 func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props adminViewProps) {
-
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, "", hh.menu, props.content).Render(r.Context(), w)
+		views.Page(props.title, "", hh.navbar, props.content).Render(r.Context(), w)
 	}
+}
+
+func (hh *AdminHandler) ReturnError(w http.ResponseWriter, r *http.Request, error string) {
+	props := adminViewProps{
+		title:   "Dashboard",
+		content: views.ErrorNotification(error),
+	}
+	hh.View(w, r, props)
 }

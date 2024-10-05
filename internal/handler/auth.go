@@ -18,6 +18,7 @@ import (
 type AuthHandler struct {
 	authService *services.AuthService
 	userService *services.UserService
+	navbar      models.NavBarStructure
 	log         *slog.Logger
 }
 
@@ -36,11 +37,34 @@ func NewAuthHandler(authService *services.AuthService, userService *services.Use
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
-	return &AuthHandler{
+	h := &AuthHandler{
 		authService: authService,
 		userService: userService,
 		log:         lo,
 	}
+
+	h.setupNavbar()
+
+	return h
+}
+
+func (h *AuthHandler) setupNavbar() {
+	startBtns := []models.Button{
+		{
+			ButtonName:   "Home",
+			Url:          "/home",
+			NotHxRequest: true,
+		},
+	}
+
+	endBtns := []models.Button{}
+
+	navbar := models.NavBarStructure{
+		StartButtons: startBtns,
+		EndButtons:   endBtns,
+	}
+
+	h.navbar = navbar
 }
 
 func (ah *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -87,11 +111,11 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		if err == nil && user != nil {
 			if ah.authService.IsAdmin(user.Username) {
 				// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
-				Redirect(w, r, "/admin/")
+				Redirect(w, r, "/admin")
 				return
 			} else {
 				// http.Redirect(w, r, "/home/", http.StatusSeeOther)
-				Redirect(w, r, "/home/")
+				Redirect(w, r, "/home")
 				return
 			}
 		}
@@ -186,10 +210,10 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		user, err := ah.authService.ValidateSession(context.TODO(), token)
 		if err == nil && user != nil {
 			if ah.authService.IsAdmin(user.Username) {
-				Redirect(w, r, "/admin/")
+				Redirect(w, r, "/admin")
 				return
 			} else {
-				Redirect(w, r, "/home/")
+				Redirect(w, r, "/home")
 				return
 			}
 		}
@@ -281,10 +305,10 @@ func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &cookie)
 
 		if ah.authService.IsAdmin(u.Username) {
-			Redirect(w, r, "/admin/")
+			Redirect(w, r, "/admin")
 			return
 		}
-		Redirect(w, r, "/home/")
+		Redirect(w, r, "/home")
 		return
 	}
 }
@@ -319,8 +343,7 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewPr
 		props.content.Render(r.Context(), w)
 	} else {
 		// var aux map[string]string
-		var aux []models.RouteButton
-		views.Page(props.title, "", aux, props.content).Render(r.Context(), w)
+		views.Page(props.title, "", ah.navbar, props.content).Render(r.Context(), w)
 	}
 }
 

@@ -4,19 +4,23 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/FredericoBento/HandGame/internal/app/pong"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
+	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
-	"github.com/FredericoBento/HandGame/internal/views/home_views"
+	"github.com/FredericoBento/HandGame/internal/views/pong_views"
 	"github.com/a-h/templ"
 )
 
 type PongHandler struct {
-	navbar models.NavBarStructure
-	log    *slog.Logger
+	pongApp     *pong.PongApp
+	navbar      models.NavBarStructure
+	log         *slog.Logger
+	authService *services.AuthService
 }
 
-func NewPongHandler() *PongHandler {
+func NewPongHandler(pongApp *pong.PongApp, authService *services.AuthService) *PongHandler {
 	lo, err := logger.NewHandlerLogger("pong", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
@@ -24,7 +28,9 @@ func NewPongHandler() *PongHandler {
 	}
 
 	h := &PongHandler{
-		log: lo,
+		pongApp:     pongApp,
+		log:         lo,
+		authService: authService,
 	}
 
 	h.setupNavbar()
@@ -61,32 +67,93 @@ func (h *PongHandler) setupNavbar() {
 }
 
 func (h *PongHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		h.Get(w, r)
+	switch r.URL.Path {
+	case "/pong/home":
+		h.home(w, r)
+	case "/pong/join-game":
+		h.joinGame(w, r)
+	case "/pong/create-game":
+		h.createGame(w, r)
+	default:
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("404 - Not Found"))
 	}
 }
 
-func (h *PongHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (h *PongHandler) home(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.getHome(w, r)
 
-	h.View(w, r, pongViewProps{
-		title:       "Sign In",
-		headerTitle: "Fred's Apps",
-		content:     home_views.Base(),
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+
+	}
+}
+
+func (h *PongHandler) createGame(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		h.postCreateGame(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+
+	}
+}
+func (h *PongHandler) joinGame(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.getJoinGame(w, r)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+
+	}
+}
+
+func (h *PongHandler) getHome(w http.ResponseWriter, r *http.Request) {
+	h.View(w, r, PongViewProps{
+		content: pong_views.Home(),
 	})
 }
 
-type pongViewProps struct {
-	title       string
-	headerTitle string
-	content     templ.Component
+func (h *PongHandler) postCreateGame(w http.ResponseWriter, r *http.Request) {
+	u, isLogged := h.authService.IsLogged(r)
+	if !isLogged {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	h.pongApp.CreateGame(u)
+
+	h.View(w, r, PongViewProps{
+		content: pong_views.Home(),
+	})
 }
 
-func (h *PongHandler) View(w http.ResponseWriter, r *http.Request, props pongViewProps) {
+func (h *PongHandler) getJoinGame(w http.ResponseWriter, r *http.Request) {
+	u, isLogged := h.authService.IsLogged(r)
+	if !isLogged {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	h.View(w, r, PongViewProps{
+		content: pong_views.Home(),
+	})
+}
+
+type PongViewProps struct {
+	title   string
+	content templ.Component
+}
+
+func (h *PongHandler) View(w http.ResponseWriter, r *http.Request, props PongViewProps) {
 
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, props.headerTitle, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
 	}
 }

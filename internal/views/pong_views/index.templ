@@ -1,0 +1,51 @@
+package pong_views
+
+import "github.com/FredericoBento/HandGame/internal/models"
+
+templ Home() {
+	<div class="section">
+	  <div class="container is-max-desktop box">
+			<p class="subtitle is-4">Pong</p>
+			<hr class="has-background-dark">
+			@Menu()
+		</div>
+	</div>
+}
+
+templ Menu() {
+	<form id="pong-form">
+		<div class="field has-addons is-grouped is-grouped-centered">
+		  <div class="control">
+		    <input class="input" name="code" type="text" placeholder="Code">
+		  </div>
+		  <div class="control">
+		    <button class="button is-info" hx-get="/pong/join-game/">
+		      Join
+		    </button>
+		  </div>
+			<div class="control">
+		    <button class="button is-success" hx-post="/pong/create-game/">
+					Create Game					
+				</button>
+			</div>
+		</div>
+	</form>
+}
+
+templ RoomsTable(rooms  []models.Room) {
+	<table class="table is-bordered">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, room := range rooms {
+				<tr>
+					<td>{ room.Name }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

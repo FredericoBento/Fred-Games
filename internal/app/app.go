@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"log/slog"
+	"sort"
 	"strings"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
@@ -185,4 +186,20 @@ func (am *AppsManager) StartServer() error {
 	}
 
 	return am.Server.Run()
+}
+
+func (am *AppsManager) GetAppsSortedAlphabetic() []App {
+	apps := make([]App, 0, len(am.Apps))
+	keys := make([]string, 0, len(am.Apps))
+
+	for k := range am.Apps {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		apps = append(apps, am.Apps[k])
+	}
+
+	return apps
 }

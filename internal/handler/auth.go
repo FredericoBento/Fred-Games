@@ -51,7 +51,7 @@ func NewAuthHandler(authService *services.AuthService, userService *services.Use
 func (h *AuthHandler) setupNavbar() {
 	startBtns := []models.Button{
 		{
-			ButtonName:   "Home",
+			ButtonName:   "Games",
 			Url:          "/home",
 			NotHxRequest: true,
 		},
@@ -333,31 +333,28 @@ func (ah *AuthHandler) GetLogout(w http.ResponseWriter, r *http.Request) {
 	Redirect(w, r, "/sign-in")
 }
 
-type viewProps struct {
+type ViewAuthProps struct {
 	title   string
 	content templ.Component
 }
 
-func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props viewProps) {
+func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props ViewAuthProps) {
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		// var aux map[string]string
-		views.Page(props.title, "", ah.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, ah.navbar, props.content).Render(r.Context(), w)
 	}
 }
 
 func (ah *AuthHandler) returnSignInForm(w http.ResponseWriter, r *http.Request, data auth_views.SignInFormData) {
 
-	ah.View(w, r, viewProps{
-		title:   "Sign In",
+	ah.View(w, r, ViewAuthProps{
 		content: auth_views.SignInForm(data),
 	})
 }
 
 func (ah *AuthHandler) returnSignUpForm(w http.ResponseWriter, r *http.Request, data auth_views.SignUpFormData) {
-	ah.View(w, r, viewProps{
-		title:   "Sign Up",
+	ah.View(w, r, ViewAuthProps{
 		content: auth_views.SignUpForm(data),
 	})
 

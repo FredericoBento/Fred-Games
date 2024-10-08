@@ -1,6 +1,6 @@
 package components
 
-templ Head() {
+templ Head(title string) {
     <head>
         <link rel="icon" type="image/x-svg" href="/assets/svgs/favicon.svg">
         <link rel="stylesheet" href="/assets/css/style.css" type="text/css">
@@ -11,6 +11,6 @@ templ Head() {
         <script defer src="/assets/scripts/bulma_utils.js"/>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Fred Apps</title>
+        <title>{ title }</title>
     </head>
 }

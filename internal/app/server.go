@@ -8,6 +8,7 @@ import (
 
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/middleware"
+	"golang.org/x/net/websocket"
 )
 
 var (
@@ -18,10 +19,10 @@ var (
 
 type ServerHandlers struct {
 	AuthHandler     http.Handler
-	HandGameHandler http.Handler
-	PongHandler     http.Handler
 	HomeHandler     http.Handler
 	AdminHandler    http.Handler
+	HandGameHandler http.Handler
+	PongHandler     http.Handler
 }
 
 type Server struct {
@@ -75,12 +76,13 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func NewServerHandlers(authH http.Handler, adminH http.Handler, homeH http.Handler, handGameH http.Handler) *ServerHandlers {
+func NewServerHandlers(authH http.Handler, adminH http.Handler, homeH http.Handler, handGameH http.Handler, pongH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
 		AuthHandler:     authH,
 		AdminHandler:    adminH,
 		HomeHandler:     homeH,
 		HandGameHandler: handGameH,
+		PongHandler:     pongH,
 	}
 }
 

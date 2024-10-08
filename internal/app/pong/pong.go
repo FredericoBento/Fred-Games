@@ -7,12 +7,16 @@ import (
 	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/middleware"
+	"github.com/FredericoBento/HandGame/internal/models"
+	"github.com/FredericoBento/HandGame/internal/utils"
+	"golang.org/x/net/websocket"
 )
 
 var (
 	ErrServerRouterNotFound = errors.New("Could not find server router")
 	ErrHasNotStartedYet     = errors.New("app hasnt started yet")
 	ErrCouldNotCreateLogger = errors.New("could not create app logger")
+	ErrInvalidCode          = errors.New("game with such code does not exist")
 )
 
 type PongApp struct {
@@ -21,6 +25,18 @@ type PongApp struct {
 	status      *app.AppStatus
 	server      *app.Server
 	log         *slog.Logger
+	games       map[string]*PongGame
+}
+
+type PongPlayer struct {
+	username string
+	socket   *websocket.Conn
+}
+
+type PongGame struct {
+	p1   *PongPlayer
+	p2   *PongPlayer
+	code string
 }
 
 func NewPongApp(name, routePrefix string, server *app.Server) *PongApp {
@@ -36,6 +52,7 @@ func NewPongApp(name, routePrefix string, server *app.Server) *PongApp {
 		status:      app.NewAppStatus(),
 		server:      server,
 		log:         lo,
+		games:       make(map[string]*PongGame),
 	}
 }
 
@@ -64,6 +81,8 @@ func (a *PongApp) setupRoutes() error {
 	)
 
 	a.server.Router.Handle(a.routePrefix+"/home", appMiddlewares(a.server.Handlers.PongHandler))
+
+	// a.server.Router.Handle(a.routePrefix+"/ws", websocket.Handler(wsHandler))
 
 	return nil
 }
@@ -110,4 +129,40 @@ func (da *PongApp) GetLogs() ([]logger.PrettyLogs, error) {
 		return nil, err
 	}
 	return logs, nil
+}
+
+func (a *PongApp) CreateGame(user *models.User, socket *websocket.Conn) (string, error) {
+	p1 := &PongPlayer{
+		username: user.Username,
+		socket:   socket,
+	}
+
+	game := &PongGame{
+		p1: p1,
+		p2: nil,
+	}
+
+	randomCode := utils.RandomString(5)
+	for a.games[randomCode] != nil {
+		randomCode = utils.RandomString(5)
+	}
+
+	a.games[randomCode] = game
+
+	return randomCode, nil
+}
+
+func (a *PongApp) JoinGame(code string, user *models.User, socket *websocket.Conn) error {
+	game := a.games[code]
+	if game == nil {
+		return ErrInvalidCode
+	}
+	p2 := &PongPlayer{
+		username: user.Username,
+		socket:   socket,
+	}
+
+	game.p2 = p2
+
+	return nil
 }

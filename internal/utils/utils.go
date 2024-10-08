@@ -1,6 +1,8 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func IntToWord(num int) (string, error) {
 	// Define a map of integer to string representation

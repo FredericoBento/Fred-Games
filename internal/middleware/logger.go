@@ -12,9 +12,7 @@ type statusRecorder struct {
 	statusCode int
 }
 
-// NewStatusRecorder initializes a new statusRecorder with the default status code set to 200 (OK).
 func NewStatusRecorder(w http.ResponseWriter) *statusRecorder {
-	// Default status code should be 200 if nothing is written explicitly
 	return &statusRecorder{w, http.StatusOK}
 }
 

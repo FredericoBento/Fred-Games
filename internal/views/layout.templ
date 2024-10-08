@@ -4,20 +4,24 @@ import "github.com/FredericoBento/HandGame/internal/views/components"
 import "github.com/FredericoBento/HandGame/internal/models"
 
 
-templ Page(title string, headerTitle string, navbar models.NavBarStructure, content templ.Component) {
+templ Page(title string, navbar models.NavBarStructure, contents templ.Component) {
   <!DOCTYPE HTML>
-  @components.Head()
+  if title != "" {
+    @components.Head(title)
+  } else {
+    @components.Head("Fred's Apps")
+  }
   <html>
     <body>
       // @ErrorNotification("a")
       <div hx-ext="response-targets">
-      <div id="notification-space"></div>
-      @components.Header(headerTitle, navbar)
-      <div id="contents">      
-        @content
-      </div>
+        <div id="notification-space"></div>
+        @components.Header(navbar)
+        <div id="contents">      
+          @contents
+        </div>
 
-      @components.Footer()
+        @components.Footer()
       </div>
     </body>
   </html>

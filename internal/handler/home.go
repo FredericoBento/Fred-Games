@@ -15,6 +15,7 @@ type HomeHandler struct {
 	appManager  *app.AppsManager
 	navbar      models.NavBarStructure
 	isLogged    bool
+	isAdmin     bool
 	authService *services.AuthService
 }
 
@@ -26,7 +27,7 @@ func NewHomeHandler(appManager *app.AppsManager, authService *services.AuthServi
 		authService: authService,
 	}
 
-	h.navbar = h.getNavbar(false)
+	h.navbar = h.getNavbar(false, false)
 
 	return h
 }
@@ -50,38 +51,43 @@ func (h *HomeHandler) home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type homeViewProps struct {
-	title       string
-	headerTitle string
-	content     templ.Component
+type HomeViewProps struct {
+	title   string
+	content templ.Component
 }
 
 func (h *HomeHandler) GetHome(w http.ResponseWriter, r *http.Request) {
-	props := homeViewProps{
-		title:       "Fred Apps",
-		headerTitle: "Fred's Apps",
-		content:     home_views.Home(h.appManager.Apps),
+	apps := h.appManager.GetAppsSortedAlphabetic()
+	props := HomeViewProps{
+		content: home_views.Home(apps),
 	}
 	h.View(w, r, props)
 }
 
-func (h *HomeHandler) View(w http.ResponseWriter, r *http.Request, props homeViewProps) {
+func (h *HomeHandler) View(w http.ResponseWriter, r *http.Request, props HomeViewProps) {
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		isLogged := h.authService.IsLogged(r)
-		if isLogged != h.isLogged {
-			h.navbar = h.getNavbar(isLogged)
-			h.isLogged = isLogged
+		u, isLogged := h.authService.IsLogged(r)
+
+		if isLogged {
+			isAdmin := h.authService.IsAdmin(u.Username)
+			if isLogged != h.isLogged || isAdmin != h.isAdmin {
+				h.navbar = h.getNavbar(isLogged, isAdmin)
+				h.isLogged = isLogged
+				h.isAdmin = isAdmin
+			}
+		} else {
+			h.navbar = h.getNavbar(false, false)
 		}
-		views.Page(props.title, props.headerTitle, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
 	}
 }
 
-func (h *HomeHandler) getNavbar(isLogged bool) models.NavBarStructure {
+func (h *HomeHandler) getNavbar(isLogged bool, isAdmin bool) models.NavBarStructure {
 	startBtns := []models.Button{
 		{
-			ButtonName: "Home",
+			ButtonName: "Games",
 			Url:        "/home",
 		},
 	}
@@ -89,20 +95,44 @@ func (h *HomeHandler) getNavbar(isLogged bool) models.NavBarStructure {
 	var endBtns []models.Button
 	if isLogged {
 
-		endBtns = []models.Button{
-			{
-				ButtonName: "Account",
-				Childs: []models.Button{
-					{
-						ButtonName: "Settings",
-						Url:        "/settings",
-					},
-					{
-						ButtonName: "Logout",
-						Url:        "/logout",
+		if isAdmin {
+			endBtns = []models.Button{
+				{
+					ButtonName: "Account",
+					Childs: []models.Button{
+						{
+							ButtonName:   "Admin",
+							Url:          "/admin/dashboard",
+							NotHxRequest: true,
+						},
+						{
+							ButtonName: "Settings",
+							Url:        "/settings",
+						},
+						{
+							ButtonName: "Logout",
+							Url:        "/logout",
+						},
 					},
 				},
-			},
+			}
+
+		} else {
+			endBtns = []models.Button{
+				{
+					ButtonName: "Account",
+					Childs: []models.Button{
+						{
+							ButtonName: "Settings",
+							Url:        "/settings",
+						},
+						{
+							ButtonName: "Logout",
+							Url:        "/logout",
+						},
+					},
+				},
+			}
 		}
 	} else {
 

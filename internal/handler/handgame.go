@@ -4,19 +4,21 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/FredericoBento/HandGame/internal/app/handgame"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/views"
-	"github.com/FredericoBento/HandGame/internal/views/home_views"
+	"github.com/FredericoBento/HandGame/internal/views/handgame_views"
 	"github.com/a-h/templ"
 )
 
 type HandGameHandler struct {
-	navbar models.NavBarStructure
-	log    *slog.Logger
+	handGameApp *handgame.HandGameApp
+	navbar      models.NavBarStructure
+	log         *slog.Logger
 }
 
-func NewHandGameHandler() *HandGameHandler {
+func NewHandGameHandler(hgApp *handgame.HandGameApp) *HandGameHandler {
 	lo, err := logger.NewHandlerLogger("handgame", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
@@ -24,7 +26,8 @@ func NewHandGameHandler() *HandGameHandler {
 	}
 
 	h := &HandGameHandler{
-		log: lo,
+		handGameApp: hgApp,
+		log:         lo,
 	}
 
 	h.setupNavbar()
@@ -69,24 +72,21 @@ func (h *HandGameHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *HandGameHandler) Get(w http.ResponseWriter, r *http.Request) {
 
-	h.View(w, r, handGameViewProps{
-		title:       "Sign In",
-		headerTitle: "Fred's Apps",
-		content:     home_views.Base(),
+	h.View(w, r, HandGameViewProps{
+		content: handgame_views.Home(h.handGameApp.GetRooms()),
 	})
 }
 
-type handGameViewProps struct {
-	title       string
-	headerTitle string
-	content     templ.Component
+type HandGameViewProps struct {
+	title   string
+	content templ.Component
 }
 
-func (h *HandGameHandler) View(w http.ResponseWriter, r *http.Request, props handGameViewProps) {
+func (h *HandGameHandler) View(w http.ResponseWriter, r *http.Request, props HandGameViewProps) {
 
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, props.headerTitle, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
 	}
 }

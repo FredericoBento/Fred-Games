@@ -63,7 +63,7 @@ func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *Ad
 func (h *AdminHandler) setupNavbar() {
 	startBtns := []models.Button{
 		{
-			ButtonName:   "Home",
+			ButtonName:   "Games",
 			Url:          "/home",
 			NotHxRequest: true,
 		},
@@ -165,7 +165,7 @@ func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ah.View(w, r, adminViewProps{
+	ah.View(w, r, AdminViewProps{
 		title:   "Dashboard",
 		content: admin_views.Dashboard(ah.appManager.Apps),
 	})
@@ -178,7 +178,7 @@ func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ah.View(w, r, adminViewProps{
+	ah.View(w, r, AdminViewProps{
 		title:   "Users",
 		content: admin_views.UsersPage(&users),
 	})
@@ -188,7 +188,7 @@ func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 func (ah *AdminHandler) moreApp(w http.ResponseWriter, r *http.Request, appID string) {
 	for name, app := range ah.appManager.Apps {
 		if name == appID {
-			ah.View(w, r, adminViewProps{
+			ah.View(w, r, AdminViewProps{
 				title:   "App Modal",
 				content: admin_views.AppModal(app),
 			})
@@ -213,7 +213,7 @@ func (ah *AdminHandler) startApp(w http.ResponseWriter, r *http.Request, appID s
 				}
 			}
 
-			ah.View(w, r, adminViewProps{
+			ah.View(w, r, AdminViewProps{
 				title:   "Dashboard",
 				content: admin_views.Dashboard(ah.appManager.Apps),
 			})
@@ -238,7 +238,7 @@ func (ah *AdminHandler) stopApp(w http.ResponseWriter, r *http.Request, appID st
 				}
 			}
 
-			ah.View(w, r, adminViewProps{
+			ah.View(w, r, AdminViewProps{
 				title:   "Dashboard",
 				content: admin_views.Dashboard(ah.appManager.Apps),
 			})
@@ -263,7 +263,7 @@ func (ah *AdminHandler) resumeApp(w http.ResponseWriter, r *http.Request, appID 
 				}
 			}
 
-			ah.View(w, r, adminViewProps{
+			ah.View(w, r, AdminViewProps{
 				title:   "Dashboard",
 				content: admin_views.Dashboard(ah.appManager.Apps),
 			})
@@ -292,22 +292,21 @@ func (ah *AdminHandler) gotoApp(w http.ResponseWriter, r *http.Request, appID st
 	}
 }
 
-type adminViewProps struct {
+type AdminViewProps struct {
 	title   string
 	content templ.Component
 }
 
-func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props adminViewProps) {
+func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props AdminViewProps) {
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, "", hh.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, hh.navbar, props.content).Render(r.Context(), w)
 	}
 }
 
 func (hh *AdminHandler) ReturnError(w http.ResponseWriter, r *http.Request, error string) {
-	props := adminViewProps{
-		title:   "Dashboard",
+	props := AdminViewProps{
 		content: views.ErrorNotification(error),
 	}
 	hh.View(w, r, props)

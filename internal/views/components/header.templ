@@ -3,15 +3,11 @@ package components
 import "github.com/FredericoBento/HandGame/internal/models"
 
 
-templ Header(headerTitle string, structure models.NavBarStructure) {
+templ Header(structure models.NavBarStructure) {
   <header class="hero is-small ">
     <div class="hero-body">
       <div class="container has-text-centered">
-        if headerTitle == ""{
           @NavBar("Fred's Apps", structure)
-        } else {
-          @NavBar(headerTitle, structure)
-        }
       </div>
     </div>
   </header>
@@ -21,19 +17,17 @@ templ NavBar(title string, structure models.NavBarStructure) {
   <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item" hx-get="/home" hx-push-url="true" hx-target="body" hx-headers='{"Hx-Request":"false"}'>
-      // <svg width="300" height="260">
         <img width="32" height="200" src="/assets/svgs/favicon.svg"></img>
-        <p class="title is-4 has-text-white-ter" >{ title }</p>
-      // </svg>
+        <p class="title is-5 has-text-white-ter" >{ title }</p>
     </a>
-    // if len(links) > 0 {
+    if len(structure.StartButtons) > 0 || len(structure.EndButtons) > 0 {
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
-    // }
+    }
   </div>
 
   <div id="navbarMenu" class="navbar-menu">

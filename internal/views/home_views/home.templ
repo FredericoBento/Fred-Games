@@ -2,17 +2,19 @@ package home_views
 
 import "github.com/FredericoBento/HandGame/internal/app"
 
-templ Home(apps map[string]app.App) {
+templ Home(apps []app.App) {
   <section class="section apps">
     <div class="container is-max-desktop">
       // <p class="subtitle is-4"></p>
       // <hr>
       <div class="fixed-grid has-auto-count ">
       <div class="grid is-gap-4">
-        for _, el := range apps {
-          <div class="cell">
-            @AppThumbnail(el)
-          </div>
+        for _, app := range apps {
+          if app.GetStatus().IsActive() {
+            <div class="cell">
+              @AppThumbnail(app)
+            </div>
+          }
         }
       </div>
       </div>

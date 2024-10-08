@@ -7,6 +7,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/middleware"
+	"github.com/FredericoBento/HandGame/internal/models"
 )
 
 var (
@@ -110,4 +111,19 @@ func (da *HandGameApp) GetLogs() ([]logger.PrettyLogs, error) {
 		return nil, err
 	}
 	return logs, nil
+}
+
+func (a *HandGameApp) GetRooms() []models.Room {
+	rooms := []models.Room{
+		{
+			ID:   0,
+			Name: "Room1",
+		},
+		{
+			ID:   1,
+			Name: "Room2",
+		},
+	}
+
+	return rooms
 }

@@ -1,0 +1,35 @@
+package handgame_views
+
+import "github.com/FredericoBento/HandGame/internal/models"
+
+templ Home(rooms []models.Room) {
+	<div class="section">
+	  <div class="container is-max-desktop box">
+			<p class="subtitle is-4">HandGame</p>
+			<hr class="has-background-dark">
+      <input class="input" type="text" placeholder="Search" />
+      <span class="icon is-left">
+      <i class="fas fa-search" aria-hidden="true"></i>
+	      </span>
+			@RoomsTable(rooms)
+		</div>
+	</div>
+}
+
+templ RoomsTable(rooms  []models.Room) {
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, room := range rooms {
+				<tr>
+					<td>{ room.Name }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

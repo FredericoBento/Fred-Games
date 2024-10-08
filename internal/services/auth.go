@@ -12,6 +12,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/google/uuid"
+	"golang.org/x/net/websocket"
 )
 
 var (
@@ -31,6 +32,7 @@ const (
 type Session struct {
 	username string
 	expiry   time.Time
+	socket   *websocket.Conn
 }
 
 type AuthService struct {
@@ -152,15 +154,15 @@ func (s *AuthService) GetToken(r *http.Request) (string, error) {
 
 }
 
-func (s *AuthService) IsLogged(r *http.Request) bool {
+func (s *AuthService) IsLogged(r *http.Request) (*models.User, bool) {
 	token, err := s.GetToken(r)
 	if err != nil {
 		s.log.Error(err.Error())
-		return false
+		return nil, false
 	}
-	_, err = s.ValidateSession(context.Background(), token)
+	u, err := s.ValidateSession(context.Background(), token)
 	if err != nil {
-		return false
+		return nil, false
 	}
-	return true
+	return u, true
 }

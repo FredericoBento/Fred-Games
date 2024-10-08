@@ -61,6 +61,14 @@ const (
 	dbFile = "./simple.db"
 )
 
+var (
+	handGameHandler *handler.HandGameHandler
+	handGameApp     *handgame.HandGameApp
+
+	pongHandler *handler.PongHandler
+	pongApp     *pong.PongApp
+)
+
 func main() {
 	pprofRun()
 	config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
@@ -88,9 +96,11 @@ func main() {
 	authHandler := handler.NewAuthHandler(authService, userService)
 	adminHandler := handler.NewAdminHandler(appManager, userService)
 	homeHandler := handler.NewHomeHandler(appManager, authService)
-	handGameHandler := handler.NewHandGameHandler()
 
-	serverHandlers := app.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler)
+	handGameHandler = handler.NewHandGameHandler(handGameApp)
+	pongHandler = handler.NewPongHandler(pongApp, authService)
+
+	serverHandlers := app.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler, pongHandler)
 
 	server := app.NewServer(
 		app.WithHost(config.Server.Host),
@@ -151,10 +161,12 @@ func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
 func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {
 	switch strings.ToLower(appConfig.Name) {
 	case "handgame":
-		return handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+		handGameApp = handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server)
+		return handGameApp, nil
 
 	case "pong":
-		return pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server), nil
+		pongApp = pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server)
+		return pongApp, nil
 
 	default:
 		return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")

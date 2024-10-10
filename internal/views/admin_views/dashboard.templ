@@ -1,13 +1,14 @@
 package admin_views
 
-import "github.com/FredericoBento/HandGame/internal/app"
+import "github.com/FredericoBento/HandGame/internal/services"
 
-templ Dashboard(apps map[string]app.App) {
+
+templ Dashboard(games []services.GameService) {
   <section class="section dashboard">
     <div class="container is-max-desktop box">
       <p class="subtitle is-4">Dashboard</p>
       <hr>
-      @ListAppCards(apps)
+      @ListAppCards(games)
     </div>
 
     <div id="admin-app-modal" class="modal">

@@ -3,26 +3,26 @@ package handler
 import (
 	"net/http"
 
-	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/home_views"
+
 	"github.com/a-h/templ"
 )
 
 type HomeHandler struct {
-	appManager  *app.AppsManager
+	games       []services.GameService
 	navbar      models.NavBarStructure
 	isLogged    bool
 	isAdmin     bool
 	authService *services.AuthService
 }
 
-func NewHomeHandler(appManager *app.AppsManager, authService *services.AuthService) *HomeHandler {
+func NewHomeHandler(gameServices []services.GameService, authService *services.AuthService) *HomeHandler {
 
 	h := &HomeHandler{
-		appManager:  appManager,
+		games:       gameServices,
 		isLogged:    false,
 		authService: authService,
 	}
@@ -57,11 +57,18 @@ type HomeViewProps struct {
 }
 
 func (h *HomeHandler) GetHome(w http.ResponseWriter, r *http.Request) {
-	apps := h.appManager.GetAppsSortedAlphabetic()
+	// apps := h.appManager.GetAppsSortedAlphabetic()
 	props := HomeViewProps{
-		content: home_views.Home(apps),
+		content: home_views.Home(h.games),
 	}
 	h.View(w, r, props)
+
+	// user, ok := GetLoggedUser(w, r)
+	// if !ok {
+	// 	fmt.Println("User username is none")
+	// } else {
+	// 	fmt.Println("User username is " + user.Username)
+	// }
 }
 
 func (h *HomeHandler) View(w http.ResponseWriter, r *http.Request, props HomeViewProps) {

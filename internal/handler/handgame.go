@@ -4,21 +4,20 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/FredericoBento/HandGame/internal/app/handgame"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
+	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
-	"github.com/FredericoBento/HandGame/internal/views/handgame_views"
 	"github.com/a-h/templ"
 )
 
 type HandGameHandler struct {
-	handGameApp *handgame.HandGameApp
-	navbar      models.NavBarStructure
-	log         *slog.Logger
+	handGameService *services.HandGameService
+	navbar          models.NavBarStructure
+	log             *slog.Logger
 }
 
-func NewHandGameHandler(hgApp *handgame.HandGameApp) *HandGameHandler {
+func NewHandGameHandler(handGameService *services.HandGameService) *HandGameHandler {
 	lo, err := logger.NewHandlerLogger("handgame", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
@@ -26,8 +25,8 @@ func NewHandGameHandler(hgApp *handgame.HandGameApp) *HandGameHandler {
 	}
 
 	h := &HandGameHandler{
-		handGameApp: hgApp,
-		log:         lo,
+		handGameService: handGameService,
+		log:             lo,
 	}
 
 	h.setupNavbar()
@@ -72,9 +71,9 @@ func (h *HandGameHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *HandGameHandler) Get(w http.ResponseWriter, r *http.Request) {
 
-	h.View(w, r, HandGameViewProps{
-		content: handgame_views.Home(h.handGameApp.GetRooms()),
-	})
+	// h.View(w, r, HandGameViewProps{
+	// content: handgame_views.Home(),
+	// })
 }
 
 type HandGameViewProps struct {

@@ -11,18 +11,16 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
-	"github.com/FredericoBento/HandGame/internal/app"
-	"github.com/FredericoBento/HandGame/internal/app/handgame"
-	"github.com/FredericoBento/HandGame/internal/app/pong"
 	"github.com/FredericoBento/HandGame/internal/database/repository"
 	"github.com/FredericoBento/HandGame/internal/database/sqlite"
 	"github.com/FredericoBento/HandGame/internal/handler"
 	"github.com/FredericoBento/HandGame/internal/middleware"
+	"github.com/FredericoBento/HandGame/internal/server"
 	"github.com/FredericoBento/HandGame/internal/services"
+	"github.com/FredericoBento/HandGame/internal/services/admin_service"
 
 	_ "net/http/pprof"
 
@@ -61,14 +59,6 @@ const (
 	dbFile = "./simple.db"
 )
 
-var (
-	handGameHandler *handler.HandGameHandler
-	handGameApp     *handgame.HandGameApp
-
-	pongHandler *handler.PongHandler
-	pongApp     *pong.PongApp
-)
-
 func main() {
 	pprofRun()
 	config, err := loadConfig("/home/fredarch/Documents/Github/HandGame/config.json")
@@ -84,60 +74,58 @@ func main() {
 	}
 	defer db.Close()
 
-	appManager := app.NewAppsManager()
+	var httpServer *server.Server
 
 	userRepository := repository.NewSQLiteUserRepository(db)
 
 	userService := services.NewUserService(userRepository, time.Minute*10)
 	authService := services.NewAuthService(userService)
 
+	pongService := services.NewPongService()
+	handgameService := services.NewHandGameService()
+
+	games := []services.GameService{handgameService, pongService}
+
+	adminService := admin_service.NewAdminService(httpServer, games)
+
 	middleware.SetAuthService(authService)
 
 	authHandler := handler.NewAuthHandler(authService, userService)
-	adminHandler := handler.NewAdminHandler(appManager, userService)
-	homeHandler := handler.NewHomeHandler(appManager, authService)
+	adminHandler := handler.NewAdminHandler(adminService, userService)
+	homeHandler := handler.NewHomeHandler(games, authService)
 
-	handGameHandler = handler.NewHandGameHandler(handGameApp)
-	pongHandler = handler.NewPongHandler(pongApp, authService)
+	handGameHandler := handler.NewHandGameHandler(handgameService)
+	pongHandler := handler.NewPongHandler(pongService)
 
-	serverHandlers := app.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler, pongHandler)
+	serverHandlers := server.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler, pongHandler)
 
-	server := app.NewServer(
-		app.WithHost(config.Server.Host),
-		app.WithPort(config.Server.Port),
-		app.WithHandlers(serverHandlers),
+	httpServer = server.NewServer(
+		server.WithHost(config.Server.Host),
+		server.WithPort(config.Server.Port),
+		server.WithHandlers(serverHandlers),
 	)
 
-	err = appManager.SetServer(server)
-
-	if err != nil {
-		slog.Error("Couldnt setup app manager server")
-		os.Exit(exitCode)
-	}
-
-	for _, appConfig := range config.Applications {
-		if appConfig.Active == 1 {
-			app, err := createApp(appConfig, server)
-			if err != nil {
-				slog.Error(err.Error())
-			} else {
-				appManager.AddApp(app)
-				if appConfig.StartAtStartup == 1 {
-					err = appManager.StartApp(app.GetName())
-					if err != nil {
-						slog.Error(err.Error())
-					}
-				}
-			}
-		}
-	}
-
-	err = appManager.StartServer()
+	err = httpServer.Init()
 	if err != nil {
 		slog.Error(err.Error())
 	}
 
-	catchInterrupt(appManager)
+	for _, game := range games {
+		switch game.(type) {
+		case *services.HandGameService:
+			httpServer.SetupHandGameRoutes(game.GetRoute())
+		case *services.PongService:
+			httpServer.SetupPongGameRoutes(game.GetRoute())
+		default:
+			slog.Error("could not setup routes for unknown game service")
+		}
+	}
+	err = httpServer.Run()
+	if err != nil {
+		slog.Error(err.Error())
+	}
+
+	catchInterrupt()
 }
 
 func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
@@ -158,20 +146,20 @@ func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
 	return db, nil
 }
 
-func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {
-	switch strings.ToLower(appConfig.Name) {
-	case "handgame":
-		handGameApp = handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server)
-		return handGameApp, nil
+// func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {
+// switch strings.ToLower(appConfig.Name) {
+// case "handgame":
+// 	handGameApp = handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server)
+// 	return handGameApp, nil
 
-	case "pong":
-		pongApp = pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server)
-		return pongApp, nil
+// case "pong":
+// 	pongApp = pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server)
+// 	return pongApp, nil
 
-	default:
-		return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")
-	}
-}
+// default:
+// 	return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")
+// }
+// }
 
 func loadConfig(filename string) (*Config, error) {
 	raw, err := os.ReadFile(filename)
@@ -186,7 +174,7 @@ func loadConfig(filename string) (*Config, error) {
 	return config, nil
 }
 
-func catchInterrupt(am *app.AppsManager) {
+func catchInterrupt() {
 	channel := make(chan os.Signal, 1)
 
 	signal.Notify(channel, syscall.SIGINT)
@@ -194,13 +182,6 @@ func catchInterrupt(am *app.AppsManager) {
 	<-channel
 	var appsStillRunning []string
 	appsStillRunning = make([]string, 0)
-
-	for _, app := range am.Apps {
-		if app.Stop() != nil {
-			slog.Error("Could not stop " + app.GetName())
-			appsStillRunning = append(appsStillRunning, app.GetName())
-		}
-	}
 
 	numApps := len(appsStillRunning)
 	if numApps > 0 {
@@ -219,6 +200,40 @@ func catchInterrupt(am *app.AppsManager) {
 
 	os.Exit(exitCodeInterrupt)
 }
+
+// func OldcatchInterrupt(am *app.AppsManager) {
+// 	channel := make(chan os.Signal, 1)
+
+// 	signal.Notify(channel, syscall.SIGINT)
+
+// 	<-channel
+// 	var appsStillRunning []string
+// 	appsStillRunning = make([]string, 0)
+
+// 	for _, app := range am.Apps {
+// 		if app.Stop() != nil {
+// 			slog.Error("Could not stop " + app.GetName())
+// 			appsStillRunning = append(appsStillRunning, app.GetName())
+// 		}
+// 	}
+
+// 	numApps := len(appsStillRunning)
+// 	if numApps > 0 {
+// 		var answer string
+// 		var err error
+// 		for answer == "" || answer != "y" && answer != "n" && err != nil {
+// 			slog.Warn("There are still running " + strconv.Itoa(numApps) + ", do you want to forcefully close them? (y/n)")
+// 			_, err = fmt.Scan(&answer)
+// 		}
+// 		if answer == "y" {
+// 			os.Exit(exitCodeInterrupt)
+// 		} else {
+// 			slog.Error("I dont know what to do...")
+// 		}
+// 	}
+
+// 	os.Exit(exitCodeInterrupt)
+// }
 
 func pprofRun() {
 	go func() {

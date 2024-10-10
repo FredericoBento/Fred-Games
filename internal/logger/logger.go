@@ -96,6 +96,27 @@ func GetAppLogs(appName string) ([]PrettyLogs, error) {
 
 	return logs, nil
 }
+func GetServiceLogs(serviceName string) ([]PrettyLogs, error) {
+	logContent, err := os.ReadFile("./logs/services/" + serviceName + ".log")
+	if err != nil {
+		return nil, err
+	}
+
+	var logs []PrettyLogs
+	var logAux PrettyLogs
+	for _, line := range strings.Split(string(logContent), "\n") {
+		if line == "" {
+			continue
+		}
+		err = json.Unmarshal([]byte(line), &logAux)
+		if err != nil {
+			return nil, err
+		}
+		logs = append(logs, logAux)
+	}
+
+	return logs, nil
+}
 
 func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
 	file, err := os.OpenFile(path+name+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)

@@ -7,9 +7,8 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.23
 )
 
-require github.com/google/uuid v1.6.0
-
 require (
-	golang.org/x/crypto v0.28.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	github.com/google/uuid v1.6.0
+	golang.org/x/crypto v0.28.0
+	golang.org/x/net v0.30.0
 )

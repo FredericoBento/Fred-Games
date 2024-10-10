@@ -4,7 +4,6 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/FredericoBento/HandGame/internal/app/pong"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
@@ -14,13 +13,12 @@ import (
 )
 
 type PongHandler struct {
-	pongApp     *pong.PongApp
+	pongService *services.PongService
 	navbar      models.NavBarStructure
 	log         *slog.Logger
-	authService *services.AuthService
 }
 
-func NewPongHandler(pongApp *pong.PongApp, authService *services.AuthService) *PongHandler {
+func NewPongHandler(pongService *services.PongService) *PongHandler {
 	lo, err := logger.NewHandlerLogger("pong", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
@@ -28,9 +26,8 @@ func NewPongHandler(pongApp *pong.PongApp, authService *services.AuthService) *P
 	}
 
 	h := &PongHandler{
-		pongApp:     pongApp,
+		pongService: pongService,
 		log:         lo,
-		authService: authService,
 	}
 
 	h.setupNavbar()
@@ -113,19 +110,24 @@ func (h *PongHandler) joinGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *PongHandler) getHome(w http.ResponseWriter, r *http.Request) {
+	_, isLogged := GetLoggedUser(w, r)
+	if !isLogged {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 	h.View(w, r, PongViewProps{
 		content: pong_views.Home(),
 	})
 }
 
 func (h *PongHandler) postCreateGame(w http.ResponseWriter, r *http.Request) {
-	u, isLogged := h.authService.IsLogged(r)
+	_, isLogged := GetLoggedUser(w, r)
 	if !isLogged {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
-	h.pongApp.CreateGame(u)
+	// h..CreateGame()
 
 	h.View(w, r, PongViewProps{
 		content: pong_views.Home(),
@@ -133,7 +135,7 @@ func (h *PongHandler) postCreateGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *PongHandler) getJoinGame(w http.ResponseWriter, r *http.Request) {
-	u, isLogged := h.authService.IsLogged(r)
+	_, isLogged := GetLoggedUser(w, r)
 	if !isLogged {
 		w.WriteHeader(http.StatusForbidden)
 		return

@@ -1,16 +1,16 @@
 package admin_views
 
-import "github.com/FredericoBento/HandGame/internal/app"
 import "github.com/FredericoBento/HandGame/internal/logger"
+import "github.com/FredericoBento/HandGame/internal/services"
 
-templ AppModal(app app.App) {
-	  <div class="modal-card" id="admin-app-modal-content">
+templ GameModal(game services.GameService) {
+	  <div class="modal-card" id="admin-game-modal-content">
 	    <header class="modal-card-head">
-	      <p class="modal-card-title">{ app.GetName() }
-        if app.GetStatus().IsActive() {
+	      <p class="modal-card-title">{ game.GetName() }
+        if game.GetStatus().IsActive() {
             <span class="tag is-success">Running</span>
           } else {
-            if app.GetStatus().HasStartedOnce() {
+            if game.GetStatus().HasStartedOnce() {
               <span class="tag is-danger">Stopped</span>
             } else {
               <span class="tag is-danger">Off</span>
@@ -20,7 +20,7 @@ templ AppModal(app app.App) {
 	      <button class="delete" aria-label="close"></button>
 	    </header>
 	    <section class="modal-card-body">
-			@AppModalLogs(app.GetLogs())
+			@GameModalLogs(game.GetLogs())
 	    </section>
 	    <footer class="modal-card-foot">
 	      // <div class="buttons">
@@ -31,7 +31,7 @@ templ AppModal(app app.App) {
 			</div>
 }
 
-templ AppModalLogs(logs []logger.PrettyLogs, err error) {
+templ GameModalLogs(logs []logger.PrettyLogs, err error) {
 	<div>
 		<h1 class="subtitle">Logs</h1>
 	  <hr class="header-line">
@@ -39,6 +39,9 @@ templ AppModalLogs(logs []logger.PrettyLogs, err error) {
 			if err != nil {
 				<p>Couldnt retrieve logs {err.Error()}</p>
 			} else {
+			  if len(logs) == 0 {
+					<p>Nothing has been logged yet</p>
+				}
 				for _, log := range logs {
 					<div class="columns is-vcentered mb-0">
 						// <p class="is-size-6">

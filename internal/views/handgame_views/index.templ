@@ -2,7 +2,7 @@ package handgame_views
 
 import "github.com/FredericoBento/HandGame/internal/models"
 
-templ Home(rooms []models.Room) {
+templ Home() {
 	<div class="section">
 	  <div class="container is-max-desktop box">
 			<p class="subtitle is-4">HandGame</p>
@@ -11,7 +11,7 @@ templ Home(rooms []models.Room) {
       <span class="icon is-left">
       <i class="fas fa-search" aria-hidden="true"></i>
 	      </span>
-			@RoomsTable(rooms)
+			@RoomsTable(nil)
 		</div>
 	</div>
 }

@@ -29,6 +29,7 @@ var (
 )
 
 type UserService struct {
+	name  string
 	repo  repository.UserRepository
 	cache *sync.Map
 	ttl   time.Duration
@@ -49,6 +50,27 @@ func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserServ
 		log:   lo,
 	}
 }
+
+// func (*UserService) Start() error {
+// }
+
+// func (*UserService) Stop() error {
+// }
+
+// func (*UserService) Resume() error {
+// }
+
+// func (*UserService) GetName() string {
+// }
+
+// func (*UserService) GetRoute() string {
+// }
+
+// func (*UserService) GetStatus() Status {
+// }
+
+// func (*UserService) GetLogs() ([]logger.PrettyLogs, error) {
+// }
 
 func (us *UserService) ChangeLogger(logger *slog.Logger) error {
 	if logger == nil {

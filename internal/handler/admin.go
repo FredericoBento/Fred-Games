@@ -8,51 +8,52 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/FredericoBento/HandGame/internal/app"
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
+	"github.com/FredericoBento/HandGame/internal/services/admin_service"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/admin_views"
 	"github.com/a-h/templ"
 )
 
 var (
-	ErrAppAlreadyStarted  = errors.New("app is already running")
-	ErrAppCouldNotStart   = errors.New("a server error ocurred, could not start app")
-	ErrAppAlreadyStopped  = errors.New("app is already inactive")
-	ErrAppCouldNotStop    = errors.New("a server error ocurred, could not stop app")
-	ErrAppAlreadyActive   = errors.New("app is already active, there is no need to resume")
-	ErrAppCouldNotResume  = errors.New("a server error ocurred, could not resume app")
-	ErrAppNotFound        = errors.New("app not found")
-	ErrAppCouldNotGetMore = errors.New("could not get more info of app")
+	ErrGameAlreadyStarted  = errors.New("game is already running")
+	ErrGameCouldNotStart   = errors.New("a server error ocurred, could not start game")
+	ErrGameAlreadyStopped  = errors.New("game is already inactive")
+	ErrGameCouldNotStop    = errors.New("a server error ocurred, could not stop game")
+	ErrGameAlreadyActive   = errors.New("game is already active, there is no need to resume")
+	ErrGameCouldNotResume  = errors.New("a server error ocurred, could not resume game")
+	ErrGameNotFound        = errors.New("game not found")
+	ErrGameCouldNotGetMore = errors.New("could not get more info of game")
+	ErrGameIsInactive      = errors.New("game is inactive")
 )
 
 type AdminHandler struct {
-	appManager  *app.AppsManager
-	navbar      models.NavBarStructure
-	userService *services.UserService
-	log         *slog.Logger
+	adminService *admin_service.AdminService
+	userService  *services.UserService
+	navbar       models.NavBarStructure
+	log          *slog.Logger
 }
 
-func NewAdminHandler(am *app.AppsManager, userService *services.UserService) *AdminHandler {
-	if am == nil {
-		log.Fatal("AdminHandler: app manager not provided")
+func NewAdminHandler(adminService *admin_service.AdminService, userService *services.UserService) *AdminHandler {
+	if adminService == nil {
+		log.Fatal("AdminHandler: admin service not provided")
 	}
 	if userService == nil {
 		log.Fatal("AdminHandler: user service not provided")
 	}
 
-	lo, err := logger.NewHandlerLogger("AdminHandler", "", false)
+	lo, err := logger.NewHandlerLogger("AdminHandler", "", true)
 	if err != nil {
 		lo = slog.Default()
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
 	h := &AdminHandler{
-		appManager:  am,
-		userService: userService,
-		log:         lo,
+		adminService: adminService,
+		userService:  userService,
+		log:          lo,
 	}
 
 	h.setupNavbar()
@@ -97,14 +98,14 @@ func (h *AdminHandler) setupNavbar() {
 	h.navbar = navbar
 }
 
-func (ah *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		ah.Get(w, r)
+		h.Get(w, r)
 	}
 }
 
-func (ah *AdminHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) Get(w http.ResponseWriter, r *http.Request) {
 	route := strings.Split(r.URL.Path, "/")
 	switch route[len(route)-1] {
 
@@ -113,10 +114,10 @@ func (ah *AdminHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 
 	case "dashboard":
-		ah.GetDashboard(w, r)
+		h.GetDashboard(w, r)
 
 	case "users":
-		ah.GetUsers(w, r)
+		h.GetUsers(w, r)
 
 	default:
 		w.WriteHeader(http.StatusNotFound)
@@ -126,37 +127,37 @@ func (ah *AdminHandler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (ah *AdminHandler) Post(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) Post(w http.ResponseWriter, r *http.Request) {
 	route := strings.Split(r.URL.Path, "/")
 	switch route[len(route)-1] {
 	case "dashboard":
-		ah.GetDashboard(w, r)
+		h.GetDashboard(w, r)
 	}
 }
 
-func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
-	appID := r.URL.Query().Get("appid")
-	if appID != "" {
+func (h *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
+	gameID := r.URL.Query().Get("gameid")
+	if gameID != "" {
 		action := r.URL.Query().Get("action")
 		switch action {
 		case "start":
-			ah.startApp(w, r, appID)
+			h.startGame(w, r, gameID)
 			return
 
 		case "stop":
-			ah.stopApp(w, r, appID)
+			h.stopGame(w, r, gameID)
 			return
 
 		case "resume":
-			ah.resumeApp(w, r, appID)
+			h.resumeGame(w, r, gameID)
 			return
 
 		case "more":
-			ah.moreApp(w, r, appID)
+			h.moreGame(w, r, gameID)
 			return
 
 		case "goto":
-			ah.gotoApp(w, r, appID)
+			h.gotoGame(w, r, gameID)
 			return
 
 		default:
@@ -165,131 +166,137 @@ func (ah *AdminHandler) GetDashboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ah.View(w, r, AdminViewProps{
+	h.View(w, r, AdminViewProps{
 		title:   "Dashboard",
-		content: admin_views.Dashboard(ah.appManager.Apps),
+		content: admin_views.Dashboard(h.adminService.GameServices),
 	})
 }
 
-func (ah *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := ah.userService.GetAllUsers()
+func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.userService.GetAllUsers()
 	if err != nil {
-		ah.log.Error(err.Error())
+		h.log.Error(err.Error())
 		return
 	}
 
-	ah.View(w, r, AdminViewProps{
+	h.View(w, r, AdminViewProps{
 		title:   "Users",
 		content: admin_views.UsersPage(&users),
 	})
 
 }
 
-func (ah *AdminHandler) moreApp(w http.ResponseWriter, r *http.Request, appID string) {
-	for name, app := range ah.appManager.Apps {
-		if name == appID {
-			ah.View(w, r, AdminViewProps{
-				title:   "App Modal",
-				content: admin_views.AppModal(app),
-			})
-			return
-		}
+func (h *AdminHandler) moreGame(w http.ResponseWriter, r *http.Request, gameID string) {
+	game, ok := h.adminService.GetGame(gameID)
+	if !ok {
+		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
 	}
 
-	http.Error(w, ErrAppNotFound.Error(), http.StatusNotFound)
+	h.View(w, r, AdminViewProps{
+		title:   "game Modal",
+		content: admin_views.GameModal(game),
+	})
 	return
 }
 
-func (ah *AdminHandler) startApp(w http.ResponseWriter, r *http.Request, appID string) {
-	for name, app := range ah.appManager.Apps {
-		if name == appID {
-			if app.GetStatus().IsActive() {
-				http.Error(w, ErrAppAlreadyStarted.Error(), http.StatusBadRequest)
-			} else {
-				err := app.Start()
-				if err != nil {
-					ah.log.Error(err.Error())
-					http.Error(w, ErrAppCouldNotStart.Error(), http.StatusInternalServerError)
-				}
-			}
-
-			ah.View(w, r, AdminViewProps{
-				title:   "Dashboard",
-				content: admin_views.Dashboard(ah.appManager.Apps),
-			})
-			return
+func (h *AdminHandler) startGame(w http.ResponseWriter, r *http.Request, gameID string) {
+	game, ok := h.adminService.GetGame(gameID)
+	if !ok {
+		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
+	}
+	if game.GetStatus().IsActive() {
+		http.Error(w, ErrGameAlreadyStarted.Error(), http.StatusBadRequest)
+	} else {
+		err := h.adminService.StartGame(gameID)
+		if err != nil {
+			h.log.Error(err.Error())
+			http.Error(w, ErrGameCouldNotStart.Error(), http.StatusInternalServerError)
 		}
 	}
 
-	http.Error(w, ErrAppCouldNotStart.Error(), http.StatusNotFound)
+	h.View(w, r, AdminViewProps{
+		title:   "Dashboard",
+		content: admin_views.Dashboard(h.adminService.GameServices),
+	})
 	return
 }
 
-func (ah *AdminHandler) stopApp(w http.ResponseWriter, r *http.Request, appID string) {
-	for name, app := range ah.appManager.Apps {
-		if name == appID {
-			if app.GetStatus().IsInactive() {
-				http.Error(w, ErrAppAlreadyStopped.Error(), http.StatusBadRequest)
-			} else {
-				err := app.Stop()
-				if err != nil {
-					ah.log.Error(err.Error())
-					http.Error(w, ErrAppCouldNotStop.Error(), http.StatusInternalServerError)
-				}
-			}
+func (h *AdminHandler) stopGame(w http.ResponseWriter, r *http.Request, gameID string) {
+	game, ok := h.adminService.GetGame(gameID)
 
-			ah.View(w, r, AdminViewProps{
-				title:   "Dashboard",
-				content: admin_views.Dashboard(ah.appManager.Apps),
-			})
-			return
-		}
+	if !ok {
+		h.log.Error(ErrGameNotFound.Error())
+		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
+		return
 	}
 
-	http.Error(w, ErrAppCouldNotStop.Error(), http.StatusNotFound)
+	if game.GetStatus().IsInactive() {
+		h.log.Error(ErrGameAlreadyStopped.Error())
+		http.Error(w, ErrGameAlreadyStopped.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := h.adminService.StopGame(gameID)
+	if err != nil {
+		h.log.Error(err.Error())
+		http.Error(w, ErrGameCouldNotStop.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.View(w, r, AdminViewProps{
+		title:   "Dashboard",
+		content: admin_views.Dashboard(h.adminService.GameServices),
+	})
 	return
 }
 
-func (ah *AdminHandler) resumeApp(w http.ResponseWriter, r *http.Request, appID string) {
-	for name, app := range ah.appManager.Apps {
-		if name == appID {
-			if app.GetStatus().IsActive() {
-				http.Error(w, ErrAppAlreadyActive.Error(), http.StatusBadRequest)
-			} else {
-				err := app.Resume()
-				if err != nil {
-					ah.log.Error(err.Error())
-					http.Error(w, ErrAppCouldNotResume.Error(), http.StatusInternalServerError)
-				}
-			}
+func (h *AdminHandler) resumeGame(w http.ResponseWriter, r *http.Request, gameID string) {
+	game, ok := h.adminService.GetGame(gameID)
 
-			ah.View(w, r, AdminViewProps{
-				title:   "Dashboard",
-				content: admin_views.Dashboard(ah.appManager.Apps),
-			})
-			return
-		}
+	if !ok {
+		h.log.Error(ErrGameNotFound.Error())
+		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
+		return
 	}
 
-	http.Error(w, ErrAppCouldNotResume.Error(), http.StatusNotFound)
+	if game.GetStatus().IsActive() {
+		h.log.Error(ErrGameAlreadyActive.Error())
+		http.Error(w, ErrGameAlreadyActive.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := h.adminService.ResumeGame(gameID)
+	if err != nil {
+		h.log.Error(err.Error())
+		http.Error(w, ErrGameCouldNotResume.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.View(w, r, AdminViewProps{
+		title:   "Dashboard",
+		content: admin_views.Dashboard(h.adminService.GameServices),
+	})
 	return
 }
 
-func (ah *AdminHandler) gotoApp(w http.ResponseWriter, r *http.Request, appID string) {
-	for name, app := range ah.appManager.Apps {
-		if name == appID {
-			if app.GetStatus().IsInactive() {
-				w.WriteHeader(http.StatusBadRequest)
-				ah.ReturnError(w, r, "App is not active")
-				return
-			}
-
-			w.Header().Add("Hx-Request", "false") // Because we want to replace the body with a full page
-			Redirect(w, r, app.GetRoute()+"/home")
-			// http.Redirect(w, r, app.GetRoute()+"/home", http.StatusSeeOther)
-			return
-		}
+func (h *AdminHandler) gotoGame(w http.ResponseWriter, r *http.Request, gameID string) {
+	game, ok := h.adminService.GetGame(gameID)
+	if !ok {
+		h.log.Error(ErrGameNotFound.Error())
+		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
+		return
 	}
+
+	if game.GetStatus().IsInactive() {
+		h.log.Error(ErrGameIsInactive.Error())
+		http.Error(w, ErrGameIsInactive.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Add("Hx-Request", "false") // Because we want to replace the body with a full page
+	Redirect(w, r, game.GetRoute()+"/home")
+	return
+
 }
 
 type AdminViewProps struct {

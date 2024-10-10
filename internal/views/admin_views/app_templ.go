@@ -9,11 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/FredericoBento/HandGame/internal/app"
-	"sort"
+	"github.com/FredericoBento/HandGame/internal/services"
 )
 
-func AdminAppCard(a app.App) templ.Component {
+func AdminAppCard(game services.GameService) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -36,9 +35,9 @@ func AdminAppCard(a app.App) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(a.GetName())
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(game.GetName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 9, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 8, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -49,9 +48,9 @@ func AdminAppCard(a app.App) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=goto")
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=goto")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 11, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 10, Col: 82}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -62,9 +61,9 @@ func AdminAppCard(a app.App) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(a.GetName())
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(game.GetName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 12, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 11, Col: 108}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -74,13 +73,13 @@ func AdminAppCard(a app.App) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if a.GetStatus().IsActive() {
+		if game.GetStatus().IsActive() {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"tag is-success\">Running</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			if a.GetStatus().HasStartedOnce() {
+			if game.GetStatus().HasStartedOnce() {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"tag is-warning\">Stopped</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -96,15 +95,15 @@ func AdminAppCard(a app.App) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if a.GetStatus().IsActive() {
+		if game.GetStatus().IsActive() {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=stop")
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=stop")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 27, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 26, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -115,9 +114,9 @@ func AdminAppCard(a app.App) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=more")
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=more")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 29, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 28, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -128,15 +127,15 @@ func AdminAppCard(a app.App) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			if a.GetStatus().HasStartedOnce() {
+			if game.GetStatus().HasStartedOnce() {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=resume")
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=resume")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 32, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 31, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -152,9 +151,9 @@ func AdminAppCard(a app.App) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=start")
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=start")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 34, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 33, Col: 87}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -170,9 +169,9 @@ func AdminAppCard(a app.App) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?appid=" + a.GetName() + "&action=more")
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/admin/dashboard?gameid=" + game.GetName() + "&action=more")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 37, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/admin_views/app.templ`, Line: 36, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -191,7 +190,7 @@ func AdminAppCard(a app.App) templ.Component {
 	})
 }
 
-func ListAppCards(apps map[string]app.App) templ.Component {
+func ListAppCards(games []services.GameService) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -213,18 +212,12 @@ func ListAppCards(apps map[string]app.App) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		appsKeys := make([]string, 0, len(apps))
-
-		for appKey := range apps {
-			appsKeys = append(appsKeys, appKey)
-		}
-		sort.Strings(appsKeys)
-		for _, key := range appsKeys {
+		for _, game := range games {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = AdminAppCard(apps[key]).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = AdminAppCard(game).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

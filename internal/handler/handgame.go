@@ -17,7 +17,7 @@ type HandGameHandler struct {
 }
 
 func NewHandGameHandler(handGameService *services.HandGameService) *HandGameHandler {
-	lo, err := logger.NewHandlerLogger("handgame", "", false)
+	lo, err := logger.NewHandlerLogger("HandgameHandler", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
 		lo.Error(err.Error())

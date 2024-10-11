@@ -27,7 +27,7 @@ var (
 )
 
 func NewAdminService(server *server.Server, gameServices []services.GameService) *AdminService {
-	lo, err := logger.NewServiceLogger("admin", "", true)
+	lo, err := logger.NewServiceLogger("AdminService", "", true)
 	if err != nil {
 		lo = slog.Default()
 	}
@@ -49,7 +49,7 @@ func (s *AdminService) GetStatus() services.Status {
 }
 
 func (s *AdminService) GetLogs() ([]logger.PrettyLogs, error) {
-	logs, err := logger.GetAppLogs(s.Name)
+	logs, err := logger.GetServiceLogs(s.Name)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -22,14 +21,6 @@ type AuthHandler struct {
 }
 
 func NewAuthHandler(authService *services.AuthService, userService *services.UserService) *AuthHandler {
-	if authService == nil {
-		log.Fatal("auth service not provided")
-	}
-
-	if userService == nil {
-		log.Fatal("user service not provided")
-	}
-
 	lo, err := logger.NewHandlerLogger("AuthHandler", "", false)
 	if err != nil {
 		lo = slog.Default()
@@ -172,15 +163,14 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ah.authService == nil {
-		ah.log.Error("NO AUTH SERVICE")
-		w.WriteHeader(http.StatusInternalServerError)
-		data := auth_views.SignInFormData{
-			GeneralErr: "A server error has ocurred, try again later",
-		}
-		ah.returnSignInForm(w, r, data)
-		return
-	}
+	// if ah.authService == nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	data := auth_views.SignInFormData{
+	// 		GeneralErr: "A server error has ocurred, try again later",
+	// 	}
+	// 	ah.returnSignInForm(w, r, data)
+	// 	return
+	// }
 
 	if IsLogged(r) {
 		if IsAdmin(r) {

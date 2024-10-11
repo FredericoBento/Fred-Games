@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	defaultAppLoggerFilePath             = "./logs/apps/"
 	defaultServiceLoggerFilePath         = "./logs/services/"
 	defaultHandlerLoggerFilePath         = "./logs/handler/"
 	defaultSQLiteRepostoryLoggerFilePath = "./logs/database/sqlite/"
@@ -22,15 +21,6 @@ type PrettyLogs struct {
 	Level  string      `json:"level"`
 	Source slog.Source `json:"source"`
 	Msg    string      `json:"msg"`
-}
-
-func NewAppLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
-	if path == "" {
-		path = defaultAppLoggerFilePath
-		createFilePath(path)
-	}
-
-	return buildLogger(name, path, showOnConsole)
 }
 
 func NewServiceLogger(name string, path string, showOnConsole bool) (*slog.Logger, error) {
@@ -75,27 +65,6 @@ func NewRepositoryLogger(dbType, name, path string, showOnConsole bool) (*slog.L
 	return buildLogger(name, path, showOnConsole)
 }
 
-func GetAppLogs(appName string) ([]PrettyLogs, error) {
-	logContent, err := os.ReadFile("./logs/apps/" + appName + ".log")
-	if err != nil {
-		return nil, err
-	}
-
-	var logs []PrettyLogs
-	var logAux PrettyLogs
-	for _, line := range strings.Split(string(logContent), "\n") {
-		if line == "" {
-			continue
-		}
-		err = json.Unmarshal([]byte(line), &logAux)
-		if err != nil {
-			return nil, err
-		}
-		logs = append(logs, logAux)
-	}
-
-	return logs, nil
-}
 func GetServiceLogs(serviceName string) ([]PrettyLogs, error) {
 	logContent, err := os.ReadFile("./logs/services/" + serviceName + ".log")
 	if err != nil {
@@ -132,7 +101,6 @@ func buildLogger(name string, path string, showOnConsole bool) (*slog.Logger, er
 	})
 
 	if showOnConsole {
-		// textHandler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{})
 		textHandler := slog.Default().Handler()
 		multiHandler = NewMultiHandler(textHandler, jsonHandler)
 	} else {

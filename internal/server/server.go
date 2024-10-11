@@ -62,7 +62,7 @@ func WithHandlers(handlers *ServerHandlers) ServerOption {
 }
 
 func NewServer(opts ...ServerOption) *Server {
-	lo, err := logger.NewServerLogger("server", "", true)
+	lo, err := logger.NewServerLogger("Server", "", true)
 	if err != nil {
 		lo = slog.Default()
 	}

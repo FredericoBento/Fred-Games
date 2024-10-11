@@ -18,7 +18,7 @@ type PongHandler struct {
 }
 
 func NewPongHandler(pongService *services.PongService) *PongHandler {
-	lo, err := logger.NewHandlerLogger("pong", "", false)
+	lo, err := logger.NewHandlerLogger("PongHandler", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())
 		lo.Error(err.Error())

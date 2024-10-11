@@ -122,7 +122,7 @@ func AdminAppCard(game services.GameService) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-app-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-app-modal-content\">More</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-game-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-game-modal-content\">More</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -177,7 +177,7 @@ func AdminAppCard(game services.GameService) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-app-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-app-modal-content\">More</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"card-footer-item js-modal-trigger\" data-target=\"admin-game-modal\" hx-swap=\"outerHTML\" hx-target=\"#admin-game-modal-content\">More</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

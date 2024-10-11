@@ -25,7 +25,7 @@ templ AdminAppCard(game services.GameService) {
       if game.GetStatus().IsActive() {
         <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=stop"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Stop</button>
         <button class="card-footer-item">Restart</button>
-        <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
+        <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-game-modal" hx-swap="outerHTML" hx-target="#admin-game-modal-content">More</button>
       } else {
         if game.GetStatus().HasStartedOnce() {
           <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=resume"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Resume</button>
@@ -33,8 +33,7 @@ templ AdminAppCard(game services.GameService) {
           <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=start"} class="card-footer-item" hx-swap="outerHTML" hx-target=".dashboard">Start</button>
         }
         <button class="card-footer-item">Restart</button>
-        <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-app-modal" hx-swap="outerHTML" hx-target="#admin-app-modal-content">More</button>
-        // <button  class="card-footer-item js-modal-trigger" data-target="admin-app-modal">More</button>
+        <button hx-get={"/admin/dashboard?gameid=" + game.GetName() + "&action=more"} class="card-footer-item js-modal-trigger" data-target="admin-game-modal" hx-swap="outerHTML" hx-target="#admin-game-modal-content">More</button>
       }
     </footer>
 
@@ -42,22 +41,9 @@ templ AdminAppCard(game services.GameService) {
 }
 
 templ ListAppCards(games []services.GameService){
-      <div class="grid is-col-min-8">
-      // {{ appsKeys := make([]string, 0, len(apps)) }}
-
-      // {{
-
-        // for appKey := range apps {
-          // appsKeys = append(appsKeys, appKey)
-        // }
-
-      // }}
-
-      // {{ sort.Strings(appsKeys) }} 
-      // for _, key:= range appsKeys {
+  <div class="grid is-col-min-8">
       for _, game:= range games{
         <div class="cell">
-            // @AdminAppCard(apps[key])
             @AdminAppCard(game)
         </div>
       }

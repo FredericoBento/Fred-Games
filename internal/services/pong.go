@@ -13,7 +13,7 @@ type PongService struct {
 }
 
 func NewPongService() *PongService {
-	lo, err := logger.NewServiceLogger("pong", "", true)
+	lo, err := logger.NewServiceLogger("PongService", "", true)
 	if err != nil {
 		lo = slog.Default()
 	}
@@ -55,7 +55,7 @@ func (s *PongService) GetName() string {
 }
 
 func (s *PongService) GetLogs() ([]logger.PrettyLogs, error) {
-	logs, err := logger.GetAppLogs(s.Name)
+	logs, err := logger.GetServiceLogs(s.Name)
 	if err != nil {
 		return nil, err
 	}

@@ -8,12 +8,12 @@ templ GameModal(game services.GameService) {
 	    <header class="modal-card-head">
 	      <p class="modal-card-title">{ game.GetName() }
         if game.GetStatus().IsActive() {
-            <span class="tag is-success">Running</span>
+            <span class="tag is-success has-text-weight-bold">Running</span>
           } else {
             if game.GetStatus().HasStartedOnce() {
-              <span class="tag is-danger">Stopped</span>
+              <span class="tag is-warning has-text-weight-bold">Stopped</span>
             } else {
-              <span class="tag is-danger">Off</span>
+              <span class="tag is-danger has-text-weight-bold">Off</span>
             }
           }
 				</p>
@@ -23,10 +23,6 @@ templ GameModal(game services.GameService) {
 			@GameModalLogs(game.GetLogs())
 	    </section>
 	    <footer class="modal-card-foot">
-	      // <div class="buttons">
-	        // <button class="button is-success">Save changes</button>
-	        // <button class="button">Cancel</button>
-	      // </div>
 	    </footer>
 			</div>
 }
@@ -44,11 +40,9 @@ templ GameModalLogs(logs []logger.PrettyLogs, err error) {
 				}
 				for _, log := range logs {
 					<div class="columns is-vcentered mb-0">
-						// <p class="is-size-6">
 							<span class="column is-2"> @LogTypeTag(log.Level) </span>
 							<span class="column is-4"> { log.Time.Format("02-01-2006 15:04")} </span>
 						 	<span class="column is-4"> { log.Msg } </span>
-						// </p>
 					</div>
 				}
 			}
@@ -59,12 +53,12 @@ templ GameModalLogs(logs []logger.PrettyLogs, err error) {
 templ LogTypeTag(logType string) {
 	switch logType {
 		case "INFO":
-		  <span class="tag is-info">Info</span>
+		  <span class="tag is-info has-text-weight-bold">Info</span>
 		case "ERROR":
-		  <span class="tag is-danger">Error</span>
+		  <span class="tag is-danger has-text-weight-bold">Error</span>
 		case "WARN":
-		  <span class="tag is-warning">Warning</span>
+		  <span class="tag is-warning has-text-weight-bold">Warning</span>
 		default:
-		  <span class="tag is-dark">Unknown</span>
+		  <span class="tag is-dark has-text-weight-bold">Unknown</span>
 	}
 } 

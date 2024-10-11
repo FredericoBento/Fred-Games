@@ -51,27 +51,6 @@ func NewUserService(repo repository.UserRepository, ttl time.Duration) *UserServ
 	}
 }
 
-// func (*UserService) Start() error {
-// }
-
-// func (*UserService) Stop() error {
-// }
-
-// func (*UserService) Resume() error {
-// }
-
-// func (*UserService) GetName() string {
-// }
-
-// func (*UserService) GetRoute() string {
-// }
-
-// func (*UserService) GetStatus() Status {
-// }
-
-// func (*UserService) GetLogs() ([]logger.PrettyLogs, error) {
-// }
-
 func (us *UserService) ChangeLogger(logger *slog.Logger) error {
 	if logger == nil {
 		return ErrInvalidLogger
@@ -172,10 +151,8 @@ func (us *UserService) evictAfter(key string, ttl time.Duration) {
 func (us *UserService) getUserInCache(username string) (*models.User, error) {
 	if cachedUser, ok := us.cache.Load(username); ok {
 		if user, valid := cachedUser.(*models.User); valid {
-			us.log.Info("user cache hit")
 			return user, nil
 		}
 	}
-	us.log.Info("user cache miss")
 	return nil, ErrUserNotCached
 }

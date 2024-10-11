@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -35,13 +34,6 @@ type AdminHandler struct {
 }
 
 func NewAdminHandler(adminService *admin_service.AdminService, userService *services.UserService) *AdminHandler {
-	if adminService == nil {
-		log.Fatal("AdminHandler: admin service not provided")
-	}
-	if userService == nil {
-		log.Fatal("AdminHandler: user service not provided")
-	}
-
 	lo, err := logger.NewHandlerLogger("AdminHandler", "", true)
 	if err != nil {
 		lo = slog.Default()
@@ -147,10 +139,10 @@ func (h *AdminHandler) moreGame(w http.ResponseWriter, r *http.Request, gameID s
 	game, ok := h.adminService.GetGame(gameID)
 	if !ok {
 		http.Error(w, ErrGameNotFound.Error(), http.StatusNotFound)
+		return
 	}
 
 	h.View(w, r, AdminViewProps{
-		title:   "game Modal",
 		content: admin_views.GameModal(game),
 	})
 	return
@@ -268,25 +260,6 @@ func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props Admin
 		views.Page(props.title, admin_views.Navbar(), props.content).Render(r.Context(), w)
 	}
 }
-
-// func (h *AdminHandler) getNavbar(w http.ResponseWriter, r *http.Request) templ.Component {
-// u, isLogged := GetLoggedUser(r)
-// var navbar templ.Component
-// if isLogged {
-// isAdmin := h.authService.IsAdmin(u.Username)
-// if IsAdmin(r) {
-// navbar = home_views.AdminNavbar()
-// }
-
-// if isLogged != h.isLogged || isAdmin != h.isAdmin {
-// h.navbar = h.getNavbar(isLogged, isAdmin)
-// h.isLogged = isLogged
-// h.isAdmin = isAdmin
-// }
-// } else {
-// h.navbar = h.getNavbar(false, false)
-// }
-// }
 
 func (hh *AdminHandler) ReturnError(w http.ResponseWriter, r *http.Request, error string) {
 	props := AdminViewProps{

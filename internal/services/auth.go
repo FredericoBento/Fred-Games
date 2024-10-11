@@ -157,7 +157,7 @@ func (s *AuthService) GetToken(r *http.Request) (string, error) {
 func (s *AuthService) IsLogged(r *http.Request) (*models.User, bool) {
 	token, err := s.GetToken(r)
 	if err != nil {
-		s.log.Error(err.Error())
+		// s.log.Error(err.Error())
 		return nil, false
 	}
 	u, err := s.ValidateSession(context.Background(), token)

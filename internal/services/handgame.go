@@ -13,7 +13,7 @@ type HandGameService struct {
 }
 
 const (
-	logFileName = "Handgame"
+	logFileName = "HandgameService"
 )
 
 func NewHandGameService() *HandGameService {

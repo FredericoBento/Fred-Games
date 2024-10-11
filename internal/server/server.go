@@ -18,8 +18,8 @@ var (
 
 	standardMiddlewares = middleware.StackMiddleware(
 		middleware.Logger,
-		middleware.AddUserToContext,
 		middleware.SecureHeadersMiddleware,
+		middleware.AuthEssential,
 	)
 )
 
@@ -36,7 +36,6 @@ type Server struct {
 	Port        int
 	HttpServer  *http.Server
 	Router      *http.ServeMux
-	AuthRouter  *http.ServeMux
 	AdminRouter *http.ServeMux
 	Handlers    *ServerHandlers
 	log         *slog.Logger
@@ -70,7 +69,6 @@ func NewServer(opts ...ServerOption) *Server {
 	server := &Server{
 		HttpServer:  nil,
 		Router:      http.NewServeMux(),
-		AuthRouter:  http.NewServeMux(),
 		AdminRouter: http.NewServeMux(),
 		Handlers:    nil,
 		log:         lo,
@@ -121,11 +119,9 @@ func (s *Server) setupRoutes() error {
 	)
 
 	// Auth Routes
-	s.AuthRouter.Handle("/sign-in", s.Handlers.AuthHandler)
-	s.AuthRouter.Handle("/sign-up", s.Handlers.AuthHandler)
-	s.AuthRouter.Handle("/logout", s.Handlers.AuthHandler)
-
-	s.Router.Handle("/", authHandlerMiddlewares(s.AuthRouter))
+	s.Router.Handle("/sign-in", authHandlerMiddlewares(s.Handlers.AuthHandler))
+	s.Router.Handle("/sign-up", authHandlerMiddlewares(s.Handlers.AuthHandler))
+	s.Router.Handle("/logout", authHandlerMiddlewares(s.Handlers.AuthHandler))
 
 	// Admin Routes
 	s.AdminRouter.Handle("/dashboard", s.Handlers.AdminHandler)
@@ -136,6 +132,7 @@ func (s *Server) setupRoutes() error {
 
 	// App Homepage
 	s.Router.Handle("/home", authHandlerMiddlewares(s.Handlers.HomeHandler))
+	s.Router.Handle("/", http.RedirectHandler("/home", http.StatusSeeOther))
 
 	// Fileserver
 	fs := http.FileServer(http.Dir("./assets"))

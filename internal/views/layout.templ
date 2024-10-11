@@ -1,10 +1,9 @@
 package views
 
 import "github.com/FredericoBento/HandGame/internal/views/components"
-import "github.com/FredericoBento/HandGame/internal/models"
 
 
-templ Page(title string, navbar models.NavBarStructure, contents templ.Component) {
+templ Page(title string, navbar templ.Component, contents templ.Component) {
   <!DOCTYPE HTML>
   if title != "" {
     @components.Head(title)

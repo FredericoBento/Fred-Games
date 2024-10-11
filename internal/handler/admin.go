@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
-	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/services/admin_service"
 	"github.com/FredericoBento/HandGame/internal/views"
@@ -32,7 +31,6 @@ var (
 type AdminHandler struct {
 	adminService *admin_service.AdminService
 	userService  *services.UserService
-	navbar       models.NavBarStructure
 	log          *slog.Logger
 }
 
@@ -50,52 +48,11 @@ func NewAdminHandler(adminService *admin_service.AdminService, userService *serv
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
-	h := &AdminHandler{
+	return &AdminHandler{
 		adminService: adminService,
 		userService:  userService,
 		log:          lo,
 	}
-
-	h.setupNavbar()
-
-	return h
-}
-
-func (h *AdminHandler) setupNavbar() {
-	startBtns := []models.Button{
-		{
-			ButtonName:   "Games",
-			Url:          "/home",
-			NotHxRequest: true,
-		},
-		{
-			ButtonName: "Dashboard",
-			Url:        "/admin/dashboard",
-		},
-		{
-			ButtonName: "Users",
-			Url:        "/admin/users",
-		},
-	}
-
-	endBtns := []models.Button{
-		{
-			ButtonName: "Account",
-			Childs: []models.Button{
-				{
-					ButtonName: "Logout",
-					Url:        "/logout",
-				},
-			},
-		},
-	}
-
-	navbar := models.NavBarStructure{
-		StartButtons: startBtns,
-		EndButtons:   endBtns,
-	}
-
-	h.navbar = navbar
 }
 
 func (h *AdminHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -308,9 +265,28 @@ func (hh *AdminHandler) View(w http.ResponseWriter, r *http.Request, props Admin
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, hh.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, admin_views.Navbar(), props.content).Render(r.Context(), w)
 	}
 }
+
+// func (h *AdminHandler) getNavbar(w http.ResponseWriter, r *http.Request) templ.Component {
+// u, isLogged := GetLoggedUser(r)
+// var navbar templ.Component
+// if isLogged {
+// isAdmin := h.authService.IsAdmin(u.Username)
+// if IsAdmin(r) {
+// navbar = home_views.AdminNavbar()
+// }
+
+// if isLogged != h.isLogged || isAdmin != h.isAdmin {
+// h.navbar = h.getNavbar(isLogged, isAdmin)
+// h.isLogged = isLogged
+// h.isAdmin = isAdmin
+// }
+// } else {
+// h.navbar = h.getNavbar(false, false)
+// }
+// }
 
 func (hh *AdminHandler) ReturnError(w http.ResponseWriter, r *http.Request, error string) {
 	props := AdminViewProps{

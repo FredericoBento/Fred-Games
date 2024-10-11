@@ -5,15 +5,14 @@ import (
 	"net/http"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
-	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
+	"github.com/FredericoBento/HandGame/internal/views/components"
 	"github.com/a-h/templ"
 )
 
 type HandGameHandler struct {
 	handGameService *services.HandGameService
-	navbar          models.NavBarStructure
 	log             *slog.Logger
 }
 
@@ -24,42 +23,10 @@ func NewHandGameHandler(handGameService *services.HandGameService) *HandGameHand
 		lo.Error(err.Error())
 	}
 
-	h := &HandGameHandler{
+	return &HandGameHandler{
 		handGameService: handGameService,
 		log:             lo,
 	}
-
-	h.setupNavbar()
-
-	return h
-}
-
-func (h *HandGameHandler) setupNavbar() {
-	startBtns := []models.Button{
-		{
-			ButtonName: "Home",
-			Url:        "/home",
-		},
-	}
-
-	endBtns := []models.Button{
-		{
-			ButtonName: "Account",
-			Childs: []models.Button{
-				{
-					ButtonName: "Logout",
-					Url:        "/logout",
-				},
-			},
-		},
-	}
-
-	navbar := models.NavBarStructure{
-		StartButtons: startBtns,
-		EndButtons:   endBtns,
-	}
-
-	h.navbar = navbar
 }
 
 func (h *HandGameHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -86,6 +53,6 @@ func (h *HandGameHandler) View(w http.ResponseWriter, r *http.Request, props Han
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, components.DefaultLoggedNavbar(), props.content).Render(r.Context(), w)
 	}
 }

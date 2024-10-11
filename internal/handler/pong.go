@@ -5,16 +5,15 @@ import (
 	"net/http"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
-	"github.com/FredericoBento/HandGame/internal/models"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/views"
+	"github.com/FredericoBento/HandGame/internal/views/components"
 	"github.com/FredericoBento/HandGame/internal/views/pong_views"
 	"github.com/a-h/templ"
 )
 
 type PongHandler struct {
 	pongService *services.PongService
-	navbar      models.NavBarStructure
 	log         *slog.Logger
 }
 
@@ -25,42 +24,10 @@ func NewPongHandler(pongService *services.PongService) *PongHandler {
 		lo.Error(err.Error())
 	}
 
-	h := &PongHandler{
+	return &PongHandler{
 		pongService: pongService,
 		log:         lo,
 	}
-
-	h.setupNavbar()
-
-	return h
-}
-
-func (h *PongHandler) setupNavbar() {
-	startBtns := []models.Button{
-		{
-			ButtonName: "Home",
-			Url:        "/home",
-		},
-	}
-
-	endBtns := []models.Button{
-		{
-			ButtonName: "Account",
-			Childs: []models.Button{
-				{
-					ButtonName: "Logout",
-					Url:        "/logout",
-				},
-			},
-		},
-	}
-
-	navbar := models.NavBarStructure{
-		StartButtons: startBtns,
-		EndButtons:   endBtns,
-	}
-
-	h.navbar = navbar
 }
 
 func (h *PongHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -110,8 +77,7 @@ func (h *PongHandler) joinGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *PongHandler) getHome(w http.ResponseWriter, r *http.Request) {
-	_, isLogged := GetLoggedUser(w, r)
-	if !isLogged {
+	if !IsLogged(r) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -121,13 +87,10 @@ func (h *PongHandler) getHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *PongHandler) postCreateGame(w http.ResponseWriter, r *http.Request) {
-	_, isLogged := GetLoggedUser(w, r)
-	if !isLogged {
+	if !IsLogged(r) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
-
-	// h..CreateGame()
 
 	h.View(w, r, PongViewProps{
 		content: pong_views.Home(),
@@ -135,8 +98,7 @@ func (h *PongHandler) postCreateGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *PongHandler) getJoinGame(w http.ResponseWriter, r *http.Request) {
-	_, isLogged := GetLoggedUser(w, r)
-	if !isLogged {
+	if !IsLogged(r) {
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -156,6 +118,6 @@ func (h *PongHandler) View(w http.ResponseWriter, r *http.Request, props PongVie
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, components.DefaultLoggedNavbar(), props.content).Render(r.Context(), w)
 	}
 }

@@ -13,23 +13,21 @@ import (
 
 type HomeHandler struct {
 	games       []services.GameService
-	navbar      models.NavBarStructure
-	isLogged    bool
-	isAdmin     bool
 	authService *services.AuthService
 }
 
 func NewHomeHandler(gameServices []services.GameService, authService *services.AuthService) *HomeHandler {
 
-	h := &HomeHandler{
+	return &HomeHandler{
 		games:       gameServices,
-		isLogged:    false,
 		authService: authService,
 	}
 
-	h.navbar = h.getNavbar(false, false)
+	// h.navbar = h.getNavbar(false, false)
+	// h.isLogged = false
+	// h.isAdmin = false
 
-	return h
+	// return h
 }
 
 func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -62,32 +60,23 @@ func (h *HomeHandler) GetHome(w http.ResponseWriter, r *http.Request) {
 		content: home_views.Home(h.games),
 	}
 	h.View(w, r, props)
-
-	// user, ok := GetLoggedUser(w, r)
-	// if !ok {
-	// 	fmt.Println("User username is none")
-	// } else {
-	// 	fmt.Println("User username is " + user.Username)
-	// }
 }
 
 func (h *HomeHandler) View(w http.ResponseWriter, r *http.Request, props HomeViewProps) {
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		u, isLogged := h.authService.IsLogged(r)
-
-		if isLogged {
-			isAdmin := h.authService.IsAdmin(u.Username)
-			if isLogged != h.isLogged || isAdmin != h.isAdmin {
-				h.navbar = h.getNavbar(isLogged, isAdmin)
-				h.isLogged = isLogged
-				h.isAdmin = isAdmin
+		var navbar templ.Component
+		if IsLogged(r) {
+			if IsAdmin(r) {
+				navbar = home_views.AdminNavbar()
+			} else {
+				navbar = home_views.LoggedNavbar()
 			}
 		} else {
-			h.navbar = h.getNavbar(false, false)
+			navbar = home_views.DefaultNavbar()
 		}
-		views.Page(props.title, h.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, navbar, props.content).Render(r.Context(), w)
 	}
 }
 

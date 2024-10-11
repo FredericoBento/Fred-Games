@@ -1,0 +1,31 @@
+package auth_views
+
+import "github.com/FredericoBento/HandGame/internal/views/components"
+
+templ DefaultNavbar() {
+  <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" hx-get="/home" hx-push-url="true" hx-target="body" hx-headers='{"Hx-Request":"false"}'>
+        <img width="32" height="200" src="/assets/svgs/favicon.svg"></img>
+        <p class="title is-5 has-text-white-ter">Fred Games</p>
+    </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+  </div>
+
+  <div id="navbarMenu" class="navbar-menu">
+    <div class="navbar-start">
+      @components.NavButton("Games", "/home", false)
+    </div>
+     <div class="navbar-end">
+      @components.NavButton("Sign Up", "/sign-up", true)
+      @components.NavButton("Log In", "/sign-in", true)
+    </div>
+  </div>
+
+</nav>
+}

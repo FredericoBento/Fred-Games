@@ -29,7 +29,7 @@ func UsersPage(users *[]models.User) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"section users\"><div class=\"container is-max-desktop\"><p class=\"subtitle is-4\">Users</p><hr>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"section users\"><div class=\"container is-max-desktop box\"><p class=\"subtitle is-4\">Users</p><hr>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

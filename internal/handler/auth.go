@@ -18,7 +18,6 @@ import (
 type AuthHandler struct {
 	authService *services.AuthService
 	userService *services.UserService
-	navbar      models.NavBarStructure
 	log         *slog.Logger
 }
 
@@ -31,40 +30,17 @@ func NewAuthHandler(authService *services.AuthService, userService *services.Use
 		log.Fatal("user service not provided")
 	}
 
-	lo, err := logger.NewHandlerLogger("AuthHandler", "", true)
+	lo, err := logger.NewHandlerLogger("AuthHandler", "", false)
 	if err != nil {
 		lo = slog.Default()
 		lo.Error("could not create admin handler logger, using slog.default")
 	}
 
-	h := &AuthHandler{
+	return &AuthHandler{
 		authService: authService,
 		userService: userService,
 		log:         lo,
 	}
-
-	h.setupNavbar()
-
-	return h
-}
-
-func (h *AuthHandler) setupNavbar() {
-	startBtns := []models.Button{
-		{
-			ButtonName:   "Games",
-			Url:          "/home",
-			NotHxRequest: true,
-		},
-	}
-
-	endBtns := []models.Button{}
-
-	navbar := models.NavBarStructure{
-		StartButtons: startBtns,
-		EndButtons:   endBtns,
-	}
-
-	h.navbar = navbar
 }
 
 func (ah *AuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -105,20 +81,21 @@ func (ah *AuthHandler) GetSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := ah.authService.GetToken(r)
-	if err == nil && token != "" {
-		user, err := ah.authService.ValidateSession(context.TODO(), token)
-		if err == nil && user != nil {
-			if ah.authService.IsAdmin(user.Username) {
-				// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
-				Redirect(w, r, "/admin")
-				return
-			} else {
-				// http.Redirect(w, r, "/home/", http.StatusSeeOther)
-				Redirect(w, r, "/home")
-				return
-			}
+	// token, err := ah.authService.GetToken(r)
+	// if err == nil && token != "" {
+	// user, err := ah.authService.ValidateSession(context.TODO(), token)
+	// if err == nil && user != nil {
+	if IsLogged(r) {
+		if IsAdmin(r) {
+			// if ah.authService.IsAdmin(user.Username) {
+			// http.Redirect(w, r, "/admin/", http.StatusSeeOther)
+			Redirect(w, r, "/admin")
+			return
 		}
+		// } else {
+		http.Redirect(w, r, "/home/", http.StatusSeeOther)
+		Redirect(w, r, "/home")
+		return
 	}
 
 	ah.returnSignUpForm(w, r, auth_views.SignUpFormData{})
@@ -205,18 +182,13 @@ func (ah *AuthHandler) GetSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := ah.authService.GetToken(r)
-	if err == nil && token != "" {
-		user, err := ah.authService.ValidateSession(context.TODO(), token)
-		if err == nil && user != nil {
-			if ah.authService.IsAdmin(user.Username) {
-				Redirect(w, r, "/admin")
-				return
-			} else {
-				Redirect(w, r, "/home")
-				return
-			}
+	if IsLogged(r) {
+		if IsAdmin(r) {
+			Redirect(w, r, "/admin")
+			return
 		}
+		Redirect(w, r, "/home")
+		return
 	}
 
 	ah.returnSignInForm(w, r, auth_views.SignInFormData{})
@@ -342,7 +314,7 @@ func (ah *AuthHandler) View(w http.ResponseWriter, r *http.Request, props ViewAu
 	if IsHTMX(r) {
 		props.content.Render(r.Context(), w)
 	} else {
-		views.Page(props.title, ah.navbar, props.content).Render(r.Context(), w)
+		views.Page(props.title, auth_views.DefaultNavbar(), props.content).Render(r.Context(), w)
 	}
 }
 

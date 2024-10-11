@@ -23,10 +23,23 @@ func Redirect(w http.ResponseWriter, r *http.Request, route string) {
 	}
 }
 
-func GetLoggedUser(w http.ResponseWriter, r *http.Request) (*models.User, bool) {
+func GetLoggedUser(r *http.Request) (*models.User, bool) {
 	user := r.Context().Value(middleware.LoggedUserKey)
 	if user != nil {
 		return user.(*models.User), true
 	}
 	return nil, false
+}
+
+func IsLogged(r *http.Request) bool {
+	_, logged := GetLoggedUser(r)
+	return logged
+}
+
+func IsAdmin(r *http.Request) bool {
+	isAdmin := r.Context().Value(middleware.IsAdminKey)
+	if isAdmin != nil {
+		return isAdmin.(bool)
+	}
+	return false
 }

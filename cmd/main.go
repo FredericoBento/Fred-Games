@@ -119,6 +119,7 @@ func main() {
 		default:
 			slog.Error("could not setup routes for unknown game service")
 		}
+		adminService.StartGame(game.GetName())
 	}
 	err = httpServer.Run()
 	if err != nil {

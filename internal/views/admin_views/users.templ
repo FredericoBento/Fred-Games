@@ -6,7 +6,7 @@ import "strconv"
 
 templ UsersPage(users *[]models.User) {
   <section class="section users">
-    <div class="container is-max-desktop">
+    <div class="container is-max-desktop box">
       <p class="subtitle is-4">Users</p>
       <hr>
       @UsersTable(1, users)

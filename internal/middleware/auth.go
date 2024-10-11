@@ -16,11 +16,14 @@ type contextKey string
 
 const (
 	LoggedUserKey = contextKey("user")
+	IsAdminKey    = contextKey("isAdmin")
 )
 
 type AuthService interface {
+	GetToken(r *http.Request) (string, error)
 	GetCookieName() string
 	ValidateSession(ctx context.Context, token string) (*models.User, error)
+	IsAdmin(username string) bool
 }
 
 func SetAuthService(service AuthService) {
@@ -32,43 +35,49 @@ func RequiredLogged(next http.Handler) http.Handler {
 		log.Fatal("authservice not setup")
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		c, err := r.Cookie(authService.GetCookieName())
-		if err != nil {
-			// http.Error(w, "Forbidden", http.StatusForbidden)
-			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+		user := r.Context().Value(LoggedUserKey)
+		if user != nil {
+			next.ServeHTTP(w, r)
 			return
 		}
 
-		_, ok := authService.ValidateSession(context.TODO(), c.Value)
-		if ok != nil {
-			// http.Error(w, "Forbidden", http.StatusForbidden)
-			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
-			return
-		}
+		http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
+		return
 
-		next.ServeHTTP(w, r)
 	})
 }
 
 func RequiredAdmin(next http.Handler) http.Handler {
-	next = AddUserToContext(next)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		user, ok := GetUserFromContext(r)
-		if !ok {
-			// http.Error(w, "Forbidden", http.StatusForbidden)
+		user := r.Context().Value(LoggedUserKey)
+		if user == nil {
 			http.Redirect(w, r, "/sign-in", http.StatusSeeOther)
 			return
 		}
 
-		if user.Username == "fred" {
-			next.ServeHTTP(w, r)
-		} else {
-			http.Error(w, "Forbidden, not an admin", http.StatusForbidden)
-			return
+		isAdmin := r.Context().Value(IsAdminKey)
+		if isAdmin != nil {
+			if isAdmin.(bool) {
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
 
+		http.Error(w, "Forbidden, not an admin", http.StatusForbidden)
+		return
+	})
+}
+
+// Will Add Logged User and Admin level to context
+func AuthEssential(next http.Handler) http.Handler {
+	if authService == nil {
+		log.Fatal("authService needs to be provided to use this middleware")
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r = r.WithContext(addUserToContext(r))
+		r = r.WithContext(addAdminLevelToContext(r.Context()))
+		next.ServeHTTP(w, r)
+		return
 	})
 }
 
@@ -100,6 +109,37 @@ func AddUserToContext(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), LoggedUserKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
+		return
 	})
 
+}
+
+func addAdminLevelToContext(ctx context.Context) context.Context {
+	if authService == nil {
+		log.Fatal("authService needs to be provided to use this middleware")
+	}
+	user := ctx.Value(LoggedUserKey)
+	if user != nil {
+		if authService.IsAdmin(user.(*models.User).Username) {
+			return context.WithValue(ctx, IsAdminKey, true)
+		}
+	}
+	return context.WithValue(ctx, IsAdminKey, false)
+}
+
+func addUserToContext(r *http.Request) context.Context {
+	if authService == nil {
+		log.Fatal("authService needs to be provided to use this middleware")
+	}
+	token, err := authService.GetToken(r)
+	if err != nil {
+		return r.Context()
+	}
+
+	user, err := authService.ValidateSession(r.Context(), token)
+	if err != nil {
+		return context.WithValue(r.Context(), LoggedUserKey, nil)
+	}
+
+	return context.WithValue(r.Context(), LoggedUserKey, user)
 }

@@ -28,7 +28,7 @@ func Home() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"section\"><div class=\"container is-max-desktop box\"><p class=\"subtitle is-4\">Pong</p><hr class=\"has-background-dark\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section class=\"section pong-section\"><div class=\"container is-max-desktop box\"><p class=\"subtitle is-4\">Pong</p><hr class=\"has-background-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -36,7 +36,7 @@ func Home() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -62,7 +62,7 @@ func Menu() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"pong-form\"><div class=\"field has-addons is-grouped is-grouped-centered\"><div class=\"control\"><input class=\"input\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button class=\"button is-info\" hx-get=\"/pong/join-game/\">Join</button></div><div class=\"control\"><button class=\"button is-success\" hx-post=\"/pong/create-game/\">Create Game\t\t\t\t\t</button></div></div></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"pong-form\"><div class=\"field has-addons has-addons-centered\"><div class=\"control\"><input class=\"input\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button class=\"button is-info\" hx-get=\"/pong/join-game/\">Join</button></div><div class=\"control\"><button class=\"button is-success\" hx-post=\"/pong/create-game/\">Create Game\t\t\t\t\t</button></div></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

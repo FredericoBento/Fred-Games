@@ -3,18 +3,18 @@ package pong_views
 import "github.com/FredericoBento/HandGame/internal/models"
 
 templ Home() {
-	<div class="section">
+	<section class="section pong-section">
 	  <div class="container is-max-desktop box">
 			<p class="subtitle is-4">Pong</p>
 			<hr class="has-background-dark">
 			@Menu()
 		</div>
-	</div>
+	</section>
 }
 
 templ Menu() {
 	<form id="pong-form">
-		<div class="field has-addons is-grouped is-grouped-centered">
+		<div class="field has-addons has-addons-centered">
 		  <div class="control">
 		    <input class="input" name="code" type="text" placeholder="Code">
 		  </div>

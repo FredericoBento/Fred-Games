@@ -87,9 +87,6 @@ func (s *AdminService) StopGame(name string) error {
 }
 
 func (s *AdminService) ResumeGame(name string) error {
-	if s.Server == nil {
-		return ErrNoServerProvided
-	}
 	game, ok := s.GetGame(name)
 	if ok {
 		err := game.Resume()

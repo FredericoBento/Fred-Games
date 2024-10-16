@@ -264,7 +264,13 @@ func (ah *AuthHandler) PostSignIn(w http.ResponseWriter, r *http.Request) {
 			Value: token,
 		}
 
+		usernameCookie := http.Cookie{
+			Name:  "User",
+			Value: u.Username,
+		}
+
 		http.SetCookie(w, &cookie)
+		http.SetCookie(w, &usernameCookie)
 
 		if ah.authService.IsAdmin(u.Username) {
 			Redirect(w, r, "/admin")

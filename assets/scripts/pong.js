@@ -1,17 +1,12 @@
-const socket = new WebSocket("ws://localhost:8080/ws/pong");
+class Position {
+    constructor(x, y) {
+       this.x = x
+       this.y = y
+    }
 
-const joinBtn = document.getElementById("joinBtn")
-const createBtn = document.getElementById("createBtn")
-const codeInput = document.getElementById("code")
+}
 
-const room = document.getElementById("waiting-room")
-const roomCode = document.getElementById("roomCode")
-const player1 = document.getElementById("player1")
-const player2 = document.getElementById("player2")
-
-const EventTypeMessage = 1
-
-class Game {
+class GameState {
     constructor(code, p1, p2, ball) {
         this.code = code
         this.p1 = p1
@@ -22,26 +17,54 @@ class Game {
 }
 
 class Player {
-    constructor(username) {
+    constructor(username, paddle, isConnected) {
         this.username = username
+        this.paddle = paddle
+        this.isConnected = isConnected
     }
 }
 
-class Bar {
-    constructor(x, y) {
-        this.x = x
-        this.y = y
+class Paddle {
+    constructor(position, length, width) {
+        this.position = position
+        this.length = length
+        this.width = width
+        this.drawing = null
     }
 }
 
 class Ball {
-    constructor(x, y, speed) {
-       this.x = x
-       this.y = y
-       this.speed = speed
+    constructor(position, speed, radius, direction) {
+      this.position = position
+      this.speed = speed
+      this.direction = direction
+      this.radius = radius
+      this.drawing = null
     }
 }
 
+const EventTypeMessage = 1
+const DirectionLeft = "direction_left"
+const DirectionRight = "direction_right"
+
+const socket = new WebSocket("ws://localhost:8080/ws/pong");
+
+const joinBtn = document.getElementById("joinBtn")
+const createBtn = document.getElementById("createBtn")
+const codeInput = document.getElementById("code")
+
+const canvasWidth = 640
+const canvasHeight = 360
+
+const p1Paddle = new Paddle(new Position(30, canvasHeight/2), 30, 4)
+const p2Paddle = new Paddle(new Position(canvasWidth-30, canvasHeight/2), 30, 4)
+
+const player1 = new Player(getCookie("User"), p1Paddle, true)
+const player2 = new Player(getCookie("None"), p2Paddle, false)
+
+const ball = new Ball(new Position(canvasWidth/2, canvasHeight/2), 3.00, 3, DirectionLeft)
+
+const gameState = new GameState("empty", player1, player2, ball)
 
 socket.addEventListener("open", (e) => {
     const message = {
@@ -83,4 +106,59 @@ function playerJoined(data) {
 
 function joinError(errors) {
   console.log("couldnt join because: "+errors)
+}
+
+const app = new PIXI.Application();
+const canvasDiv = document.getElementById("gameCanvas") 
+
+async function initPixi() {
+  await app.init({ width: canvasWidth, height: canvasHeight})
+  canvasDiv.appendChild(app.canvas);
+
+  let ballDrawing = new PIXI.Graphics()
+                        .circle(gameState.ball.position.x, gameState.ball.position.y, gameState.ball.radius)
+                        .fill("yellow")
+
+  let p1PaddleDrawing = new PIXI.Graphics()
+                            .rect(gameState.p1.paddle.position.x, 
+                                  gameState.p1.paddle.position.y, gameState.p1.paddle.width, gameState.p1.paddle.length)
+                            .fill("red")
+
+  let p2PaddleDrawing = new PIXI.Graphics()
+                            .rect(gameState.p2.paddle.position.x, 
+                                  gameState.p2.paddle.position.y, gameState.p2.paddle.width, gameState.p2.paddle.length)
+                            .fill("red")
+
+  gameState.ball.drawing = ballDrawing
+  gameState.p1.paddle.drawing = p1PaddleDrawing
+  gameState.p2.paddle.drawing = p2PaddleDrawing
+  
+
+  app.stage.addChild(gameState.ball.drawing);
+  app.stage.addChild(gameState.p1.paddle.drawing);
+  app.stage.addChild(gameState.p2.paddle.drawing);
+
+  let elapsed = 0.0;
+  app.ticker.add((ticker) => {
+    elapsed += ticker.deltaTime;
+  });
+}
+
+
+initPixi()
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }

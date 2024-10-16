@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
-	"github.com/FredericoBento/HandGame/internal/services"
+	"github.com/FredericoBento/HandGame/internal/services/pong"
 	"github.com/FredericoBento/HandGame/internal/views"
 	"github.com/FredericoBento/HandGame/internal/views/components"
 	"github.com/FredericoBento/HandGame/internal/views/pong_views"
@@ -13,11 +13,11 @@ import (
 )
 
 type PongHandler struct {
-	pongService *services.PongService
+	pongService *pong.PongService
 	log         *slog.Logger
 }
 
-func NewPongHandler(pongService *services.PongService) *PongHandler {
+func NewPongHandler(pongService *pong.PongService) *PongHandler {
 	lo, err := logger.NewHandlerLogger("PongHandler", "", false)
 	if err != nil {
 		lo = slog.New(slog.Default().Handler())

@@ -1,0 +1,10 @@
+{
+  "name": "Fred Games",
+  "short_name": "FredGames",
+  "description": "Play fun and exciting games like Pong and Handgame!",
+  "start_url": "/home",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US"
+}

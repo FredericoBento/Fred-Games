@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+// option go_package = "handgame/models/protomodels/";
+option go_package = "handgame/internal/services/pong/";
+
+message Player {
+    int32 id = 1;
+    string name = 2;
+    int32 score = 3;
+}
+
+message Ball {
+    float x = 1;
+    float y = 2;
+    float vx = 3;
+    float vy = 4;
+}
+
+message PongGameState {
+    Player player1 = 1;
+    Player player2 = 2;
+    Ball ball = 3;
+    bool hasStarted = 4;
+}

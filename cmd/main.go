@@ -21,6 +21,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/server"
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/services/admin_service"
+	"github.com/FredericoBento/HandGame/internal/services/pong"
 
 	_ "net/http/pprof"
 
@@ -81,7 +82,7 @@ func main() {
 	userService := services.NewUserService(userRepository, time.Minute*10)
 	authService := services.NewAuthService(userService)
 
-	pongService := services.NewPongService()
+	pongService := pong.NewPongService()
 	handgameService := services.NewHandGameService()
 
 	games := []services.GameService{handgameService, pongService}
@@ -114,8 +115,9 @@ func main() {
 		switch game.(type) {
 		case *services.HandGameService:
 			httpServer.SetupHandGameRoutes(game.GetRoute())
-		case *services.PongService:
+		case *pong.PongService:
 			httpServer.SetupPongGameRoutes(game.GetRoute())
+			httpServer.SetupPongGameWebsocketLogic(game.HandleWebSocketConnection())
 		default:
 			slog.Error("could not setup routes for unknown game service")
 		}
@@ -146,21 +148,6 @@ func getDB(databaseConfig DatabaseConfig) (db *sql.DB, err error) {
 
 	return db, nil
 }
-
-// func createApp(appConfig ApplicationConfig, server *app.Server) (app.App, error) {
-// switch strings.ToLower(appConfig.Name) {
-// case "handgame":
-// 	handGameApp = handgame.NewHandGameApp(appConfig.Name, appConfig.RoutePrefix, server)
-// 	return handGameApp, nil
-
-// case "pong":
-// 	pongApp = pong.NewPongApp(appConfig.Name, appConfig.RoutePrefix, server)
-// 	return pongApp, nil
-
-// default:
-// 	return nil, errors.New("could not create app with the name " + appConfig.Name + ", app name not found")
-// }
-// }
 
 func loadConfig(filename string) (*Config, error) {
 	raw, err := os.ReadFile(filename)
@@ -201,40 +188,6 @@ func catchInterrupt() {
 
 	os.Exit(exitCodeInterrupt)
 }
-
-// func OldcatchInterrupt(am *app.AppsManager) {
-// 	channel := make(chan os.Signal, 1)
-
-// 	signal.Notify(channel, syscall.SIGINT)
-
-// 	<-channel
-// 	var appsStillRunning []string
-// 	appsStillRunning = make([]string, 0)
-
-// 	for _, app := range am.Apps {
-// 		if app.Stop() != nil {
-// 			slog.Error("Could not stop " + app.GetName())
-// 			appsStillRunning = append(appsStillRunning, app.GetName())
-// 		}
-// 	}
-
-// 	numApps := len(appsStillRunning)
-// 	if numApps > 0 {
-// 		var answer string
-// 		var err error
-// 		for answer == "" || answer != "y" && answer != "n" && err != nil {
-// 			slog.Warn("There are still running " + strconv.Itoa(numApps) + ", do you want to forcefully close them? (y/n)")
-// 			_, err = fmt.Scan(&answer)
-// 		}
-// 		if answer == "y" {
-// 			os.Exit(exitCodeInterrupt)
-// 		} else {
-// 			slog.Error("I dont know what to do...")
-// 		}
-// 	}
-
-// 	os.Exit(exitCodeInterrupt)
-// }
 
 func pprofRun() {
 	go func() {

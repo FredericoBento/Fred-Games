@@ -1,6 +1,11 @@
 package services
 
-import "github.com/FredericoBento/HandGame/internal/logger"
+import (
+	"net/http"
+
+	"github.com/FredericoBento/HandGame/internal/logger"
+	"github.com/FredericoBento/HandGame/internal/ws"
+)
 
 type Service interface {
 	// GetStatus() StatusChecker
@@ -15,4 +20,6 @@ type GameService interface {
 	GetStatus() StatusChecker
 	GetRoute() string
 	GetLogs() ([]logger.PrettyLogs, error)
+	HandleWebSocketConnection() http.HandlerFunc
+	ReadMessageHandler(client *ws.Client, message []byte)
 }

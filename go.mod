@@ -12,3 +12,8 @@ require (
 	golang.org/x/crypto v0.28.0
 	golang.org/x/net v0.30.0
 )
+
+require (
+	github.com/gorilla/websocket v1.5.3 // indirect
+	google.golang.org/protobuf v1.35.1 // indirect
+)

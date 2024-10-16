@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -40,4 +41,12 @@ func GetColumnsToUse(number int) string {
 		return "one"
 	}
 	return numberStr
+}
+
+func EncodeJSON(dataStruct any) ([]byte, error) {
+	data, err := json.Marshal(dataStruct)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

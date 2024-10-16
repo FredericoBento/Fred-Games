@@ -21,6 +21,10 @@ var (
 		middleware.SecureHeadersMiddleware,
 		middleware.AuthEssential,
 	)
+
+	standardWebsocketMiddlewares = middleware.StackMiddleware(
+		middleware.AuthEssential,
+	)
 )
 
 type ServerHandlers struct {
@@ -100,7 +104,6 @@ func (s *Server) Init() error {
 		return ErrServerCouldNotSetupRoutes
 	}
 
-	// 	}
 	return nil
 }
 
@@ -165,6 +168,12 @@ func (s *Server) SetupPongGameRoutes(routePrefix string) {
 	//We need to set the routes before the server listening
 	//This makes sure the routes only are allow after the game service is started
 	s.BlockRoutes(routePrefix)
+}
+
+func (s *Server) SetupPongGameWebsocketLogic(wsHandler http.HandlerFunc) {
+	wsHandler = http.HandlerFunc(wsHandler)
+
+	s.Router.Handle("/ws/pong", standardWebsocketMiddlewares(wsHandler))
 }
 
 func (s *Server) Run() error {

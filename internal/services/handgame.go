@@ -2,8 +2,10 @@ package services
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/FredericoBento/HandGame/internal/logger"
+	"github.com/FredericoBento/HandGame/internal/ws"
 )
 
 type HandGameService struct {
@@ -34,6 +36,16 @@ func (s *HandGameService) Start() error {
 	return nil
 }
 
+func (s *HandGameService) ReadMessageHandler(client *ws.Client, message []byte) {
+	s.Log.Info("Got Message: " + string(message) + " from " + client.Username)
+	return
+}
+
+func (s *HandGameService) HandleWebSocketConnection() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		return
+	}
+}
 func (s *HandGameService) Stop() error {
 	s.Status.SetInactive()
 	s.Log.Warn(s.Name + " Stopped")

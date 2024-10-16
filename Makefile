@@ -8,6 +8,9 @@ build: generate
 generate:
 	TEMPL_EXPERIMENT=rawgo templ generate
 
+proto:
+	protoc --go_out=. --go_opt=paths=source_relative internal/models/protomodels/*.proto
+
 run: build
 	@build/${BINARY_NAME}
 

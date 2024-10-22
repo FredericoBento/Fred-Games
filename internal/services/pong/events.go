@@ -8,14 +8,43 @@ type EventCreateRoomData struct {
 	Code string `json:"code"`
 }
 
-type EventJoinRoomData struct {
+type EventRoomCreatedData struct {
 	Code string `json:"code"`
 }
 
+type EventJoinRoomData struct {
+	Code   string `json:"code"`
+	Player string `json"player"`
+}
+
+type EventPlayerJoinedRoomData struct {
+	Code   string `json:"code"`
+	Player string `json"player"`
+}
+
+type EventJoinedRoomData struct {
+	Code   string `json:"code"`
+	Player string `json"player"`
+}
+
 const (
-	EventTypeMessage    = 1
-	EventTypeCreateRoom = 2
-	EventTypeJoinRoom   = 3
-	// EventTypePaddleMove         = 3
-	// EventTypePlayerDisconnected = 4
+	EventTypeMessage      = 1
+	EventTypeGameSettings = 11
+
+	EventTypeCreateRoom  = 21
+	EventTypeCreatedRoom = 22
+	EventTypeJoinRoom    = 23
+
+	EventTypeJoinedRoom       = 24
+	EventTypePlayerJoinedRoom = 25
+
+	EventTypePaddleUpPressed = 31
+	EventTypePaddleUpRelease = 32
+
+	EventTypePaddleDownPressed = 33
+	EventTypePaddleDownRelease = 34
+
+	EventTypeBallShot = 35
+
+	EventTypePlayerDisconnected = 4
 )

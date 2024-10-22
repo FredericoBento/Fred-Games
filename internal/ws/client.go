@@ -24,8 +24,8 @@ const (
 	// writeWait      = 10 * time.Second
 	// pongWait       = 15 * time.Second
 	writeWait      = 10 * time.Second
-	pongWait       = 60 * time.Millisecond
-	pingPeriod     = (pongWait * 9) / 10
+	pongWait       = 1 * time.Second
+	pingPeriod     = (pongWait * 9) / 20
 	maxMessageSize = 512
 )
 
@@ -39,6 +39,7 @@ func NewClient(conn *websocket.Conn, username string) *Client {
 }
 
 func (client *Client) SendEvent(e *Event) {
+	slog.Info("Sent event")
 	client.Event <- e
 }
 
@@ -113,6 +114,7 @@ func (client *Client) WritePump() {
 			if err != nil {
 				return
 			}
+			// if event.Data =
 			eventBytes, err := utils.EncodeJSON(event)
 			if err != nil {
 				slog.Error("Error while marshiling: " + err.Error())

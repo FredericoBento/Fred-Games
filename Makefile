@@ -1,7 +1,7 @@
 BINARY_NAME=handgame.out
 .PHONY: build
 	
-build: generate
+build: generate bundle
 	@go build -o build/${BINARY_NAME} cmd/main.go
 	@chmod +x build/${BINARY_NAME}
 
@@ -10,6 +10,9 @@ generate:
 
 proto:
 	protoc --go_out=. --go_opt=paths=source_relative internal/models/protomodels/*.proto
+
+bundle:
+	@npx tsc
 
 run: build
 	@build/${BINARY_NAME}

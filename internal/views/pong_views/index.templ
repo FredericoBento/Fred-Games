@@ -13,27 +13,31 @@ templ Home() {
 }
 
 templ Menu() {
-		<div class="field has-addons has-addons-centered">
-			<div class="control">
-				<input class="input" id="code" name="code" type="text" placeholder="Code">
-			</div>
-			<div class="control">
-				<button id="joinBtn" class="button is-info">
-					Join
-				</button>
-			</div>
+	<script>var exports = {};</script>
+	<div class="field has-addons has-addons-centered" id="room-menu">
+		<div class="control">
+			<input class="input" id="code" name="code" type="text" placeholder="Code">
 		</div>
-	<div class="control">
-		<button class="button is-success" hx-post="/pong/create-game/" id="createBtn">
-			Create Game					
-		</button>
+		<div class="control">
+			<button id="joinBtn" class="button is-info">
+				Join
+			</button>
+		</div>
+		<div class="control">
+			<button class="button is-success" id="createBtn">
+				Create Game					
+			</button>
+		</div>
 	</div>
-	@Canvas()
-	<script defer src="/assets/scripts/pong.js" type="text/javascript"></script>
+	<div class="painel" id="roomInfo"></div>
+	<div id="canvasDiv">
+		@Canvas()
+	</div>
+	<script defer src="/assets/scripts/dist/ponggame.js" type="module"></script>
 }
 
 templ Canvas() {
-	<div id="gameCanvas"></div>
+		<canvas id="gameCanvas" width="640" height="360"></canvas>
 }
 
 templ OldMenu() {

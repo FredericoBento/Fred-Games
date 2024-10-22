@@ -53,6 +53,7 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 		slog.Error("Invalid message no event: " + string(message))
 		return
 	}
+	slog.Info("Got Event")
 	event.From = client.Username
 
 	switch event.Type {
@@ -64,6 +65,7 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 			return
 		}
 		slog.Info("Got Message from " + client.Username + ": " + message.Message)
+
 	case EventTypeCreateRoom:
 		code := utils.RandomString(4)
 		_, exist := s.Hub.Rooms[code]
@@ -72,25 +74,71 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 			_, exist = s.Hub.Rooms[code]
 		}
 		room := ws.NewRoom(code, 2)
+		s.Hub.Rooms[code] = room
+
 		err := room.AddClient(client)
 		if err != nil {
 			client.SendErrorEvent(&event)
 			return
 		}
-		client.RoomCode = code
-		// event.RoomCode = code
-		// client.SendSimpleMessage("/joined")
+		createdRoomEvent := ws.NewEvent(EventTypeCreatedRoom, room.Code, "", client.Username)
+
+		eventData := EventRoomCreatedData{
+			Code: room.Code,
+		}
+		bytes, err := utils.EncodeJSON(eventData)
+		if err != nil {
+			client.SendErrorEventWithMessage(&event, err.Error())
+			return
+		}
+		createdRoomEvent.Data = bytes
+		client.SendEvent(&createdRoomEvent)
 		return
+
 	case EventTypeJoinRoom:
 		data := EventJoinRoomData{}
-		err := json.Unmarshal([]byte(event.Data), data)
+		err := json.Unmarshal(event.Data, &data)
 		if err != nil {
 			slog.Error("Invalid data for JoinRoomData")
 			return
 		}
 		if _, ok := s.Hub.Rooms[data.Code]; !ok {
 			client.SendErrorEventWithMessage(&event, ErrInvalidCode.Error())
+			return
 		}
+		room := s.Hub.Rooms[data.Code]
+		var otherClientUsername string
+		for _, c := range room.Clients {
+			if c.Username != client.Username {
+				otherClientUsername = c.Username
+				eventData := EventPlayerJoinedRoomData{
+					Code:   data.Code,
+					Player: client.Username,
+				}
+				slog.Info(eventData.Code)
+				bytes, err := utils.EncodeJSON(eventData)
+				if err != nil {
+					c.SendErrorEventWithMessage(&event, err.Error())
+					return
+				}
+				event := ws.NewEvent(EventTypePlayerJoinedRoom, data.Code, "server", c.Username)
+				event.Data = bytes
+				c.SendEvent(&event)
+			}
+		}
+		eventData := EventJoinedRoomData{
+			Code:   data.Code,
+			Player: otherClientUsername,
+		}
+		bytes, err := utils.EncodeJSON(eventData)
+		if err != nil {
+			client.SendErrorEventWithMessage(&event, err.Error())
+			return
+		}
+		event := ws.NewEvent(EventTypeJoinedRoom, data.Code, "server", client.Username)
+		event.Data = bytes
+		client.SendEvent(&event)
+		return
 
 	default:
 		slog.Error("Unknown event received")

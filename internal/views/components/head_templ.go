@@ -26,14 +26,14 @@ func Head(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><link rel=\"icon\" type=\"image/x-svg\" href=\"/assets/svgs/favicon.svg\"><link rel=\"stylesheet\" href=\"/assets/css/style.css\" type=\"text/css\"><link rel=\"stylesheet\" href=\"/assets/css/bulma.min.css\" type=\"text/css\"><link rel=\"manifest\" href=\"/assets/manifest.json\"><script defer src=\"/assets/scripts/modal.js\"></script><script defer src=\"/assets/scripts/bulma_utils.js\"></script><script defer src=\"/assets/scripts/htmx.min.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8.x/dist/pixi.min.js\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><link rel=\"icon\" type=\"image/x-svg\" href=\"/assets/svgs/favicon.svg\"><link rel=\"stylesheet\" href=\"/assets/css/style.css\" type=\"text/css\"><link rel=\"stylesheet\" href=\"/assets/css/bulma.min.css\" type=\"text/css\"><link rel=\"manifest\" href=\"/assets/manifest.json\"><script defer src=\"/assets/scripts/modal.js\"></script><script defer src=\"/assets/scripts/bulma_utils.js\"></script><script defer src=\"/assets/scripts/htmx.min.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/head.templ`, Line: 18, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/head.templ`, Line: 20, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

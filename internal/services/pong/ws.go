@@ -14,6 +14,9 @@ type Direction int
 const (
 	DirectionLeft  = 0
 	DirectionRight = 1
+
+	CanvasWidth  = 640
+	CanvasHeight = 360
 )
 
 type Ball struct {
@@ -34,6 +37,7 @@ type Paddle struct {
 	position models.Vector `json:"position"`
 	length   Pixel         `json:"length"`
 	width    Pixel         `json:"width"`
+	speed    float32       `json:"speed"`
 }
 
 type PongGameState struct {
@@ -91,15 +95,6 @@ func NewPongGameState(p1 *Player, p2 *Player, ball *Ball) *PongGameState {
 		hasStarted: false,
 	}
 }
-
-// func (state *PongGameState) encodeProto() ([]byte, error) {
-// data, err := proto.Marshal(state)
-// if err != nil {
-// slog.Error("could not enconde pong game state to protobuf")
-// return nil, err
-// }
-// return data, nil
-// }
 
 func (state *PongGameState) encodeJSON() ([]byte, error) {
 	data, err := json.Marshal(state)

@@ -6,7 +6,7 @@ type EventType int
 
 type Event struct {
 	Type     EventType       `json:"type"`
-	Data     json.RawMessage `json:"data"`
+	Data     json.RawMessage `json:"data,omitempty"`
 	RoomCode string          `json:"roomCode",omitempty`
 	From     string          `json:"from,omitempty"`
 	To       string          `json:"to",omitempty`

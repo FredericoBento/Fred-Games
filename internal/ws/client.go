@@ -54,15 +54,15 @@ func (client *Client) SendErrorEvent(e *Event) {
 
 func (client *Client) SendErrorEventWithMessage(e *Event, message string) {
 	type Message struct {
-		message string `json:"message"`
+		Message string `json:"message"`
 	}
-	m, err := utils.EncodeJSON(Message{message: message})
+	m, err := utils.EncodeJSON(Message{Message: message})
 	if err != nil {
 		slog.Error("Could not send message in error event with message")
 		return
 	}
 	e.IsError = true
-	e.From = "server"
+	e.From = ""
 	e.To = client.Username
 	e.Data = m
 	e.RoomCode = client.RoomCode
@@ -117,7 +117,7 @@ func (client *Client) WritePump() {
 			// if event.Data =
 			eventBytes, err := utils.EncodeJSON(event)
 			if err != nil {
-				slog.Error("Error while marshiling: " + err.Error())
+				slog.Error("Error while marshiling: "+err.Error(), event.Type, event.To)
 				return
 			}
 			w.Write(eventBytes)

@@ -9,7 +9,6 @@ import (
 	"github.com/FredericoBento/HandGame/internal/logger"
 	"github.com/FredericoBento/HandGame/internal/middleware"
 	"github.com/FredericoBento/HandGame/internal/services"
-	"github.com/FredericoBento/HandGame/internal/utils"
 	"github.com/FredericoBento/HandGame/internal/ws"
 	"github.com/gorilla/websocket"
 )
@@ -58,96 +57,21 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 
 	switch event.Type {
 	case EventTypeMessage:
-		message := EventMessage{}
-		err := json.Unmarshal(event.Data, &message)
-		if err != nil {
-			slog.Error("Invalid data for EventMessage: " + err.Error())
-			return
-		}
-		slog.Info("Got Message from " + client.Username + ": " + message.Message)
+		s.HandleEventMessage(&event, client)
+		return
 
 	case EventTypeCreateRoom:
-		code := utils.RandomString(4)
-		_, exist := s.Hub.Rooms[code]
-		for exist {
-			code = utils.RandomString(4)
-			_, exist = s.Hub.Rooms[code]
-		}
-		room := ws.NewRoom(code, 2)
-		s.Hub.Rooms[code] = room
-
-		err := room.AddClient(client)
-		if err != nil {
-			client.SendErrorEvent(&event)
-			return
-		}
-		createdRoomEvent := ws.NewEvent(EventTypeCreatedRoom, room.Code, "", client.Username)
-
-		eventData := EventRoomCreatedData{
-			Code: room.Code,
-		}
-		bytes, err := utils.EncodeJSON(eventData)
-		if err != nil {
-			client.SendErrorEventWithMessage(&event, err.Error())
-			return
-		}
-		createdRoomEvent.Data = bytes
-		client.SendEvent(&createdRoomEvent)
+		s.HandleEventCreateRoom(&event, client)
 		return
 
 	case EventTypeJoinRoom:
-		data := EventJoinRoomData{}
-		err := json.Unmarshal(event.Data, &data)
-		if err != nil {
-			slog.Error("Invalid data for JoinRoomData")
-			return
-		}
-		if _, ok := s.Hub.Rooms[data.Code]; !ok {
-			client.SendErrorEventWithMessage(&event, ErrInvalidCode.Error())
-			return
-		}
-		room := s.Hub.Rooms[data.Code]
-		var otherClientUsername string
-		for _, c := range room.Clients {
-			if c.Username != client.Username {
-				otherClientUsername = c.Username
-				eventData := EventPlayerJoinedRoomData{
-					Code:   data.Code,
-					Player: client.Username,
-				}
-				slog.Info(eventData.Code)
-				bytes, err := utils.EncodeJSON(eventData)
-				if err != nil {
-					c.SendErrorEventWithMessage(&event, err.Error())
-					return
-				}
-				event := ws.NewEvent(EventTypePlayerJoinedRoom, data.Code, "server", c.Username)
-				event.Data = bytes
-				c.SendEvent(&event)
-			}
-		}
-		eventData := EventJoinedRoomData{
-			Code:   data.Code,
-			Player: otherClientUsername,
-		}
-		bytes, err := utils.EncodeJSON(eventData)
-		if err != nil {
-			client.SendErrorEventWithMessage(&event, err.Error())
-			return
-		}
-		event := ws.NewEvent(EventTypeJoinedRoom, data.Code, "server", client.Username)
-		event.Data = bytes
-		client.SendEvent(&event)
+		s.HandleEventJoinRoom(&event, client)
 		return
 
 	default:
 		slog.Error("Unknown event received")
 		return
 	}
-}
-
-func (s *PongService) JoinRoom() {
-
 }
 
 func (s *PongService) HandleWebSocketConnection() http.HandlerFunc {

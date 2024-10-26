@@ -395,12 +395,7 @@ window.addEventListener("keydown", async (event) => {
   }
 });
 
-
-let prevPaddleY = 360/2// Store initial position
-
 function updatePaddlePosition() {
-  // if (game_state.p1.paddle.position.y !== prevPaddleY) { 
-    // Update event data only if position changed
     const ev: SocketEvent = {
       type: EventType.PaddleMoved,
       data: {
@@ -408,57 +403,7 @@ function updatePaddlePosition() {
       }
     };
     send_event(ev);
-    // prevPaddleY = game_state.p1.paddle.position.y; // Store previous position
   }
-
-  // Schedule next update (optional)
-  // requestAnimationFrame(updatePaddlePosition);
-
-// window.addEventListener("keypress", async (event) => {
-//     if(event.key == "w" && game_state.status == GameStatus.Running) { 
-//         game_state.p1.paddle.keys.up = true
-//         const ev: SocketEvent = {
-//             type: EventType.PaddleMoved,
-//             data: {
-//                 y: game_state.p1.paddle.position.y,
-//             }
-//         }
-//         let counter = 20
-//         while(game_state.p1.paddle.keys.up) {
-//             if (counter == 0) {
-//                 await sleep(200)
-//             }
-//             counter = 20
-//             while(counter > 0) {
-//                 ev.data.y = game_state.p1.paddle.position.y   
-//                 send_event(ev)
-//                 counter--;
-//             }
-//         }
-//     }
-
-//     if(event.key == "s" && game_state.status == GameStatus.Running) { 
-//         game_state.p1.paddle.keys.down = true
-//         const ev: SocketEvent = {
-//             type: EventType.PaddleMoved,
-//             data: {
-//                 y: game_state.p1.paddle.position.y,
-//             }
-//         }
-//         let counter = 20
-//         while(game_state.p1.paddle.keys.down) {
-//             if (counter == 0) {
-//                 await sleep(200)
-//             }
-//             counter = 20
-//             while(counter > 0) {
-//                 ev.data.y = game_state.p1.paddle.position.y   
-//                 send_event(ev)
-//                 counter--;
-//             }
-//         }
-//     }
-// })
 
 window.addEventListener("keyup", (event) => {
     if(event.key == "w" && game_state.status == GameStatus.Running) { 
@@ -504,13 +449,6 @@ function animate(time: any) {
 }
 
 socket.addEventListener("open", (e) => {
-    const msg_event: SocketEvent = {
-        type: EventType.Message,
-        data: {
-            message: "Hello Server",
-        }
-    }
-    send_event(msg_event)
     measure_latency()
 });
 

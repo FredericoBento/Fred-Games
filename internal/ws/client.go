@@ -21,12 +21,10 @@ type ReadMessageHandler func(*Client, []byte)
 type ReadEventHandler func(*Client, []byte)
 
 const (
-	// writeWait      = 10 * time.Second
-	// pongWait       = 15 * time.Second
-	writeWait      = 10 * time.Second
-	pongWait       = 1 * time.Second
+	writeWait      = 34 * time.Millisecond
+	pongWait       = 52 * time.Millisecond
 	pingPeriod     = (pongWait * 9) / 20
-	maxMessageSize = 512
+	maxMessageSize = 128
 )
 
 func NewClient(conn *websocket.Conn, username string) *Client {
@@ -39,7 +37,7 @@ func NewClient(conn *websocket.Conn, username string) *Client {
 }
 
 func (client *Client) SendEvent(e *Event) {
-	slog.Info("Sent event")
+	// slog.Info("Sent event")
 	client.Event <- e
 }
 
@@ -114,21 +112,12 @@ func (client *Client) WritePump() {
 			if err != nil {
 				return
 			}
-			// if event.Data =
 			eventBytes, err := utils.EncodeJSON(event)
 			if err != nil {
 				slog.Error("Error while marshiling: "+err.Error(), event.Type, event.To)
 				return
 			}
 			w.Write(eventBytes)
-			// slog.Info("Sent Message to " + client.Username + " with: " + string(message.Data) + " and " + string(message.Errors))
-			// message.PrintMessage()
-			// messageJson, err := json.Marshal(message)
-			// if err != nil {
-			// slog.Error("Error while marshiling: " + err.Error())
-			// return
-			// }
-			// w.Write(messageJson)
 
 			n := len(client.Event)
 			for i := 0; i < n; i++ {

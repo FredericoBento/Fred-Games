@@ -22,8 +22,9 @@ type PongService struct {
 
 var (
 	upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		CheckOrigin:     func(r *http.Request) bool { return true },
+		ReadBufferSize:  512,
+		WriteBufferSize: 512,
 	}
 
 	ErrInvalidCode = errors.New("Invalid Code, Room does not exists")
@@ -52,10 +53,13 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 		slog.Error("Invalid message no event: " + string(message))
 		return
 	}
-	slog.Info("Got Event")
 	event.From = client.Username
 
 	switch event.Type {
+	case ws.EventTypePing:
+		ws.HandleEventPing(&event, client)
+		return
+
 	case EventTypeMessage:
 		s.HandleEventMessage(&event, client)
 		return
@@ -66,6 +70,21 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 
 	case EventTypeJoinRoom:
 		s.HandleEventJoinRoom(&event, client)
+		return
+	case EventTypePaddleUpPressed:
+		s.HandleEventPaddleMove(&event, client)
+		return
+	case EventTypePaddleDownPressed:
+		s.HandleEventPaddleMove(&event, client)
+		return
+	case EventTypePaddleUpRelease:
+		s.HandleEventPaddleMove(&event, client)
+		return
+	case EventTypePaddleDownRelease:
+		s.HandleEventPaddleMove(&event, client)
+		return
+	case EventTypePaddleMoved:
+		s.HandleEventPaddleMove(&event, client)
 		return
 
 	default:
@@ -90,6 +109,18 @@ func (s *PongService) HandleWebSocketConnection() http.HandlerFunc {
 
 		client := ws.NewClient(conn, user.Username)
 		s.Hub.Register <- client
+
+		// go func() {
+		// 	ticker := time.NewTicker(5 * time.Second)
+		// 	defer ticker.Stop()
+		// 	for {
+		// 		<-ticker.C
+		// 		if err := client.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+		// 			s.Log.Error("Failed to send ping:", err)
+		// 			return
+		// 		}
+		// 	}
+		// }()
 
 		go client.ReadPump(s.Hub, s.ReadMessageHandler)
 		go client.WritePump()

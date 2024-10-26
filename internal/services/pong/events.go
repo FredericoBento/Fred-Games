@@ -36,6 +36,10 @@ type EventJoinedRoomData struct {
 	Player string `json:"player"`
 }
 
+type EventPaddleMoveData struct {
+	Paddle_y float32 `json:"y"`
+}
+
 const (
 	EventTypeGameSettings = 0
 	EventTypeMessage      = 1
@@ -53,7 +57,9 @@ const (
 	EventTypePaddleDownPressed = 33
 	EventTypePaddleDownRelease = 34
 
-	EventTypeBallShot = 35
+	EventTypePaddleMoved = 35
+
+	EventTypeBallShot = 36
 
 	EventTypePlayerDisconnected = 4
 )
@@ -99,6 +105,7 @@ func (s *PongService) HandleEventCreateRoom(event *ws.Event, client *ws.Client) 
 	}
 	createdRoomEvent.Data = bytes
 	client.SendEvent(&createdRoomEvent)
+	room.AddClient(client)
 }
 
 func (s *PongService) HandleEventJoinRoom(event *ws.Event, client *ws.Client) {
@@ -154,4 +161,33 @@ func (s *PongService) HandleEventJoinRoom(event *ws.Event, client *ws.Client) {
 	joinedEvent := ws.NewSimpleEvent(EventTypeJoinedRoom, client.Username)
 	joinedEvent.Data = bytes
 	client.SendEvent(&joinedEvent)
+}
+
+func (s *PongService) HandleEventPaddleMove(event *ws.Event, client *ws.Client) {
+	data := EventPaddleMoveData{}
+	err := json.Unmarshal(event.Data, &data)
+	if err != nil {
+		slog.Error("Invalid data for paddle pressed event")
+		client.SendErrorEventWithMessage(event, ErrServerError.Error())
+		return
+	}
+	room, ok := s.Hub.Rooms[client.RoomCode]
+	if !ok {
+		client.SendErrorEventWithMessage(event, "Invalid Room")
+		return
+	}
+	bytes, err := utils.EncodeJSON(data)
+	if err != nil {
+		client.SendErrorEventWithMessage(event, err.Error())
+		return
+	}
+	for _, c := range room.Clients {
+		if c.Username != client.Username {
+			moveEvent := ws.NewSimpleEvent(event.Type, c.Username)
+			moveEvent.Data = bytes
+			go func(targetClient *ws.Client, moveEvent ws.Event) {
+				targetClient.SendEvent(&moveEvent)
+			}(c, moveEvent)
+		}
+	}
 }

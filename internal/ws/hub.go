@@ -50,6 +50,7 @@ func (room *Room) AddClient(client *Client) error {
 		return ErrClientAlreadyInRoom
 	}
 	room.Clients[client.Username] = client
+	client.RoomCode = room.Code
 	return nil
 }
 

@@ -44,12 +44,6 @@ enum EventType {
     JoinedRoom = 24,
     PlayerJoinedRoom = 25,
 
-    PaddleUpPressed = 31,
-    PaddleUpRelease = 32,
-
-    PaddleDownPressed = 33,
-    PaddleDownRelease = 34,
-
     PaddleMoved = 35,
 
     BallShot = 36,
@@ -147,7 +141,7 @@ class Paddle {
             this.position.y += speed * deltaTime
         }
 
-        this.position.y = Math.max(0, Math.min(this.position.y, canvas_height - this.length));
+        this.position.y = Math.max(25, Math.min(this.position.y, (canvas_height - 25) - this.length));
         this.position.y  = Math.round(this.position.y)
     }
 
@@ -265,12 +259,9 @@ class GameState {
        this.p1.paddle = this.p2.paddle 
        this.p2.paddle = aux
        this.swap_players_position = true
-    
-       this.p1.paddle.speed = 300
-       this.p2.paddle.speed = 200
 
        let label_aux = this.p1.label.x
-       this.p1.label.x = this.p2.label.x
+       this.p1.label.x = this.width - this.p1.get_label_width(this.ctx) - 10
        this.p2.label.x = label_aux
 
        label_aux = this.p1.label.y
@@ -278,11 +269,9 @@ class GameState {
        this.p2.label.y = label_aux
     }
 
-    update_paddles(deltaTime: number) {
+    update_paddle_p1(deltaTime: number) {
         this.p1.paddle.update(this.height, deltaTime)
-        // this.p2.paddle.update(this.height, deltaTime)
     }
-    
 }
 
 const canvas_width = 640
@@ -325,10 +314,10 @@ function main(): void{
     let offscreen_ctx = offscreen.getContext("2d")
 
     const paddle: Paddle = new Paddle({x: 30, y: canvas_height/2 }, 40, 4, 300)
-    const paddle2: Paddle = new Paddle({x: canvas_width-30, y: canvas_height/2 }, 40, 4, 200)
+    const paddle2: Paddle = new Paddle({x: canvas_width-30, y: canvas_height/2 }, 40, 4, 300)
 
     const player1: Player = new Player("User", paddle, true)
-    const player2: Player = new Player("Waiting...", paddle2, false)
+    const player2: Player = new Player("", paddle2, false)
     
     const ball: Ball = new Ball({x: canvas_width/2, y: canvas_height/2}, 7, 6, Direction.Left); 
 
@@ -348,14 +337,28 @@ function main(): void{
 }
 
 function draw_state(state: GameState): void {
-    state.ctx.clearRect(0, 0, state.width, state.height);
+    state.ctx.fillStyle = "#36454F" 
+    state.ctx.fillRect(0, 0, state.width, 25);
 
-    state.ctx.fillStyle = "blue"
+    state.ctx.fillRect(0, state.height - 25, state.width, 25);
+
+    state.ctx.fillStyle = "#91A3B0"
+    state.ctx.fillRect(0, 25, state.width, state.height - 50);
+
+    state.ctx.fillStyle = "white"
+
+    state.ctx.strokeStyle = "white"
+    state.ctx.setLineDash([10, 5]);
+    state.ctx.beginPath()
+    state.ctx.lineTo(state.width / 2, 25)
+    state.ctx.lineTo(state.width / 2, state.height - 25)
+    state.ctx.stroke()
+
 
     state.p1.draw_label(state.ctx)
     state.p2.draw_label(state.ctx)
 
-    state.draw_code()
+    // state.draw_code()
 
     state.p1.paddle.draw(state.ctx)
     state.p2.paddle.draw(state.ctx)
@@ -369,7 +372,7 @@ function draw_state(state: GameState): void {
 }
 
 function update(deltaTime: any) {
-    game_state.update_paddles(deltaTime)
+    game_state.update_paddle_p1(deltaTime)
 }
 
 window.addEventListener("keydown", async (event) => {
@@ -378,32 +381,22 @@ window.addEventListener("keydown", async (event) => {
       game_state.p1.paddle.keys.up = true;
       let counter = 40
       while(game_state.p1.paddle.keys.up || counter > 0) {
-          await sleep(ms)
-          updatePaddlePosition();
+          await sleep(20)
+          paddle_moved();
           counter--
       }
     } else if (event.key === "s") {
       game_state.p1.paddle.keys.down = true;
       let counter = 40
       while(game_state.p1.paddle.keys.down || counter > 0) {
-          await sleep(16)
-          updatePaddlePosition();
+          await sleep(20)
+          paddle_moved();
           counter--
       }
     }
 
   }
 });
-
-function updatePaddlePosition() {
-    const ev: SocketEvent = {
-      type: EventType.PaddleMoved,
-      data: {
-        y: game_state.p1.paddle.position.y,
-      }
-    };
-    send_event(ev);
-  }
 
 window.addEventListener("keyup", (event) => {
     if(event.key == "w" && game_state.status == GameStatus.Running) { 
@@ -448,7 +441,7 @@ function animate(time: any) {
     raf = window.requestAnimationFrame(animate);
 }
 
-socket.addEventListener("open", (e) => {
+socket.addEventListener("open", () => {
     measure_latency()
 });
 
@@ -492,18 +485,6 @@ function handle_event(event: SocketEvent): void {
         case EventType.PaddleMoved:
             handle_paddle_move(event)
             break;
-        case EventType.PaddleUpPressed:
-            handle_paddle_up_pressed(event)
-            break;
-        case EventType.PaddleDownPressed:
-            handle_paddle_down_pressed(event)
-            break;
-        case EventType.PaddleUpRelease:
-            handle_paddle_up_release(event)
-            break;
-        case EventType.PaddleDownRelease:
-            handle_paddle_down_release(event)
-            break;
         default:
             console.log("Unknown Event type: " + event.type)
             console.log(event)
@@ -534,9 +515,7 @@ function handle_pong(event: SocketEvent): void {
     if (event.data) {
         const endTime = performance.now();
         const responseTime = endTime - event.data.timestamp;
-        console.clear()
         ms = responseTime
-        console.log(`ms: ${ms}`);
 
         setTimeout(measure_latency, 4000);
     }
@@ -545,7 +524,7 @@ function handle_pong(event: SocketEvent): void {
 function handle_joined(event: SocketEvent): void { 
     if(event.data) {
         console.log(event)
-        room_form.style.visibility = "hidden"
+        room_form.style.display = "none"
         var roomTitle = document.createElement("h1")
         roomTitle.classList.add("subtitle")
         roomTitle.classList.add("is-4")
@@ -556,6 +535,7 @@ function handle_joined(event: SocketEvent): void {
         if (event.to) {
             game_state.p1.username = event.to
         }
+
         game_state.p2.isConnected = true
         game_state.p2.username = event.data.player        
         game_state.code = event.data.code
@@ -570,6 +550,7 @@ function handle_player_joined(event: SocketEvent): void {
     if (event.data) {
         game_state.p2.isConnected = true
         game_state.p2.username = event.data.player
+        game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10
         game_state.status = GameStatus.Running
     } else {
         console.log("no data", event)
@@ -583,43 +564,13 @@ function handle_room_created(event: SocketEvent): void {
     }
 
     game_state.p1.isConnected = true
-    room_form.style.visibility = "hidden"
+    room_form.style.display = "none"
     var roomTitle = document.createElement("h1")
     roomTitle.classList.add("subtitle")
     roomTitle.classList.add("is-4")
     roomTitle.innerHTML = "Code: " + event.data.code    
     room_info_div.insertAdjacentElement("afterbegin", roomTitle)
     canvas.style.visibility = "visible"
-}
-
-async function handle_paddle_up_pressed(event: SocketEvent): Promise<void> {
-    // if (event.data) {
-        // game_state.p2.paddle.position.y = event.data.y
-    // }
-    game_state.p2.paddle.keys.up = true
-}
-
-
-async function handle_paddle_down_pressed(event: SocketEvent): Promise<void> {
-    // if (event.data){
-        // game_state.p2.paddle.position.y = event.data.y
-    // }
-    game_state.p2.paddle.keys.down = true
-}
-
-async function handle_paddle_up_release(event: SocketEvent): Promise<void> {
-    if (event.data){
-        game_state.p2.paddle.position.y = event.data.y
-    }
-    game_state.p2.paddle.keys.up = false
-}
-
-
-async function handle_paddle_down_release(event: SocketEvent): Promise<void> {
-    if (event.data){
-        game_state.p2.paddle.position.y = event.data.y
-    }
-    game_state.p2.paddle.keys.down = false
 }
 
 function handle_paddle_move(event: SocketEvent): void {
@@ -659,56 +610,14 @@ function join_game_error(event: SocketEvent) {
 }
 
 function paddle_moved(): void {
-    const event: SocketEvent = {
+    const ev: SocketEvent = {
         type: EventType.PaddleMoved,
         data: {
             y: game_state.p1.paddle.position.y,
         }
-    }
-    send_event(event);
-
+    };
+    send_event(ev);
 }
-
-function pressed_up(): void {
-    const event: SocketEvent = {
-        type: EventType.PaddleUpPressed,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    }
-    send_event(event);
-}
-function release_up(): void {
-    const event: SocketEvent = {
-        type: EventType.PaddleUpRelease,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    }
-    send_event(event);
-}
-
-function pressed_down(): void {
-    const event: SocketEvent = {
-        type: EventType.PaddleDownPressed,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    }
-    send_event(event);
-}
-
-function release_down(): void {
-    const event: SocketEvent = {
-        type: EventType.PaddleDownRelease,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    }
-    send_event(event);
-}
-
-
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));

@@ -23,10 +23,6 @@ var EventType;
     EventType[EventType["JoinRoom"] = 23] = "JoinRoom";
     EventType[EventType["JoinedRoom"] = 24] = "JoinedRoom";
     EventType[EventType["PlayerJoinedRoom"] = 25] = "PlayerJoinedRoom";
-    EventType[EventType["PaddleUpPressed"] = 31] = "PaddleUpPressed";
-    EventType[EventType["PaddleUpRelease"] = 32] = "PaddleUpRelease";
-    EventType[EventType["PaddleDownPressed"] = 33] = "PaddleDownPressed";
-    EventType[EventType["PaddleDownRelease"] = 34] = "PaddleDownRelease";
     EventType[EventType["PaddleMoved"] = 35] = "PaddleMoved";
     EventType[EventType["BallShot"] = 36] = "BallShot";
     EventType[EventType["PlayerDisconnected"] = 4] = "PlayerDisconnected";
@@ -90,7 +86,7 @@ class Paddle {
         if (keys.down) {
             this.position.y += speed * deltaTime;
         }
-        this.position.y = Math.max(0, Math.min(this.position.y, canvas_height - this.length));
+        this.position.y = Math.max(25, Math.min(this.position.y, (canvas_height - 25) - this.length));
         this.position.y = Math.round(this.position.y);
     }
     move(y) {
@@ -167,18 +163,15 @@ class GameState {
         this.p1.paddle = this.p2.paddle;
         this.p2.paddle = aux;
         this.swap_players_position = true;
-        this.p1.paddle.speed = 300;
-        this.p2.paddle.speed = 200;
         let label_aux = this.p1.label.x;
-        this.p1.label.x = this.p2.label.x;
+        this.p1.label.x = this.width - this.p1.get_label_width(this.ctx) - 10;
         this.p2.label.x = label_aux;
         label_aux = this.p1.label.y;
         this.p1.label.y = this.p2.label.y;
         this.p2.label.y = label_aux;
     }
-    update_paddles(deltaTime) {
+    update_paddle_p1(deltaTime) {
         this.p1.paddle.update(this.height, deltaTime);
-        // this.p2.paddle.update(this.height, deltaTime)
     }
 }
 const canvas_width = 640;
@@ -209,9 +202,9 @@ function main() {
     const offscreen = new OffscreenCanvas(canvas_width, canvas_height);
     let offscreen_ctx = offscreen.getContext("2d");
     const paddle = new Paddle({ x: 30, y: canvas_height / 2 }, 40, 4, 300);
-    const paddle2 = new Paddle({ x: canvas_width - 30, y: canvas_height / 2 }, 40, 4, 200);
+    const paddle2 = new Paddle({ x: canvas_width - 30, y: canvas_height / 2 }, 40, 4, 300);
     const player1 = new Player("User", paddle, true);
-    const player2 = new Player("Waiting...", paddle2, false);
+    const player2 = new Player("", paddle2, false);
     const ball = new Ball({ x: canvas_width / 2, y: canvas_height / 2 }, 7, 6, Direction.Left);
     if (ctx == null || offscreen_ctx == null) {
         console.log("Error: Could not put canvas context to work");
@@ -225,11 +218,21 @@ function main() {
     raf = requestAnimationFrame(animate);
 }
 function draw_state(state) {
-    state.ctx.clearRect(0, 0, state.width, state.height);
-    state.ctx.fillStyle = "blue";
+    state.ctx.fillStyle = "#36454F";
+    state.ctx.fillRect(0, 0, state.width, 25);
+    state.ctx.fillRect(0, state.height - 25, state.width, 25);
+    state.ctx.fillStyle = "#91A3B0";
+    state.ctx.fillRect(0, 25, state.width, state.height - 50);
+    state.ctx.fillStyle = "white";
+    state.ctx.strokeStyle = "white";
+    state.ctx.setLineDash([10, 5]);
+    state.ctx.beginPath();
+    state.ctx.lineTo(state.width / 2, 25);
+    state.ctx.lineTo(state.width / 2, state.height - 25);
+    state.ctx.stroke();
     state.p1.draw_label(state.ctx);
     state.p2.draw_label(state.ctx);
-    state.draw_code();
+    // state.draw_code()
     state.p1.paddle.draw(state.ctx);
     state.p2.paddle.draw(state.ctx);
     state.ctx.fillStyle = "yellow";
@@ -237,7 +240,7 @@ function draw_state(state) {
     state.ball.draw(state.ctx);
 }
 function update(deltaTime) {
-    game_state.update_paddles(deltaTime);
+    game_state.update_paddle_p1(deltaTime);
 }
 window.addEventListener("keydown", async (event) => {
     if (game_state.status === GameStatus.Running) {
@@ -245,8 +248,8 @@ window.addEventListener("keydown", async (event) => {
             game_state.p1.paddle.keys.up = true;
             let counter = 40;
             while (game_state.p1.paddle.keys.up || counter > 0) {
-                await sleep(ms);
-                updatePaddlePosition();
+                await sleep(20);
+                paddle_moved();
                 counter--;
             }
         }
@@ -254,22 +257,13 @@ window.addEventListener("keydown", async (event) => {
             game_state.p1.paddle.keys.down = true;
             let counter = 40;
             while (game_state.p1.paddle.keys.down || counter > 0) {
-                await sleep(16);
-                updatePaddlePosition();
+                await sleep(20);
+                paddle_moved();
                 counter--;
             }
         }
     }
 });
-function updatePaddlePosition() {
-    const ev = {
-        type: EventType.PaddleMoved,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    };
-    send_event(ev);
-}
 window.addEventListener("keyup", (event) => {
     if (event.key == "w" && game_state.status == GameStatus.Running) {
         game_state.p1.paddle.keys.up = false;
@@ -306,7 +300,7 @@ function animate(time) {
     lastTime = time;
     raf = window.requestAnimationFrame(animate);
 }
-socket.addEventListener("open", (e) => {
+socket.addEventListener("open", () => {
     measure_latency();
 });
 socket.addEventListener("message", (e) => {
@@ -344,18 +338,6 @@ function handle_event(event) {
         case EventType.PaddleMoved:
             handle_paddle_move(event);
             break;
-        case EventType.PaddleUpPressed:
-            handle_paddle_up_pressed(event);
-            break;
-        case EventType.PaddleDownPressed:
-            handle_paddle_down_pressed(event);
-            break;
-        case EventType.PaddleUpRelease:
-            handle_paddle_up_release(event);
-            break;
-        case EventType.PaddleDownRelease:
-            handle_paddle_down_release(event);
-            break;
         default:
             console.log("Unknown Event type: " + event.type);
             console.log(event);
@@ -383,16 +365,14 @@ function handle_pong(event) {
     if (event.data) {
         const endTime = performance.now();
         const responseTime = endTime - event.data.timestamp;
-        console.clear();
         ms = responseTime;
-        console.log(`ms: ${ms}`);
         setTimeout(measure_latency, 4000);
     }
 }
 function handle_joined(event) {
     if (event.data) {
         console.log(event);
-        room_form.style.visibility = "hidden";
+        room_form.style.display = "none";
         var roomTitle = document.createElement("h1");
         roomTitle.classList.add("subtitle");
         roomTitle.classList.add("is-4");
@@ -416,6 +396,7 @@ function handle_player_joined(event) {
     if (event.data) {
         game_state.p2.isConnected = true;
         game_state.p2.username = event.data.player;
+        game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10;
         game_state.status = GameStatus.Running;
     }
     else {
@@ -428,37 +409,13 @@ function handle_room_created(event) {
         game_state.p1.username = event.to;
     }
     game_state.p1.isConnected = true;
-    room_form.style.visibility = "hidden";
+    room_form.style.display = "none";
     var roomTitle = document.createElement("h1");
     roomTitle.classList.add("subtitle");
     roomTitle.classList.add("is-4");
     roomTitle.innerHTML = "Code: " + event.data.code;
     room_info_div.insertAdjacentElement("afterbegin", roomTitle);
     canvas.style.visibility = "visible";
-}
-async function handle_paddle_up_pressed(event) {
-    // if (event.data) {
-    // game_state.p2.paddle.position.y = event.data.y
-    // }
-    game_state.p2.paddle.keys.up = true;
-}
-async function handle_paddle_down_pressed(event) {
-    // if (event.data){
-    // game_state.p2.paddle.position.y = event.data.y
-    // }
-    game_state.p2.paddle.keys.down = true;
-}
-async function handle_paddle_up_release(event) {
-    if (event.data) {
-        game_state.p2.paddle.position.y = event.data.y;
-    }
-    game_state.p2.paddle.keys.up = false;
-}
-async function handle_paddle_down_release(event) {
-    if (event.data) {
-        game_state.p2.paddle.position.y = event.data.y;
-    }
-    game_state.p2.paddle.keys.down = false;
 }
 function handle_paddle_move(event) {
     if (event.data) {
@@ -493,49 +450,13 @@ function join_game_error(event) {
     alert("Could not join room");
 }
 function paddle_moved() {
-    const event = {
+    const ev = {
         type: EventType.PaddleMoved,
         data: {
             y: game_state.p1.paddle.position.y,
         }
     };
-    send_event(event);
-}
-function pressed_up() {
-    const event = {
-        type: EventType.PaddleUpPressed,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    };
-    send_event(event);
-}
-function release_up() {
-    const event = {
-        type: EventType.PaddleUpRelease,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    };
-    send_event(event);
-}
-function pressed_down() {
-    const event = {
-        type: EventType.PaddleDownPressed,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    };
-    send_event(event);
-}
-function release_down() {
-    const event = {
-        type: EventType.PaddleDownRelease,
-        data: {
-            y: game_state.p1.paddle.position.y,
-        }
-    };
-    send_event(event);
+    send_event(ev);
 }
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

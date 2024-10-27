@@ -63,6 +63,7 @@ class Player {
     paddle: Paddle;
     isConnected: boolean;
     label: Label;
+    score: number;
 
     constructor(
         username: string = "Not Connected...",
@@ -78,6 +79,7 @@ class Player {
             content: this.username,  
             font: "19px Arial"
         }
+        this.score = 0
     }
 
     draw_label(ctx: CanvasRenderingContext2D, x: number = this.label.x, y: number = this.label.y): void {
@@ -89,8 +91,9 @@ class Player {
     get_label_width(ctx: CanvasRenderingContext2D): number {
         let old_font = ctx.font
         ctx.font = this.label.font
+        const w = ctx.measureText(this.username).width
         ctx.font = old_font
-        return ctx.measureText(this.username).width
+        return w
     }
 }
 
@@ -179,6 +182,8 @@ class Ball {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2
         ctx.beginPath()
         ctx.arc(
             this.position.x,
@@ -187,6 +192,7 @@ class Ball {
             0,
             this.endAngle
         );
+        ctx.closePath()
         ctx.fill();
     }
 }
@@ -207,9 +213,8 @@ class GameState {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
-    offscreen: OffscreenCanvas;
-    offscreen_ctx: OffscreenCanvasRenderingContext2D;
-
+    score_canvas: OffscreenCanvas;
+    score_canvas_ctx: OffscreenCanvasRenderingContext2D;
 
     constructor(
         code: string,
@@ -217,10 +222,7 @@ class GameState {
         p1: Player,
         p2: Player,
         canvas: HTMLCanvasElement,
-        offscreen: OffscreenCanvas,
-
         ctx: CanvasRenderingContext2D,
-        offscreen_ctx: OffscreenCanvasRenderingContext2D,
     ){
         this._code = code;
         this.ball = ball;
@@ -228,10 +230,16 @@ class GameState {
         this.p2 = p2;
         this.status = GameStatus.NotStarted;
         this.canvas = canvas
-        this.offscreen = offscreen
-
         this.ctx = ctx
-        this.offscreen_ctx = offscreen_ctx
+
+        this.score_canvas = new OffscreenCanvas(125, 25)
+        const score_ctx = this.score_canvas.getContext("2d")
+        if (score_ctx) {
+            this.score_canvas_ctx = score_ctx
+            this.update_scores()
+        } else {
+            throw new Error("Could not setup score_canvas context")
+        }
     }
 
     set code(theCode: string) {
@@ -242,15 +250,39 @@ class GameState {
         return this._code;
     }
 
+    update_scores(): void{
+        this.score_canvas_ctx.fillStyle = "black"
+        this.score_canvas_ctx.fillRect(0, 0, 25, 25)
+        this.score_canvas_ctx.fillRect(100, 0, 25, 25)
+
+        // this.score_canvas_ctx.strokeStyle = "white"
+        this.score_canvas_ctx.fillStyle = "white"
+
+        this.score_canvas_ctx.font = "16px Arial"
+        this.score_canvas_ctx.fillText(this.p1.score.toString(), 8, 17)
+        this.score_canvas_ctx.fillText(this.p2.score.toString(), 109, 17)
+    }
+
+    draw_scores(): void {
+        this.ctx.drawImage(this.score_canvas, (this.width / 2) - 65, 0)
+    }
+
     draw_fps(fps: number, x: number = 640, y:number = 360): void {
         this.ctx.font = "11px Arial";
         let fpsStr: string = fps.toString();
-        let width = this.offscreen_ctx.measureText(fpsStr).width + 5;
+        let width = this.ctx.measureText(fpsStr).width + 5;
+        this.ctx?.fillText(fpsStr, x - width, y);
+    }
+
+    draw_ms(ms: number, x: number = 640, y:number = 360): void {
+        this.ctx.font = "11px Arial";
+        let fpsStr: string = ms.toFixed(0) + " ms";
+        let width = this.ctx.measureText(fpsStr).width + 5;
         this.ctx?.fillText(fpsStr, x - width, y);
     }
 
     draw_code(x: number = 320, y: number = 20) {
-        let width = this.offscreen_ctx.measureText(this._code).width + 5;
+        let width = this.ctx.measureText(this._code).width + 5;
         this.ctx?.fillText(this._code, x - width, y);
     }
 
@@ -261,7 +293,7 @@ class GameState {
        this.swap_players_position = true
 
        let label_aux = this.p1.label.x
-       this.p1.label.x = this.width - this.p1.get_label_width(this.ctx) - 10
+       this.p1.label.x = this.width - (this.p1.get_label_width(this.ctx) + 10)
        this.p2.label.x = label_aux
 
        label_aux = this.p1.label.y
@@ -272,6 +304,7 @@ class GameState {
     update_paddle_p1(deltaTime: number) {
         this.p1.paddle.update(this.height, deltaTime)
     }
+
 }
 
 const canvas_width = 640
@@ -307,16 +340,17 @@ function measure_latency() {
     send_event(event_ping)
 }
 
-function main(): void{
+function main(): void {
     const ctx = canvas.getContext("2d")
     
     const offscreen = new OffscreenCanvas(canvas_width, canvas_height);
     let offscreen_ctx = offscreen.getContext("2d")
 
-    const paddle: Paddle = new Paddle({x: 30, y: canvas_height/2 }, 40, 4, 300)
-    const paddle2: Paddle = new Paddle({x: canvas_width-30, y: canvas_height/2 }, 40, 4, 300)
+    const paddle_y = (canvas_height / 2) - 20
+    const paddle: Paddle = new Paddle({x: 30, y: paddle_y }, 40, 4, 300)
+    const paddle2: Paddle = new Paddle({x: canvas_width-30, y: paddle_y }, 40, 4, 300)
 
-    const player1: Player = new Player("User", paddle, true)
+    const player1: Player = new Player("", paddle, true)
     const player2: Player = new Player("", paddle2, false)
     
     const ball: Ball = new Ball({x: canvas_width/2, y: canvas_height/2}, 7, 6, Direction.Left); 
@@ -325,12 +359,12 @@ function main(): void{
         console.log("Error: Could not put canvas context to work")
         return
     }
-    game_state = new GameState("XXXX", ball, player1, player2, canvas, offscreen, ctx, offscreen_ctx)
+    game_state = new GameState("XXXX", ball, player1, player2, canvas, ctx)
 
     player1.label.x = 10
     player1.label.y = 20
 
-    player2.label.x = game_state.width - player2.get_label_width(game_state.ctx) 
+    player2.label.x = game_state.width - (player2.get_label_width(game_state.ctx) + 10)
     player2.label.y = 20
 
     raf = requestAnimationFrame(animate)
@@ -346,8 +380,8 @@ function draw_state(state: GameState): void {
     state.ctx.fillRect(0, 25, state.width, state.height - 50);
 
     state.ctx.fillStyle = "white"
-
     state.ctx.strokeStyle = "white"
+
     state.ctx.setLineDash([10, 5]);
     state.ctx.beginPath()
     state.ctx.lineTo(state.width / 2, 25)
@@ -358,16 +392,18 @@ function draw_state(state: GameState): void {
     state.p1.draw_label(state.ctx)
     state.p2.draw_label(state.ctx)
 
+    state.draw_scores()
+
     // state.draw_code()
 
     state.p1.paddle.draw(state.ctx)
     state.p2.paddle.draw(state.ctx)
 
     state.ctx.fillStyle = "yellow"
-    state.ctx.strokeStyle = "1px black"
-
 
     state.ball.draw(state.ctx)
+
+    state.draw_ms(ms, state.width, state.height - 2)
 
 }
 
@@ -569,8 +605,40 @@ function handle_room_created(event: SocketEvent): void {
     roomTitle.classList.add("subtitle")
     roomTitle.classList.add("is-4")
     roomTitle.innerHTML = "Code: " + event.data.code    
+    navigator.clipboard.writeText(event.data.code);
+    showNotification("code copied to clipboard")
     room_info_div.insertAdjacentElement("afterbegin", roomTitle)
     canvas.style.visibility = "visible"
+}
+
+function showNotification(message: string) {
+    // Create the notification element
+    const notification = document.createElement("div");
+    notification.innerText = message;
+    notification.style.position = "fixed";
+    notification.style.bottom = "20px";
+    notification.style.left = "50%";
+    notification.style.transform = "translateX(-50%)";
+    notification.style.backgroundColor = "#333";
+    notification.style.color = "#fff";
+    notification.style.padding = "10px 20px";
+    notification.style.borderRadius = "5px";
+    notification.style.opacity = "0";
+    notification.style.transition = "opacity 0.3s";
+    notification.style.fontSize = "12px";
+
+
+    // Add the notification to the document body
+    document.body.appendChild(notification);
+
+    // Show the notification
+    setTimeout(() => notification.style.opacity = "1", 10);
+
+    // Hide and remove the notification after 2 seconds
+    setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 300); // 300ms to match the transition
+    }, 2000);
 }
 
 function handle_paddle_move(event: SocketEvent): void {

@@ -62,7 +62,7 @@ func Menu() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>var exports = {};</script><div class=\"field has-addons has-addons-centered\" id=\"room-menu\"><div class=\"control\"><input class=\"input\" id=\"code\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button id=\"joinBtn\" class=\"button is-info\">Join</button></div><div class=\"control\"><button class=\"button is-success\" id=\"createBtn\">Create Game\t\t\t\t\t</button></div></div><div class=\"painel\" id=\"roomInfo\"></div><div id=\"canvasDiv\" class=\"container is-flex is-justify-content-center\"><br>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>var exports = {};</script><div class=\"field has-addons has-addons-centered\" id=\"room-menu\"><div class=\"control\"><input class=\"input\" id=\"code\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button id=\"joinBtn\" class=\"button is-info\">Join</button></div><div class=\"control\"><button class=\"button is-success\" id=\"createBtn\">Create Game\t\t\t\t\t</button></div></div><div class=\"painel is-flex is-justify-content-center\" id=\"roomInfo\"></div><div id=\"canvasDiv\" class=\"container is-flex is-justify-content-center\"><br>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -160,7 +160,7 @@ func RoomsTable(rooms []models.Room) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(room.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pong_views/index.templ`, Line: 77, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pong_views/index.templ`, Line: 78, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {

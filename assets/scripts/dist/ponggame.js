@@ -32,6 +32,7 @@ class Player {
     paddle;
     isConnected;
     label;
+    score;
     constructor(username = "Not Connected...", paddle, isConnected = false) {
         this.username = username;
         this.paddle = paddle;
@@ -42,6 +43,7 @@ class Player {
             content: this.username,
             font: "19px Arial"
         };
+        this.score = 0;
     }
     draw_label(ctx, x = this.label.x, y = this.label.y) {
         ctx.font = this.label.font;
@@ -50,8 +52,9 @@ class Player {
     get_label_width(ctx) {
         let old_font = ctx.font;
         ctx.font = this.label.font;
+        const w = ctx.measureText(this.username).width;
         ctx.font = old_font;
-        return ctx.measureText(this.username).width;
+        return w;
     }
 }
 class Paddle {
@@ -112,8 +115,11 @@ class Ball {
         this.direction = direction;
     }
     draw(ctx) {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, this.radius, 0, this.endAngle);
+        ctx.closePath();
         ctx.fill();
     }
 }
@@ -129,18 +135,25 @@ class GameState {
     height = 360;
     canvas;
     ctx;
-    offscreen;
-    offscreen_ctx;
-    constructor(code, ball, p1, p2, canvas, offscreen, ctx, offscreen_ctx) {
+    score_canvas;
+    score_canvas_ctx;
+    constructor(code, ball, p1, p2, canvas, ctx) {
         this._code = code;
         this.ball = ball;
         this.p1 = p1;
         this.p2 = p2;
         this.status = GameStatus.NotStarted;
         this.canvas = canvas;
-        this.offscreen = offscreen;
         this.ctx = ctx;
-        this.offscreen_ctx = offscreen_ctx;
+        this.score_canvas = new OffscreenCanvas(125, 25);
+        const score_ctx = this.score_canvas.getContext("2d");
+        if (score_ctx) {
+            this.score_canvas_ctx = score_ctx;
+            this.update_scores();
+        }
+        else {
+            throw new Error("Could not setup score_canvas context");
+        }
     }
     set code(theCode) {
         this._code = theCode;
@@ -148,14 +161,33 @@ class GameState {
     get code() {
         return this._code;
     }
+    update_scores() {
+        this.score_canvas_ctx.fillStyle = "black";
+        this.score_canvas_ctx.fillRect(0, 0, 25, 25);
+        this.score_canvas_ctx.fillRect(100, 0, 25, 25);
+        // this.score_canvas_ctx.strokeStyle = "white"
+        this.score_canvas_ctx.fillStyle = "white";
+        this.score_canvas_ctx.font = "16px Arial";
+        this.score_canvas_ctx.fillText(this.p1.score.toString(), 8, 17);
+        this.score_canvas_ctx.fillText(this.p2.score.toString(), 109, 17);
+    }
+    draw_scores() {
+        this.ctx.drawImage(this.score_canvas, (this.width / 2) - 65, 0);
+    }
     draw_fps(fps, x = 640, y = 360) {
         this.ctx.font = "11px Arial";
         let fpsStr = fps.toString();
-        let width = this.offscreen_ctx.measureText(fpsStr).width + 5;
+        let width = this.ctx.measureText(fpsStr).width + 5;
+        this.ctx?.fillText(fpsStr, x - width, y);
+    }
+    draw_ms(ms, x = 640, y = 360) {
+        this.ctx.font = "11px Arial";
+        let fpsStr = ms.toFixed(0) + " ms";
+        let width = this.ctx.measureText(fpsStr).width + 5;
         this.ctx?.fillText(fpsStr, x - width, y);
     }
     draw_code(x = 320, y = 20) {
-        let width = this.offscreen_ctx.measureText(this._code).width + 5;
+        let width = this.ctx.measureText(this._code).width + 5;
         this.ctx?.fillText(this._code, x - width, y);
     }
     swap_players() {
@@ -164,7 +196,7 @@ class GameState {
         this.p2.paddle = aux;
         this.swap_players_position = true;
         let label_aux = this.p1.label.x;
-        this.p1.label.x = this.width - this.p1.get_label_width(this.ctx) - 10;
+        this.p1.label.x = this.width - (this.p1.get_label_width(this.ctx) + 10);
         this.p2.label.x = label_aux;
         label_aux = this.p1.label.y;
         this.p1.label.y = this.p2.label.y;
@@ -201,19 +233,20 @@ function main() {
     const ctx = canvas.getContext("2d");
     const offscreen = new OffscreenCanvas(canvas_width, canvas_height);
     let offscreen_ctx = offscreen.getContext("2d");
-    const paddle = new Paddle({ x: 30, y: canvas_height / 2 }, 40, 4, 300);
-    const paddle2 = new Paddle({ x: canvas_width - 30, y: canvas_height / 2 }, 40, 4, 300);
-    const player1 = new Player("User", paddle, true);
+    const paddle_y = (canvas_height / 2) - 20;
+    const paddle = new Paddle({ x: 30, y: paddle_y }, 40, 4, 300);
+    const paddle2 = new Paddle({ x: canvas_width - 30, y: paddle_y }, 40, 4, 300);
+    const player1 = new Player("", paddle, true);
     const player2 = new Player("", paddle2, false);
     const ball = new Ball({ x: canvas_width / 2, y: canvas_height / 2 }, 7, 6, Direction.Left);
     if (ctx == null || offscreen_ctx == null) {
         console.log("Error: Could not put canvas context to work");
         return;
     }
-    game_state = new GameState("XXXX", ball, player1, player2, canvas, offscreen, ctx, offscreen_ctx);
+    game_state = new GameState("XXXX", ball, player1, player2, canvas, ctx);
     player1.label.x = 10;
     player1.label.y = 20;
-    player2.label.x = game_state.width - player2.get_label_width(game_state.ctx);
+    player2.label.x = game_state.width - (player2.get_label_width(game_state.ctx) + 10);
     player2.label.y = 20;
     raf = requestAnimationFrame(animate);
 }
@@ -232,12 +265,13 @@ function draw_state(state) {
     state.ctx.stroke();
     state.p1.draw_label(state.ctx);
     state.p2.draw_label(state.ctx);
+    state.draw_scores();
     // state.draw_code()
     state.p1.paddle.draw(state.ctx);
     state.p2.paddle.draw(state.ctx);
     state.ctx.fillStyle = "yellow";
-    state.ctx.strokeStyle = "1px black";
     state.ball.draw(state.ctx);
+    state.draw_ms(ms, state.width, state.height - 2);
 }
 function update(deltaTime) {
     game_state.update_paddle_p1(deltaTime);
@@ -414,8 +448,35 @@ function handle_room_created(event) {
     roomTitle.classList.add("subtitle");
     roomTitle.classList.add("is-4");
     roomTitle.innerHTML = "Code: " + event.data.code;
+    navigator.clipboard.writeText(event.data.code);
+    showNotification("code copied to clipboard");
     room_info_div.insertAdjacentElement("afterbegin", roomTitle);
     canvas.style.visibility = "visible";
+}
+function showNotification(message) {
+    // Create the notification element
+    const notification = document.createElement("div");
+    notification.innerText = message;
+    notification.style.position = "fixed";
+    notification.style.bottom = "20px";
+    notification.style.left = "50%";
+    notification.style.transform = "translateX(-50%)";
+    notification.style.backgroundColor = "#333";
+    notification.style.color = "#fff";
+    notification.style.padding = "10px 20px";
+    notification.style.borderRadius = "5px";
+    notification.style.opacity = "0";
+    notification.style.transition = "opacity 0.3s";
+    notification.style.fontSize = "12px";
+    // Add the notification to the document body
+    document.body.appendChild(notification);
+    // Show the notification
+    setTimeout(() => notification.style.opacity = "1", 10);
+    // Hide and remove the notification after 2 seconds
+    setTimeout(() => {
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 300); // 300ms to match the transition
+    }, 2000);
 }
 function handle_paddle_move(event) {
     if (event.data) {

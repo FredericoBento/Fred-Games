@@ -25,6 +25,8 @@ var EventType;
     EventType[EventType["PlayerJoinedRoom"] = 25] = "PlayerJoinedRoom";
     EventType[EventType["PaddleMoved"] = 35] = "PaddleMoved";
     EventType[EventType["BallShot"] = 36] = "BallShot";
+    EventType[EventType["BallUpdate"] = 37] = "BallUpdate";
+    EventType[EventType["Goal"] = 38] = "Goal";
     EventType[EventType["PlayerDisconnected"] = 4] = "PlayerDisconnected";
 })(EventType || (EventType = {}));
 class Player {
@@ -47,6 +49,12 @@ class Player {
     }
     draw_label(ctx, x = this.label.x, y = this.label.y) {
         ctx.font = this.label.font;
+        if (this.isConnected) {
+            ctx.fillStyle = "white";
+        }
+        else {
+            ctx.fillStyle = "red";
+        }
         ctx.fillText(this.username, x, y);
     }
     get_label_width(ctx) {
@@ -63,7 +71,6 @@ class Paddle {
     width;
     speed;
     keys;
-    pos_buffer;
     last_move_time;
     last_interpolated_y;
     constructor(position, length, width, speed) {
@@ -75,11 +82,11 @@ class Paddle {
             up: false,
             down: false,
         };
-        this.pos_buffer = [];
         this.last_move_time = 0;
         this.last_interpolated_y = this.position.y;
     }
     draw(ctx) {
+        ctx.fillStyle = "white";
         ctx.fillRect(this.position.x, this.position.y, this.width, this.length);
     }
     update(canvas_height, deltaTime, speed = this.speed, keys = this.keys) {
@@ -104,15 +111,19 @@ class Paddle {
 }
 class Ball {
     position;
+    last_interpolated_position;
     radius;
     speed;
-    direction;
+    dx;
+    dy;
     endAngle = 2 * Math.PI;
-    constructor(position, radius, speed, direction) {
+    constructor(position, radius, speed, dx, dy) {
+        this.last_interpolated_position = position;
         this.position = position;
         this.radius = radius;
         this.speed = speed;
-        this.direction = direction;
+        this.dx = dx;
+        this.dy = dy;
     }
     draw(ctx) {
         ctx.strokeStyle = "black";
@@ -121,6 +132,22 @@ class Ball {
         ctx.arc(this.position.x, this.position.y, this.radius, 0, this.endAngle);
         ctx.closePath();
         ctx.fill();
+    }
+    center(width, height) {
+        this.position.x = width / 2;
+        this.position.y = height / 2;
+    }
+    move(position) {
+        const factor = 0.9;
+        const interpolatedY = this.lerp(this.last_interpolated_position.y, position.y, factor);
+        this.last_interpolated_position.y = interpolatedY;
+        const interpolatedX = this.lerp(this.last_interpolated_position.x, position.x, factor);
+        this.last_interpolated_position.x = interpolatedX;
+        // this.position.y = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
+        // this.position.x = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
+    }
+    lerp(current, target, interpolation_factor) {
+        return current + (target - current) * interpolation_factor;
     }
 }
 class GameState {
@@ -238,7 +265,8 @@ function main() {
     const paddle2 = new Paddle({ x: canvas_width - 30, y: paddle_y }, 40, 4, 300);
     const player1 = new Player("", paddle, true);
     const player2 = new Player("", paddle2, false);
-    const ball = new Ball({ x: canvas_width / 2, y: canvas_height / 2 }, 7, 6, Direction.Left);
+    const ball = new Ball({ x: canvas_width / 2, y: (canvas_height) / 2 }, 7, 6, 0, 0);
+    // ball.center(canvas_width, canvas_height)
     if (ctx == null || offscreen_ctx == null) {
         console.log("Error: Could not put canvas context to work");
         return;
@@ -296,6 +324,15 @@ window.addEventListener("keydown", async (event) => {
                 counter--;
             }
         }
+    }
+});
+window.addEventListener("keydown", (event) => {
+    if (event.key == "Space" || event.key == ' ') {
+        console.log("Shot");
+        const e = {
+            type: EventType.BallShot,
+        };
+        send_event(e);
     }
 });
 window.addEventListener("keyup", (event) => {
@@ -372,6 +409,15 @@ function handle_event(event) {
         case EventType.PaddleMoved:
             handle_paddle_move(event);
             break;
+        case EventType.BallUpdate:
+            handle_ball_update(event);
+            break;
+        case EventType.Goal:
+            handle_goal(event);
+            break;
+        case EventType.PlayerDisconnected:
+            handle_player_disconnect(event);
+            break;
         default:
             console.log("Unknown Event type: " + event.type);
             console.log(event);
@@ -394,6 +440,12 @@ function handle_event_error(event) {
 }
 function send_event(ev) {
     socket.send(JSON.stringify(ev));
+}
+function handle_player_disconnect(event) {
+    if (event.data) {
+        console.log("player " + event.data.username + " has left");
+        game_state.p2.isConnected = false;
+    }
 }
 function handle_pong(event) {
     if (event.data) {
@@ -481,6 +533,25 @@ function showNotification(message) {
 function handle_paddle_move(event) {
     if (event.data) {
         game_state.p2.paddle.move(event.data.y);
+    }
+}
+function handle_ball_update(event) {
+    if (event.data) {
+        const pos = {
+            x: event.data.x,
+            y: event.data.y,
+        };
+        game_state.ball.move(pos);
+        // console.log(game_state.ball.position.x, pos.x)
+    }
+}
+function handle_goal(event) {
+    if (event.data) {
+        console.log(event.data);
+        game_state.p1.score = event.data.player1_score;
+        game_state.p2.score = event.data.player2_score;
+        game_state.update_scores();
+        game_state.ball.center(canvas_width, canvas_height);
     }
 }
 function create_room() {

@@ -1,106 +1,82 @@
 package pong
 
 import (
-	"encoding/json"
 	"log/slog"
 
-	"github.com/FredericoBento/HandGame/internal/models"
+	"github.com/FredericoBento/HandGame/internal/utils"
+	"github.com/FredericoBento/HandGame/internal/ws"
 )
 
-type Pixel int
+func (s *PongService) Run(hub *ws.Hub) {
+	for {
+		select {
+		case client := <-hub.Register:
+			hub.Clients[client.Username] = client
+			slog.Info("User " + client.Username + " has connected")
+			if _, ok := hub.Rooms[client.RoomCode]; ok {
+				room := hub.Rooms[client.RoomCode]
 
-type Direction int
+				if _, ok := room.Clients[client.Username]; !ok {
+					room.Clients[client.Username] = client
+				}
+			}
+		case client := <-hub.Unregister:
+			slog.Info("User " + client.Username + " has disconnected")
+			if _, ok := hub.Rooms[client.RoomCode]; ok {
+				if _, ok := hub.Rooms[client.RoomCode].Clients[client.Username]; ok {
+					if len(hub.Rooms[client.RoomCode].Clients) != 0 {
+						room := hub.Rooms[client.RoomCode]
+						err := room.RemoveClient(client)
+						if err != nil {
+							slog.Error("CRITICAL ERROR WHEN REMOVING CLIENT")
+							return
+						}
+						delete(hub.Rooms[room.Code].Clients, client.Username)
+						s.GameStates[room.Code].RemovePlayer(client.Username)
+						// hub.RemoveClientBroadcast(client)
+						for _, c := range room.Clients {
+							event := ws.NewSimpleEvent(ws.EventTypeUserDisconnected, "")
+							event.RoomCode = client.RoomCode
+							type UsernameData struct {
+								Username string `json:"username"`
+							}
+							data := UsernameData{
+								Username: client.Username,
+							}
+							bytes, err := utils.EncodeJSON(data)
+							if err != nil {
+								slog.Error("Could not encode json while broadcasting cliennt disconnect")
+							} else {
+								event.Data = bytes
+								c.SendEvent(&event)
+							}
+						}
+					}
+				}
+			}
+			if client.Conn.Close() != nil {
+				slog.Error("Could not close connection")
+			}
+			delete(hub.Clients, client.Username)
+			close(client.Event)
 
-const (
-	DirectionLeft  = 0
-	DirectionRight = 1
+		case event := <-hub.Broadcast:
+			slog.Info("broadcast here4")
+			if event.RoomCode != "" {
+				if _, ok := hub.Rooms[event.RoomCode]; ok {
+					for _, client := range hub.Rooms[event.RoomCode].Clients {
+						event.To = client.Username
+						slog.Info("Sent event to " + client.Username)
+						client.Event <- event
+					}
+				}
+			} else {
+				if client, ok := hub.Clients[event.To]; ok {
+					slog.Info("Sent event to " + client.Username)
+					client.Event <- event
+				}
+			}
 
-	CanvasWidth  = 640
-	CanvasHeight = 360
-)
-
-type Ball struct {
-	position  models.Vector `json:"position"`
-	speed     float32       `json:"speed"`
-	direction Direction     `json:"direction"`
-	isRunning bool          `json:"isRunning"`
-	radius    Pixel         `json:"radius"`
-}
-
-type Player struct {
-	paddle      Paddle `json:"paddle"`
-	isConnected bool   `json:"isConnected"`
-	username    string `json:"username"`
-}
-
-type Paddle struct {
-	position models.Vector `json:"position"`
-	length   Pixel         `json:"length"`
-	width    Pixel         `json:"width"`
-	speed    float32       `json:"speed"`
-}
-
-type PongGameState struct {
-	player1    *Player `json:"player1"`
-	player2    *Player `json:"player2"`
-	ball       *Ball   `json:"ball"`
-	hasStarted bool    `json:"hasStarted"`
-}
-
-func NewPlayer(username string, paddle Paddle) *Player {
-	return &Player{
-		paddle:      paddle,
-		isConnected: false,
-		username:    username,
+		}
 	}
-}
-
-func NewPaddle(position models.Vector, length Pixel, width Pixel) Paddle {
-	return Paddle{
-		position: position,
-		length:   length,
-		width:    length,
-	}
-}
-
-func NewBall(position models.Vector, radius Pixel, speed float32, direction Direction, isRunning bool) *Ball {
-	return &Ball{
-		position:  position,
-		radius:    radius,
-		speed:     speed,
-		direction: direction,
-		isRunning: isRunning,
-	}
-}
-
-func NewDefaultBall() *Ball {
-	return NewBall(
-		models.Vector{X: 250, Y: 250},
-		3,
-		3.5,
-		DirectionLeft,
-		false,
-	)
-}
-
-func NewDefaultPaddle(position models.Vector) Paddle {
-	return NewPaddle(position, 10, 2)
-}
-
-func NewPongGameState(p1 *Player, p2 *Player, ball *Ball) *PongGameState {
-	return &PongGameState{
-		player1:    p1,
-		player2:    p2,
-		ball:       ball,
-		hasStarted: false,
-	}
-}
-
-func (state *PongGameState) encodeJSON() ([]byte, error) {
-	data, err := json.Marshal(state)
-	if err != nil {
-		slog.Error("could not enconde pong game state to JSON")
-		return nil, err
-	}
-	return data, nil
 }

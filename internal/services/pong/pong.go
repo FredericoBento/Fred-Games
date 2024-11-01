@@ -14,10 +14,11 @@ import (
 )
 
 type PongService struct {
-	Name   string
-	Status *services.Status
-	Log    *slog.Logger
-	Hub    *ws.Hub
+	Name       string
+	Status     *services.Status
+	Log        *slog.Logger
+	Hub        *ws.Hub
+	GameStates map[string]*GameState
 }
 
 var (
@@ -36,13 +37,15 @@ func NewPongService() *PongService {
 		lo = slog.Default()
 	}
 	service := &PongService{
-		Name:   "PongService",
-		Status: services.NewStatus(),
-		Log:    lo,
-		Hub:    ws.NewHub(),
+		Name:       "PongService",
+		Status:     services.NewStatus(),
+		Log:        lo,
+		Hub:        ws.NewHub(),
+		GameStates: make(map[string]*GameState),
 	}
 
-	go service.Hub.Run()
+	// go service.Hub.Run()
+	go service.Run(service.Hub)
 	return service
 }
 
@@ -71,20 +74,13 @@ func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
 	case EventTypeJoinRoom:
 		s.HandleEventJoinRoom(&event, client)
 		return
-	case EventTypePaddleUpPressed:
-		s.HandleEventPaddleMove(&event, client)
-		return
-	case EventTypePaddleDownPressed:
-		s.HandleEventPaddleMove(&event, client)
-		return
-	case EventTypePaddleUpRelease:
-		s.HandleEventPaddleMove(&event, client)
-		return
-	case EventTypePaddleDownRelease:
-		s.HandleEventPaddleMove(&event, client)
-		return
+
 	case EventTypePaddleMoved:
 		s.HandleEventPaddleMove(&event, client)
+		return
+
+	case EventTypeBallShot:
+		s.HandleEventBallShot(&event, client)
 		return
 
 	default:

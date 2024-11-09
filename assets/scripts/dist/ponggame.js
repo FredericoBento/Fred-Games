@@ -113,17 +113,11 @@ class Ball {
     position;
     last_interpolated_position;
     radius;
-    speed;
-    dx;
-    dy;
     endAngle = 2 * Math.PI;
-    constructor(position, radius, speed, dx, dy) {
+    constructor(position, radius, speed) {
         this.last_interpolated_position = position;
         this.position = position;
         this.radius = radius;
-        this.speed = speed;
-        this.dx = dx;
-        this.dy = dy;
     }
     draw(ctx) {
         ctx.strokeStyle = "black";
@@ -143,8 +137,6 @@ class Ball {
         this.last_interpolated_position.y = interpolatedY;
         const interpolatedX = this.lerp(this.last_interpolated_position.x, position.x, factor);
         this.last_interpolated_position.x = interpolatedX;
-        // this.position.y = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
-        // this.position.x = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
     }
     lerp(current, target, interpolation_factor) {
         return current + (target - current) * interpolation_factor;
@@ -258,16 +250,13 @@ function measure_latency() {
 }
 function main() {
     const ctx = canvas.getContext("2d");
-    const offscreen = new OffscreenCanvas(canvas_width, canvas_height);
-    let offscreen_ctx = offscreen.getContext("2d");
     const paddle_y = (canvas_height / 2) - 20;
     const paddle = new Paddle({ x: 30, y: paddle_y }, 40, 4, 300);
     const paddle2 = new Paddle({ x: canvas_width - 30, y: paddle_y }, 40, 4, 300);
     const player1 = new Player("", paddle, true);
     const player2 = new Player("", paddle2, false);
-    const ball = new Ball({ x: canvas_width / 2, y: (canvas_height) / 2 }, 7, 6, 0, 0);
-    // ball.center(canvas_width, canvas_height)
-    if (ctx == null || offscreen_ctx == null) {
+    const ball = new Ball({ x: canvas_width / 2, y: (canvas_height) / 2 }, 7, 6);
+    if (ctx == null) {
         console.log("Error: Could not put canvas context to work");
         return;
     }
@@ -465,13 +454,16 @@ function handle_joined(event) {
         roomTitle.innerHTML = "Code: " + event.data.code;
         room_info_div.insertAdjacentElement("afterbegin", roomTitle);
         canvas.style.visibility = "visible";
-        if (event.to) {
-            game_state.p1.username = event.to;
-        }
+        game_state.p1.username = event.data.username;
         game_state.p2.isConnected = true;
         game_state.p2.username = event.data.player;
         game_state.code = event.data.code;
-        game_state.swap_players();
+        if (event.data.is_player_1) {
+            game_state.swap_players();
+        }
+        else {
+            game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10;
+        }
         game_state.status = GameStatus.Running;
     }
     else {
@@ -482,7 +474,9 @@ function handle_player_joined(event) {
     if (event.data) {
         game_state.p2.isConnected = true;
         game_state.p2.username = event.data.player;
-        game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10;
+        if (!event.data.is_player_1) {
+            game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10;
+        }
         game_state.status = GameStatus.Running;
     }
     else {
@@ -491,8 +485,8 @@ function handle_player_joined(event) {
 }
 function handle_room_created(event) {
     game_state.code = event.data.code;
-    if (event.to) {
-        game_state.p1.username = event.to;
+    if (event.data) {
+        game_state.p1.username = event.data.username;
     }
     game_state.p1.isConnected = true;
     room_form.style.display = "none";

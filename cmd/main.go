@@ -22,6 +22,7 @@ import (
 	"github.com/FredericoBento/HandGame/internal/services"
 	"github.com/FredericoBento/HandGame/internal/services/admin_service"
 	"github.com/FredericoBento/HandGame/internal/services/pong"
+	"github.com/FredericoBento/HandGame/internal/services/tictactoe"
 
 	_ "net/http/pprof"
 
@@ -84,8 +85,9 @@ func main() {
 
 	pongService := pong.NewPongService()
 	handgameService := services.NewHandGameService()
+	ticTacToeService := tictactoe.NewTicTacToeService()
 
-	games := []services.GameService{handgameService, pongService}
+	games := []services.GameService{handgameService, pongService, ticTacToeService}
 
 	adminService := admin_service.NewAdminService(httpServer, games)
 
@@ -97,8 +99,9 @@ func main() {
 
 	handGameHandler := handler.NewHandGameHandler(handgameService)
 	pongHandler := handler.NewPongHandler(pongService)
+	tictactoeHandler := handler.NewTicTacToeHandler()
 
-	serverHandlers := server.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler, pongHandler)
+	serverHandlers := server.NewServerHandlers(authHandler, adminHandler, homeHandler, handGameHandler, pongHandler, tictactoeHandler)
 
 	httpServer = server.NewServer(
 		server.WithHost(config.Server.Host),
@@ -115,9 +118,15 @@ func main() {
 		switch game.(type) {
 		case *services.HandGameService:
 			httpServer.SetupHandGameRoutes(game.GetRoute())
+
 		case *pong.PongService:
 			httpServer.SetupPongGameRoutes(game.GetRoute())
 			httpServer.SetupPongGameWebsocketLogic(game.HandleWebSocketConnection())
+
+		case *tictactoe.TicTacToeService:
+			httpServer.SetupTicTacToeGameRoutes(game.GetRoute())
+			httpServer.SetupTicTacToeGameWebsocketLogic(game.HandleWebSocketConnection())
+
 		default:
 			slog.Error("could not setup routes for unknown game service")
 		}

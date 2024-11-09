@@ -28,11 +28,12 @@ var (
 )
 
 type ServerHandlers struct {
-	AuthHandler     http.Handler
-	HomeHandler     http.Handler
-	AdminHandler    http.Handler
-	HandGameHandler http.Handler
-	PongHandler     http.Handler
+	AuthHandler      http.Handler
+	HomeHandler      http.Handler
+	AdminHandler     http.Handler
+	HandGameHandler  http.Handler
+	PongHandler      http.Handler
+	TicTacToeHandler http.Handler
 }
 
 type Server struct {
@@ -84,13 +85,14 @@ func NewServer(opts ...ServerOption) *Server {
 	return server
 }
 
-func NewServerHandlers(authH http.Handler, adminH http.Handler, homeH http.Handler, handGameH http.Handler, pongH http.Handler) *ServerHandlers {
+func NewServerHandlers(authH http.Handler, adminH http.Handler, homeH http.Handler, handGameH http.Handler, pongH http.Handler, tictactoeH http.Handler) *ServerHandlers {
 	return &ServerHandlers{
-		AuthHandler:     authH,
-		AdminHandler:    adminH,
-		HomeHandler:     homeH,
-		HandGameHandler: handGameH,
-		PongHandler:     pongH,
+		AuthHandler:      authH,
+		AdminHandler:     adminH,
+		HomeHandler:      homeH,
+		HandGameHandler:  handGameH,
+		PongHandler:      pongH,
+		TicTacToeHandler: tictactoeH,
 	}
 }
 
@@ -174,6 +176,25 @@ func (s *Server) SetupPongGameWebsocketLogic(wsHandler http.HandlerFunc) {
 	wsHandler = http.HandlerFunc(wsHandler)
 
 	s.Router.Handle("/ws/pong", standardWebsocketMiddlewares(wsHandler))
+}
+
+func (s *Server) SetupTicTacToeGameRoutes(routePrefix string) {
+	middlewares := middleware.StackMiddleware(
+		standardMiddlewares,
+		middleware.RequiredLogged,
+	)
+
+	s.Router.Handle(routePrefix+"/home", middlewares(s.Handlers.TicTacToeHandler))
+
+	//We need to set the routes before the server listening
+	//This makes sure the routes only are allow after the game service is started
+	s.BlockRoutes(routePrefix)
+}
+
+func (s *Server) SetupTicTacToeGameWebsocketLogic(wsHandler http.HandlerFunc) {
+	wsHandler = http.HandlerFunc(wsHandler)
+
+	s.Router.Handle("/ws/tictactoe", standardWebsocketMiddlewares(wsHandler))
 }
 
 func (s *Server) Run() error {

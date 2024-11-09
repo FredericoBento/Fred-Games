@@ -172,24 +172,16 @@ class Ball {
     position: Point;
     last_interpolated_position: Point;
     radius: number;
-    speed: number;
-    dx: number;
-    dy: number;
     endAngle = 2 * Math.PI;
 
     constructor(
         position: Point,
         radius: number,
         speed: number,
-        dx: number,
-        dy: number,
     ){
         this.last_interpolated_position = position;
         this.position = position;
         this.radius = radius;
-        this.speed = speed;
-        this.dx = dx;
-        this.dy = dy;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -219,10 +211,6 @@ class Ball {
 
         const interpolatedX = this.lerp(this.last_interpolated_position.x, position.x, factor)
         this.last_interpolated_position.x = interpolatedX
-
-        // this.position.y = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
-        // this.position.x = Math.max(0, Math.min(interpolatedY, canvas_height - this.radius));
-        
     }
 
     lerp(current: number, target: number, interpolation_factor: number): number {
@@ -376,9 +364,6 @@ function measure_latency() {
 function main(): void {
     const ctx = canvas.getContext("2d")
     
-    const offscreen = new OffscreenCanvas(canvas_width, canvas_height);
-    let offscreen_ctx = offscreen.getContext("2d")
-
     const paddle_y = (canvas_height / 2) - 20
     const paddle: Paddle = new Paddle({x: 30, y: paddle_y }, 40, 4, 300)
     const paddle2: Paddle = new Paddle({x: canvas_width-30, y: paddle_y }, 40, 4, 300)
@@ -386,10 +371,9 @@ function main(): void {
     const player1: Player = new Player("", paddle, true)
     const player2: Player = new Player("", paddle2, false)
     
-    const ball: Ball = new Ball({x: canvas_width/2, y: (canvas_height)/2}, 7, 6, 0, 0); 
-    // ball.center(canvas_width, canvas_height)
+    const ball: Ball = new Ball({x: canvas_width/2, y: (canvas_height)/2}, 7, 6); 
 
-    if (ctx == null || offscreen_ctx == null) {
+    if (ctx == null) {
         console.log("Error: Could not put canvas context to work")
         return
     }
@@ -628,14 +612,16 @@ function handle_joined(event: SocketEvent): void {
         room_info_div.insertAdjacentElement("afterbegin", roomTitle)
         canvas.style.visibility = "visible"
 
-        if (event.to) {
-            game_state.p1.username = event.to
-        }
+        game_state.p1.username = event.data.username
 
         game_state.p2.isConnected = true
         game_state.p2.username = event.data.player        
         game_state.code = event.data.code
-        game_state.swap_players()
+        if (event.data.is_player_1) {
+            game_state.swap_players()
+        } else {
+            game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10
+        }
         game_state.status = GameStatus.Running
     } else {
         console.log("no data", event)
@@ -646,7 +632,9 @@ function handle_player_joined(event: SocketEvent): void {
     if (event.data) {
         game_state.p2.isConnected = true
         game_state.p2.username = event.data.player
-        game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10
+        if (!event.data.is_player_1) {
+            game_state.p2.label.x = game_state.width - game_state.p2.get_label_width(game_state.ctx) - 10
+        }
         game_state.status = GameStatus.Running
     } else {
         console.log("no data", event)
@@ -655,8 +643,8 @@ function handle_player_joined(event: SocketEvent): void {
 
 function handle_room_created(event: SocketEvent): void {
     game_state.code = event.data.code
-    if (event.to) {
-        game_state.p1.username = event.to
+    if (event.data) {
+        game_state.p1.username = event.data.username
     }
 
     game_state.p1.isConnected = true

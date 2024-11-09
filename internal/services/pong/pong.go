@@ -1,7 +1,6 @@
 package pong
 
 import (
-	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -49,15 +48,7 @@ func NewPongService() *PongService {
 	return service
 }
 
-func (s *PongService) ReadMessageHandler(client *ws.Client, message []byte) {
-	event := ws.Event{}
-	err := json.Unmarshal(message, &event)
-	if err != nil {
-		slog.Error("Invalid message no event: " + string(message))
-		return
-	}
-	event.From = client.Username
-
+func (s *PongService) ReadMessageHandler(client *ws.Client, event ws.Event) {
 	switch event.Type {
 	case ws.EventTypePing:
 		ws.HandleEventPing(&event, client)

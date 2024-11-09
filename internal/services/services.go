@@ -21,5 +21,5 @@ type GameService interface {
 	GetRoute() string
 	GetLogs() ([]logger.PrettyLogs, error)
 	HandleWebSocketConnection() http.HandlerFunc
-	ReadMessageHandler(client *ws.Client, message []byte)
+	ReadMessageHandler(client *ws.Client, event ws.Event)
 }

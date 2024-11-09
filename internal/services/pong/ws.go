@@ -35,7 +35,7 @@ func (s *PongService) Run(hub *ws.Hub) {
 						s.GameStates[room.Code].RemovePlayer(client.Username)
 						// hub.RemoveClientBroadcast(client)
 						for _, c := range room.Clients {
-							event := ws.NewSimpleEvent(ws.EventTypeUserDisconnected, "")
+							event := ws.NewSimpleEvent(ws.EventTypeUserDisconnected)
 							event.RoomCode = client.RoomCode
 							type UsernameData struct {
 								Username string `json:"username"`
@@ -61,22 +61,14 @@ func (s *PongService) Run(hub *ws.Hub) {
 			close(client.Event)
 
 		case event := <-hub.Broadcast:
-			slog.Info("broadcast here4")
 			if event.RoomCode != "" {
 				if _, ok := hub.Rooms[event.RoomCode]; ok {
 					for _, client := range hub.Rooms[event.RoomCode].Clients {
-						event.To = client.Username
 						slog.Info("Sent event to " + client.Username)
 						client.Event <- event
 					}
 				}
-			} else {
-				if client, ok := hub.Clients[event.To]; ok {
-					slog.Info("Sent event to " + client.Username)
-					client.Event <- event
-				}
 			}
-
 		}
 	}
 }

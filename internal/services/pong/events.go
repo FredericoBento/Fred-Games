@@ -3,44 +3,28 @@ package pong
 import (
 	"encoding/json"
 	"errors"
+	"github.com/FredericoBento/HandGame/internal/utils"
+	"github.com/FredericoBento/HandGame/internal/ws"
 	"log/slog"
 	"math"
 	"time"
-
-	"github.com/FredericoBento/HandGame/internal/models"
-	"github.com/FredericoBento/HandGame/internal/utils"
-	"github.com/FredericoBento/HandGame/internal/ws"
 )
 
 type EventMessage struct {
 	Message string `json:"message"`
 }
 
-type EventCreateRoomData struct {
+type EventDataCode struct {
 	Code string `json:"code"`
 }
 
-type EventRoomCreatedData struct {
-	Code string `json:"code"`
-}
-
-type EventJoinRoomData struct {
-	Code   string `json:"code"`
-	Player string `json:"player"`
-}
-
-type EventPlayerJoinedRoomData struct {
-	Code   string `json:"code"`
-	Player string `json:"player"`
-}
-
-type EventJoinedRoomData struct {
+type EventDataCodePlayer struct {
 	Code   string `json:"code"`
 	Player string `json:"player"`
 }
 
 type EventPaddleMoveData struct {
-	Paddle_y float32 `json:"y"`
+	Paddle_y float64 `json:"y"`
 }
 
 const (
@@ -59,6 +43,10 @@ const (
 	EventTypeBallShot   = 36
 	EventTypeBallUpdate = 37
 	EventTypeGoal       = 38
+
+	EventTypeSyncGameState = 39
+
+	ball_angle_modifer = float64(1.1)
 )
 
 var (
@@ -90,10 +78,15 @@ func (s *PongService) HandleEventCreateRoom(event *ws.Event, client *ws.Client) 
 		client.SendErrorEvent(event)
 		return
 	}
-	createdRoomEvent := ws.NewEvent(EventTypeCreatedRoom, room.Code, "", client.Username)
+	createdRoomEvent := ws.NewEvent(EventTypeCreatedRoom, room.Code)
 
-	eventData := EventRoomCreatedData{
-		Code: room.Code,
+	type Data struct {
+		Code     string `json:"code"`
+		Username string `json:"username"`
+	}
+	eventData := Data{
+		Code:     room.Code,
+		Username: client.Username,
 	}
 	bytes, err := utils.EncodeJSON(eventData)
 	if err != nil {
@@ -102,7 +95,12 @@ func (s *PongService) HandleEventCreateRoom(event *ws.Event, client *ws.Client) 
 	}
 	state := NewGameState(nil, 0, 0)
 	s.GameStates[code] = state
-	state.AddPlayer(client.Username, nil)
+	err = state.AddPlayer(client.Username, nil)
+	if err != nil {
+		delete(s.GameStates, code)
+		slog.Error("Coudlnt add player: " + err.Error())
+		return
+	}
 	createdRoomEvent.Data = bytes
 	client.SendEvent(&createdRoomEvent)
 	err = room.AddClient(client)
@@ -112,7 +110,7 @@ func (s *PongService) HandleEventCreateRoom(event *ws.Event, client *ws.Client) 
 }
 
 func (s *PongService) HandleEventJoinRoom(event *ws.Event, client *ws.Client) {
-	data := EventJoinRoomData{}
+	data := EventDataCodePlayer{}
 	err := json.Unmarshal(event.Data, &data)
 	if err != nil {
 		slog.Error("Invalid data for JoinRoomData")
@@ -134,13 +132,27 @@ func (s *PongService) HandleEventJoinRoom(event *ws.Event, client *ws.Client) {
 		client.SendErrorEventWithMessage(event, err.Error())
 		return
 	}
+	state := s.GameStates[room.Code]
 	var otherClientUsername string
+	var isPlayer1 bool
+
+	if state.Player1 != nil {
+		isPlayer1 = false
+	} else {
+		isPlayer1 = true
+	}
 	for _, c := range room.Clients {
 		if c.Username != client.Username {
 			otherClientUsername = c.Username
-			eventData := EventPlayerJoinedRoomData{
-				Code:   data.Code,
-				Player: client.Username,
+			type Data struct {
+				Code      string `json:"code"`
+				Player    string `json:"player"`
+				IsPlayer1 bool   `json:"is_player_1"`
+			}
+			eventData := Data{
+				Code:      data.Code,
+				Player:    client.Username,
+				IsPlayer1: isPlayer1,
 			}
 			slog.Info(eventData.Code)
 			bytes, err := utils.EncodeJSON(eventData)
@@ -148,27 +160,34 @@ func (s *PongService) HandleEventJoinRoom(event *ws.Event, client *ws.Client) {
 				c.SendErrorEventWithMessage(event, err.Error())
 				return
 			}
-			event := ws.NewEvent(EventTypePlayerJoinedRoom, data.Code, "server", c.Username)
+			event := ws.NewEvent(EventTypePlayerJoinedRoom, data.Code)
 			event.Data = bytes
 			c.SendEvent(&event)
 		}
 	}
-	err = s.GameStates[room.Code].AddPlayer(client.Username, nil)
+	err = state.AddPlayer(client.Username, nil)
 	if err != nil {
 		client.SendErrorEventWithMessage(event, err.Error())
 		return
 	}
-
-	eventData := EventJoinedRoomData{
-		Code:   room.Code,
-		Player: otherClientUsername,
+	type JoinRoomData struct {
+		Code      string `json:"code"`
+		Username  string `json:"username"`
+		Player    string `json:"player"`
+		IsPlayer1 bool   `json:"is_player_1,omitempty"`
+	}
+	eventData := JoinRoomData{
+		Code:      room.Code,
+		Username:  client.Username,
+		Player:    otherClientUsername,
+		IsPlayer1: otherClientUsername == state.Player1.Username,
 	}
 	bytes, err := utils.EncodeJSON(eventData)
 	if err != nil {
 		client.SendErrorEventWithMessage(event, err.Error())
 		return
 	}
-	joinedEvent := ws.NewSimpleEvent(EventTypeJoinedRoom, client.Username)
+	joinedEvent := ws.NewSimpleEvent(EventTypeJoinedRoom)
 	joinedEvent.Data = bytes
 	client.SendEvent(&joinedEvent)
 }
@@ -208,7 +227,7 @@ func (s *PongService) HandleEventPaddleMove(event *ws.Event, client *ws.Client) 
 	}
 	for _, c := range room.Clients {
 		if c.Username != client.Username {
-			moveEvent := ws.NewSimpleEvent(event.Type, c.Username)
+			moveEvent := ws.NewSimpleEvent(event.Type)
 			moveEvent.Data = bytes
 			go func(targetClient *ws.Client, moveEvent ws.Event) {
 				targetClient.SendEvent(&moveEvent)
@@ -238,12 +257,19 @@ func (s *PongService) HandleEventBallShot(event *ws.Event, client *ws.Client) {
 	go s.UpdateBall(state, client.RoomCode)
 }
 
-const deltaTime = 0.016
-
 func (s *PongService) UpdateBall(state *GameState, code string) {
 	if state == nil {
 		return
 	}
+
+	if state.Ball == nil {
+		return
+	}
+
+	if state.Player1 == nil || state.Player2 == nil {
+		return
+	}
+
 	for state.Ball.Direction != ball_direction_none {
 		time.Sleep(10 * time.Millisecond)
 
@@ -256,20 +282,22 @@ func (s *PongService) UpdateBall(state *GameState, code string) {
 		}
 
 		state.Ball.check_wall_collision(25, state.Canvas.Height+25)
-		// moe := float32(4) // margin of error
-		if state.Ball.Position.X < state.Player1.Paddle.Position.X+float32(state.Player1.Paddle.Width) {
+
+		if state.Ball.Position.X < state.Player1.Paddle.Position.X+state.Player1.Paddle.Width {
 			if state.Ball.Position.X-state.Ball.Radius <= 0 {
 				state.Player2.Score += 1
 				state.Ball.recenter(state.Canvas.Width, state.Canvas.Height+50)
 				go s.UpdatePoints(state, code)
+				go s.UpdateBall(state, code)
 			}
+
 		} else {
-			if state.Ball.Position.X > state.Player2.Paddle.Position.X+float32(state.Player1.Paddle.Width) {
+			if state.Ball.Position.X > state.Player2.Paddle.Position.X+state.Player1.Paddle.Width {
 				if state.Ball.Position.X+state.Ball.Radius >= state.Canvas.Width {
 					state.Player1.Score += 1
 					state.Ball.recenter(state.Canvas.Width, state.Canvas.Height+50)
 					go s.UpdatePoints(state, code)
-					s.UpdateBall(state, code)
+					go s.UpdateBall(state, code)
 				}
 			}
 		}
@@ -281,7 +309,7 @@ func (s *PongService) UpdateBall(state *GameState, code string) {
 		if err == nil {
 			go func() {
 				for _, client := range s.Hub.Rooms[code].Clients {
-					event := ws.NewSimpleEvent(EventTypeBallUpdate, client.Username)
+					event := ws.NewSimpleEvent(EventTypeBallUpdate)
 					event.Data = data
 					client.SendEvent(&event)
 				}
@@ -291,58 +319,20 @@ func (s *PongService) UpdateBall(state *GameState, code string) {
 	}
 }
 
-func two_points_distance(point1 *models.Vector2D, point2 *models.Vector2D) float32 {
-	return float32(math.Sqrt(float64((math.Pow((float64(point1.X)-float64(point2.X)), 2) + math.Pow((float64(point1.Y)-float64(point2.Y)), 2)))))
-}
-
 func (ball *Ball) is_collision(paddle *Paddle) bool {
-
-	// Calcular os limites da raquete
 	paddle_x1 := paddle.Position.X
-	paddle_x2 := paddle.Position.X + float32(paddle.Width)
+	paddle_x2 := paddle.Position.X + paddle.Width
 	paddle_y1 := paddle.Position.Y
-	paddle_y2 := paddle.Position.Y + float32(paddle.Length)
+	paddle_y2 := paddle.Position.Y + paddle.Length
 
-	// Encontrar o ponto mais próximo na raquete em relação à bola
-	closest_x := math.Max(float64(paddle_x1), math.Min(float64(ball.Position.X), float64(paddle_x2)))
-	closest_y := math.Max(float64(paddle_y1), math.Min(float64(ball.Position.Y), float64(paddle_y2)))
+	closest_x := math.Max(paddle_x1, math.Min(ball.Position.X, paddle_x2))
+	closest_y := math.Max(paddle_y1, math.Min(ball.Position.Y, paddle_y2))
+	distance := math.Sqrt(math.Pow(ball.Position.X-closest_x, 2) + math.Pow(ball.Position.Y-closest_y, 2))
 
-	// Calcular a distância do centro da bola até o ponto mais próximo
-	distance := math.Sqrt(math.Pow(float64(ball.Position.X)-closest_x, 2) + math.Pow(float64(ball.Position.Y)-closest_y, 2))
-
-	// Verificar se a distância é menor ou igual ao raio da bola
-	return distance <= float64(ball.Radius)
-	// paddle_x1 := paddle.Position.X                         // top left
-	// paddle_x2 := paddle.Position.X + float32(paddle.Width) // bottom right
-
-	// paddle_y1 := paddle.Position.Y
-	// paddle_y2 := paddle.Position.Y + float32(paddle.Length)
-
-	// if ball.Position.X < paddle_x1 || ball.Position.X > paddle_x2 || ball.Position.Y < paddle_y1 || ball.Position.Y > paddle_y2 {
-	// 	return false
-	// }
-
-	// closest_x := math.Max(float64(paddle_x1), math.Min(float64(ball.Position.X), float64(paddle_x2)))
-	// closest_y := math.Max(float64(paddle_y1), math.Min(float64(ball.Position.Y), float64(paddle_y2)))
-
-	// distance := math.Sqrt(math.Pow(float64(ball.Position.X)-closest_x, 2) + math.Pow(float64(ball.Position.Y)-closest_y, 2))
-	// return distance <= float64(ball.Radius)
-
-	// if ball.Position.X+ball.Radius < paddle.Position.X ||
-	// 	ball.Position.X-ball.Radius > paddle.Position.X+float32(paddle.Width) {
-	// 	return false
-	// }
-
-	// if ball.Position.Y+ball.Radius < paddle.Position.Y ||
-	// 	ball.Position.Y-ball.Radius > paddle.Position.Y+float32(paddle.Length) {
-	// 	return false
-	// }
-	// slog.Info("COLLISION")
-
-	// return true
+	return distance <= ball.Radius
 }
 
-func (ball *Ball) recenter(width float32, height float32) {
+func (ball *Ball) recenter(width float64, height float64) {
 	ball.Direction = ball_direction_none
 	ball.Position.X = (width / 2)
 	ball.Position.Y = (height / 2)
@@ -350,15 +340,14 @@ func (ball *Ball) recenter(width float32, height float32) {
 	ball.Dy = 0
 }
 
-func (ball *Ball) check_wall_collision(top_y float32, bottom_y float32) {
-	angle_modifer := float32(1.1)
+func (ball *Ball) check_wall_collision(top_y float64, bottom_y float64) {
 	if ball.Position.Y-ball.Radius <= top_y {
-		ball.Dy = -ball.Dy * angle_modifer
+		ball.Dy = -ball.Dy * ball_angle_modifer
 		ball.Position.Y = top_y + ball.Radius
 	}
 
 	if ball.Position.Y+ball.Radius >= bottom_y {
-		ball.Dy = -ball.Dy * angle_modifer
+		ball.Dy = -ball.Dy * ball_angle_modifer
 		ball.Position.Y = bottom_y - ball.Radius
 	}
 }
@@ -366,12 +355,8 @@ func (ball *Ball) handle_collision(paddle *Paddle) {
 	ball.invert_direction()
 	ball.Dx = -ball.Dx
 
-	offset := (ball.Position.Y - paddle.Position.Y) / float32(paddle.Length/2)
+	offset := (ball.Position.Y - paddle.Position.Y) / paddle.Length / 2
 	ball.Dy += offset * 0.9
-
-	// speed := float32(math.Sqrt(float64(ball.Dx*ball.Dx + ball.Dy*ball.Dy)))
-	// ball.Dx = (ball.Dx / speed) * ball.Speed
-	// ball.Dy = (ball.Dy / speed) * ball.Speed
 }
 
 func (ball *Ball) invert_direction() {
@@ -396,9 +381,13 @@ func (s *PongService) UpdatePoints(state *GameState, code string) {
 	data, err := utils.EncodeJSON(points)
 	if err == nil {
 		for _, client := range s.Hub.Rooms[code].Clients {
-			event := ws.NewSimpleEvent(EventTypeGoal, client.Username)
+			event := ws.NewSimpleEvent(EventTypeGoal)
 			event.Data = data
 			client.SendEvent(&event)
 		}
 	}
+}
+
+func (s *PongService) SendState(state *GameState, code string) {
+	return
 }

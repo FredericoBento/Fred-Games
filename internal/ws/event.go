@@ -11,11 +11,9 @@ type EventType int
 
 type Event struct {
 	Type     EventType       `json:"type"`
-	Data     json.RawMessage `json:"data",omitempty`
-	RoomCode string          `json:"roomCode",omitempty`
-	From     string          `json:"from",omitempty"`
-	To       string          `json:"to",omitempty`
-	IsError  bool            `json:"isError",omitempty`
+	Data     json.RawMessage `json:"data,omitempty"`
+	RoomCode string          `json:"roomCode,omitempty"`
+	IsError  bool            `json:"isError,omitempty"`
 }
 
 type EventPingPongData struct {
@@ -27,24 +25,20 @@ const (
 	EventTypePong = 99
 )
 
-func NewEvent(t EventType, roomCode string, from string, to string) Event {
+func NewEvent(t EventType, roomCode string) Event {
 	return Event{
 		Type:     t,
 		Data:     json.RawMessage{},
 		RoomCode: roomCode,
-		From:     from,
-		To:       to,
 		IsError:  false,
 	}
 }
 
-func NewSimpleEvent(t EventType, to string) Event {
+func NewSimpleEvent(t EventType) Event {
 	return Event{
 		Type:     t,
 		Data:     json.RawMessage{},
 		RoomCode: "",
-		From:     "",
-		To:       to,
 		IsError:  false,
 	}
 }
@@ -57,7 +51,7 @@ func HandleEventPing(event *Event, client *Client) {
 		client.SendErrorEventWithMessage(event, "Error pinging")
 		return
 	}
-	eventPong := NewSimpleEvent(EventTypePong, client.Username)
+	eventPong := NewSimpleEvent(EventTypePong)
 	data2 := EventPingPongData{
 		Timestamp: data.Timestamp,
 	}

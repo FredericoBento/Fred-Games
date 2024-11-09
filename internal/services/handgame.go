@@ -36,8 +36,8 @@ func (s *HandGameService) Start() error {
 	return nil
 }
 
-func (s *HandGameService) ReadMessageHandler(client *ws.Client, message []byte) {
-	s.Log.Info("Got Message: " + string(message) + " from " + client.Username)
+func (s *HandGameService) ReadMessageHandler(client *ws.Client, event ws.Event) {
+	// s.Log.Info("Got Message: " + string(message) + " from " + client.Username)
 	return
 }
 

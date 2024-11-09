@@ -144,3 +144,127 @@ canvas {
     text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
   }
 }
+
+
+/* .ttt_board_body { */
+/* border: 2px solid yellow; */
+/* } */
+
+/* .ttt_board_body .cell { */
+/* border: 2px solid yellow; */
+/* } */
+
+#ttt_board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
+  padding-bottom: 20px !important;
+}
+
+/* Define the grid layout and make each cell a square */
+#ttt_board .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  /* Space between cells */
+}
+
+#ttt_board .cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  background-color: #f4f4f9;
+  border: 2px solid #333;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+@keyframes symbolAnimation {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#ttt_board .cell.x::before,
+#ttt_board .cell.x::after {
+  content: '';
+  position: absolute;
+  width: 70%;
+  height: 10px;
+  background-color: #ff6b6b;
+  transform-origin: center;
+  animation: symbolAnimation 0.3s ease;
+}
+
+#ttt_board .cell.x::before {
+  transform: rotate(45deg);
+}
+
+#ttt_board .cell.x::after {
+  transform: rotate(-45deg);
+}
+
+#ttt_board .cell.o::before {
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border: 10px solid #4ecdc4;
+  border-radius: 50%;
+  animation: symbolAnimation 0.3s ease;
+}
+
+#ttt_board .cell:hover {
+  background-color: #ddd;
+}
+
+/* Result overlay on top of the board */
+#game-result-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 5;
+}
+
+.result-text {
+  color: yellow;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 0 0 8px yellow, 0 0 16px yellow;
+}
+
+/* Animation for winning cells */
+@keyframes yellow-glow {
+
+  0%,
+  100% {
+    border-color: yellow;
+    box-shadow: 0 0 8px yellow, 0 0 16px yellow;
+  }
+
+  50% {
+    border-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.winning-cell {
+  animation: yellow-glow 1s infinite;
+}

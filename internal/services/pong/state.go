@@ -6,20 +6,19 @@ import (
 	"github.com/FredericoBento/HandGame/internal/models"
 )
 
-type Pixel int
-
 type Paddle struct {
 	Position     models.Vector2D `json:"position"`
-	LastPosition models.Vector2D `json:"last_position", omitempty`
-	Length       Pixel           `json:"position"`
-	Width        Pixel           `json:"width"`
-	Speed        float32         `json:"speed"`
+	LastPosition models.Vector2D `json:"last_position,omitempty"`
+	Length       float64         `json:"length"`
+	Width        float64         `json:"width"`
+	Speed        float64         `json:"speed"`
 }
 
 type Player struct {
-	Username string  `json:"username"`
-	Score    int     `json:"points"`
-	Paddle   *Paddle `json:"paddle"`
+	Username  string  `json:"username"`
+	Score     int     `json:"points"`
+	Paddle    *Paddle `json:"paddle"`
+	Connected bool    `json:"connected"`
 }
 
 type Direction int
@@ -27,16 +26,16 @@ type Direction int
 type Ball struct {
 	Position     models.Vector2D `json:"position"`
 	LastPosition models.Vector2D `json:"last_position"`
-	Radius       float32         `json:"radius"`
-	Speed        float32         `json:"speed"`
+	Radius       float64         `json:"radius"`
+	Speed        float64         `json:"speed"`
 	Direction    Direction
-	Dx           float32 `json:"dx"`
-	Dy           float32 `json:"dy"`
+	Dx           float64 `json:"dx"`
+	Dy           float64 `json:"dy"`
 }
 
 type Canvas struct {
-	Width  float32 `json:"width"`
-	Height float32 `json:"height"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
 }
 
 type GameStatus int
@@ -70,7 +69,7 @@ const (
 	default_ball_radius = 7
 )
 
-func NewPaddle(position models.Vector2D, length Pixel, width Pixel, speed float32) *Paddle {
+func NewPaddle(position models.Vector2D, length float64, width float64, speed float64) *Paddle {
 	return &Paddle{
 		Position:     position,
 		LastPosition: position,
@@ -82,13 +81,14 @@ func NewPaddle(position models.Vector2D, length Pixel, width Pixel, speed float3
 
 func NewPlayer(username string, paddle *Paddle, isConnected bool) *Player {
 	return &Player{
-		Username: username,
-		Score:    0,
-		Paddle:   paddle,
+		Username:  username,
+		Score:     0,
+		Paddle:    paddle,
+		Connected: true,
 	}
 }
 
-func NewBall(position models.Vector2D, radius float32, speed float32) *Ball {
+func NewBall(position models.Vector2D, radius float64, speed float64) *Ball {
 	return &Ball{
 		Position:     position,
 		LastPosition: position,
@@ -100,7 +100,7 @@ func NewBall(position models.Vector2D, radius float32, speed float32) *Ball {
 	}
 }
 
-func NewGameState(ball *Ball, width float32, height float32) *GameState {
+func NewGameState(ball *Ball, width float64, height float64) *GameState {
 	if width == 0 {
 		width = default_playable_width
 	}
@@ -151,10 +151,13 @@ func (state *GameState) AddPlayer(username string, paddle *Paddle) error {
 }
 
 func (state *GameState) RemovePlayer(username string) error {
-	if username == state.Player1.Username {
-		state.Player1 = nil
-		return nil
-	} else {
+	if state.Player1 != nil {
+		if username == state.Player1.Username {
+			state.Player1 = nil
+			return nil
+		}
+	}
+	if state.Player2 != nil {
 		if username == state.Player2.Username {
 			state.Player2 = nil
 			return nil
@@ -163,14 +166,47 @@ func (state *GameState) RemovePlayer(username string) error {
 	return errors.New("Invalid player to remove")
 }
 
-func (state *GameState) UpdatePlayer1Paddle(y float32) {
+func (state *GameState) ReconnectPlayer(username string) error {
+	if state.Player1 != nil {
+		if state.Player1.Username == username {
+			state.Player1.Connected = true
+			return nil
+		}
+	}
+	if state.Player2 != nil {
+		if state.Player2.Username == username {
+			state.Player2.Connected = true
+			return nil
+		}
+	}
+
+	return errors.New("Could not reconnect player")
+}
+
+func (state *GameState) DisconnectPlayer(username string) error {
+	if state.Player1 != nil {
+		if username == state.Player1.Username {
+			state.Player1.Connected = false
+			return nil
+		}
+	}
+	if state.Player2 != nil {
+		if username == state.Player2.Username {
+			state.Player2.Connected = false
+			return nil
+		}
+	}
+	return errors.New("Invalid player to disconnect")
+}
+
+func (state *GameState) UpdatePlayer1Paddle(y float64) {
 	if state.Player1 != nil {
 		state.Player1.Paddle.LastPosition = state.Player1.Paddle.Position
 		state.Player1.Paddle.Position.Y = y
 	}
 }
 
-func (state *GameState) UpdatePlayer2Paddle(y float32) {
+func (state *GameState) UpdatePlayer2Paddle(y float64) {
 	if state.Player2 != nil {
 		state.Player2.Paddle.LastPosition = state.Player1.Paddle.Position
 		state.Player2.Paddle.Position.Y = y

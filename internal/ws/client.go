@@ -18,7 +18,7 @@ type Client struct {
 
 type ReadMessageHandler func(*Client, []byte)
 
-type ReadEventHandler func(*Client, []byte)
+type ReadEventHandler func(*Client, Event)
 
 const (
 	writeWait      = 34 * time.Millisecond
@@ -37,14 +37,11 @@ func NewClient(conn *websocket.Conn, username string) *Client {
 }
 
 func (client *Client) SendEvent(e *Event) {
-	// slog.Info("Sent event")
 	client.Event <- e
 }
 
 func (client *Client) SendErrorEvent(e *Event) {
 	e.IsError = true
-	e.From = "server"
-	e.To = client.Username
 	e.Data = json.RawMessage{}
 	e.RoomCode = client.RoomCode
 	client.SendEvent(e)
@@ -60,8 +57,6 @@ func (client *Client) SendErrorEventWithMessage(e *Event, message string) {
 		return
 	}
 	e.IsError = true
-	e.From = ""
-	e.To = client.Username
 	e.Data = m
 	e.RoomCode = client.RoomCode
 	client.SendEvent(e)
@@ -81,7 +76,9 @@ func (client *Client) ReadPump(hub *Hub, handler ReadEventHandler) {
 	})
 
 	for {
-		_, event, err := client.Conn.ReadMessage()
+		event := Event{}
+		err := client.Conn.ReadJSON(&event)
+		// _, event, err := client.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				slog.Error("Error: %v", err)
@@ -114,7 +111,7 @@ func (client *Client) WritePump() {
 			}
 			eventBytes, err := utils.EncodeJSON(event)
 			if err != nil {
-				slog.Error("Error while marshiling: "+err.Error(), event.Type, event.To)
+				slog.Error("Error while marshiling: "+err.Error(), event.Type)
 				return
 			}
 			w.Write(eventBytes)

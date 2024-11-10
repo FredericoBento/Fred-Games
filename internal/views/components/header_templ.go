@@ -42,72 +42,6 @@ func Header(navbar templ.Component) templ.Component {
 	})
 }
 
-// templ OldHeader(structure models.NavBarStructure) {
-//   <header class="hero is-small ">
-//     <div class="hero-body">
-//       <div class="container has-text-centered">
-//           @OldNavBar("Fred's Apps", structure)
-//       </div>
-//     </div>
-//   </header>
-// }
-
-// templ OldNavBar(title string, structure models.NavBarStructure) {
-//   <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
-//   <div class="navbar-brand">
-//     <a class="navbar-item" hx-get="/home" hx-push-url="true" hx-target="body" hx-headers='{"Hx-Request":"false"}'>
-//         <img width="32" height="200" src="/assets/svgs/favicon.svg"></img>
-//         <p class="title is-5 has-text-white-ter" >{ title }</p>
-//     </a>
-//     if len(structure.StartButtons) > 0 || len(structure.EndButtons) > 0 {
-//       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//       </a>
-//     }
-//   </div>
-
-//   <div id="navbarMenu" class="navbar-menu">
-//     <div class="navbar-start">
-//         for _, btn := range structure.StartButtons {
-//            @NavButton(btn)
-//         }
-//     </div>
-
-//   <div class="navbar-end">
-//         for _, btn := range structure.EndButtons {
-//            @NavButton(btn)
-//         }
-//     </div>
-//   </div>
-
-// </nav>
-// }
-
-//	templ OldNavButton(btn models.Button) {
-//	  if len(btn.Childs) > 0 {
-//	    <div class="navbar-item has-dropdown is-hoverable is-size-5">
-//	      <a class="navbar-link has-text-white-ter">{btn.ButtonName}</a>
-//	      <div class="navbar-dropdown">
-//	        for _, b := range btn.Childs {
-//	          if btn.NotHxRequest {
-//	              <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ b.Url }>{btn.ButtonName}</a>
-//	          } else {
-//	              <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-target="#contents" hx-get={ b.Url }>{b.ButtonName}</a>
-//	          }
-//	        }
-//	      </div>
-//	    </div>
-//	  } else {
-//	    if btn.NotHxRequest {
-//	        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ btn.Url }>{btn.ButtonName}</a>
-//	    } else {
-//	        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-target="#contents" hx-get={ btn.Url }>{btn.ButtonName}</a>
-//	    }
-//	  }
-//	}
 func NavButton(name string, url string, NotHxRequest bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -127,14 +61,14 @@ func NavButton(name string, url string, NotHxRequest bool) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if NotHxRequest {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"navbar-item is-size-5 has-text-white-ter\" hx-push-url=\"true\" hx-headers=\"{&#34;Hx-Request&#34;: &#34;false&#34;}\" hx-target=\"body\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"navbar-item is-size-5 has-text-white-ter\" hx-push-url=\"true\" hx-boost=\"true\" hx-headers=\"{&#34;Hx-Request&#34;: &#34;false&#34;}\" hx-target=\"body\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 82, Col: 145}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 15, Col: 161}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -147,7 +81,7 @@ func NavButton(name string, url string, NotHxRequest bool) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 82, Col: 153}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 15, Col: 169}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -158,14 +92,14 @@ func NavButton(name string, url string, NotHxRequest bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"navbar-item is-size-5 has-text-white-ter\" hx-push-url=\"true\" hx-target=\"#contents\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a class=\"navbar-item is-size-5 has-text-white-ter\" hx-push-url=\"true\" hx-boost=\"true\" hx-target=\"#contents\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(url)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 84, Col: 113}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 17, Col: 129}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -178,7 +112,7 @@ func NavButton(name string, url string, NotHxRequest bool) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 84, Col: 121}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 17, Col: 137}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -218,7 +152,7 @@ func NavDropdown(dropdownName string, names []string, urls []string, NotHxReques
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(dropdownName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 90, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 23, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -237,7 +171,7 @@ func NavDropdown(dropdownName string, names []string, urls []string, NotHxReques
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(urls[i])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 94, Col: 155}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 27, Col: 155}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -250,7 +184,7 @@ func NavDropdown(dropdownName string, names []string, urls []string, NotHxReques
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(b)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 94, Col: 160}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 27, Col: 160}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -268,7 +202,7 @@ func NavDropdown(dropdownName string, names []string, urls []string, NotHxReques
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(urls[i])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 97, Col: 123}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 30, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -281,7 +215,7 @@ func NavDropdown(dropdownName string, names []string, urls []string, NotHxReques
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(b)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 97, Col: 128}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/components/header.templ`, Line: 30, Col: 128}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {

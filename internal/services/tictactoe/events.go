@@ -207,7 +207,6 @@ func (s *TicTacToeService) HandleEventMakePlay(event *ws.Event, client *ws.Clien
 		}
 	} else {
 		if state.Player2 == nil {
-			s.Log.Error(err.Error())
 			s.SendError(event, ErrCouldNotPlay, client)
 			return
 		}
@@ -316,6 +315,10 @@ func (s *TicTacToeService) PlayerReconnect(state *GameState, client *ws.Client) 
 		}
 		stateEvent.Data = data
 		go client.SendEvent(&stateEvent)
+
+		if state.Player2 == nil {
+			return nil
+		}
 
 		if otherClient, ok := s.Hub.Clients[state.Player2.Username]; ok {
 			ev := ws.NewEvent(EventTypePlayerReconnected, state.Code)

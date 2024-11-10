@@ -22,7 +22,7 @@ type ReadEventHandler func(*Client, Event)
 
 const (
 	writeWait      = 34 * time.Millisecond
-	pongWait       = 52 * time.Millisecond
+	pongWait       = 500 * time.Millisecond
 	pingPeriod     = (pongWait * 9) / 20
 	maxMessageSize = 128
 )
@@ -65,7 +65,10 @@ func (client *Client) SendErrorEventWithMessage(e *Event, message string) {
 func (client *Client) ReadPump(hub *Hub, handler ReadEventHandler) {
 	defer func() {
 		hub.Unregister <- client
-		client.Conn.Close()
+		err := client.Conn.Close()
+		if err != nil {
+			slog.Error("Could not close connection", "Error", err.Error())
+		}
 	}()
 
 	client.Conn.SetReadLimit(maxMessageSize)
@@ -78,14 +81,12 @@ func (client *Client) ReadPump(hub *Hub, handler ReadEventHandler) {
 	for {
 		event := Event{}
 		err := client.Conn.ReadJSON(&event)
-		// _, event, err := client.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				slog.Error("Error: %v", err)
+				slog.Error("", "error:", err)
 			}
 			break
 		}
-		// Let service handle the messages
 		handler(client, event)
 	}
 }

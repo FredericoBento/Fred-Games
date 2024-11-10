@@ -10,78 +10,11 @@ templ Header(navbar templ.Component) {
   </header>
 }
 
-// templ OldHeader(structure models.NavBarStructure) {
-//   <header class="hero is-small ">
-//     <div class="hero-body">
-//       <div class="container has-text-centered">
-//           @OldNavBar("Fred's Apps", structure)
-//       </div>
-//     </div>
-//   </header>
-// }
-
-// templ OldNavBar(title string, structure models.NavBarStructure) {
-//   <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
-//   <div class="navbar-brand">
-//     <a class="navbar-item" hx-get="/home" hx-push-url="true" hx-target="body" hx-headers='{"Hx-Request":"false"}'>
-//         <img width="32" height="200" src="/assets/svgs/favicon.svg"></img>
-//         <p class="title is-5 has-text-white-ter" >{ title }</p>
-//     </a>
-//     if len(structure.StartButtons) > 0 || len(structure.EndButtons) > 0 {
-//       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//         <span aria-hidden="true"></span>
-//       </a>
-//     }
-//   </div>
-
-//   <div id="navbarMenu" class="navbar-menu">
-//     <div class="navbar-start">
-//         for _, btn := range structure.StartButtons {
-//            @NavButton(btn)
-//         }
-//     </div>
-
-//   <div class="navbar-end">
-//         for _, btn := range structure.EndButtons {
-//            @NavButton(btn)
-//         }
-//     </div>
-//   </div>
-
-// </nav>
-// }
-
-// templ OldNavButton(btn models.Button) {
-//   if len(btn.Childs) > 0 {
-//     <div class="navbar-item has-dropdown is-hoverable is-size-5">
-//       <a class="navbar-link has-text-white-ter">{btn.ButtonName}</a>     
-//       <div class="navbar-dropdown">
-//         for _, b := range btn.Childs {
-//           if btn.NotHxRequest {
-//               <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ b.Url }>{btn.ButtonName}</a>     
-//           } else {
-//               <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-target="#contents" hx-get={ b.Url }>{b.ButtonName}</a>     
-//           }
-//         }
-//       </div>
-//     </div>
-//   } else {
-//     if btn.NotHxRequest {
-//         <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ btn.Url }>{btn.ButtonName}</a>     
-//     } else {
-//         <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-target="#contents" hx-get={ btn.Url }>{btn.ButtonName}</a>     
-//     }
-//   }
-// }
-
 templ NavButton(name string, url string, NotHxRequest bool) {
       if NotHxRequest {
-        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ url }>{name}</a>     
+        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-boost="true" hx-headers='{"Hx-Request": "false"}' hx-target="body" hx-get={ url }>{name}</a>     
     } else {
-        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-target="#contents" hx-get={ url }>{name}</a>     
+        <a class="navbar-item is-size-5 has-text-white-ter" hx-push-url="true" hx-boost="true" hx-target="#contents" hx-get={ url }>{name}</a>     
     }
 }
 

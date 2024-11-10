@@ -60,7 +60,7 @@ func Menu() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"field has-addons has-addons-centered\" id=\"room-menu\"><div class=\"control\"><input class=\"input\" id=\"ttt_code\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button id=\"tictactoe_join_btn\" class=\"button is-info\">Join</button></div><div class=\"control\"><button class=\"button is-success\" id=\"tictactoe_create_btn\">Create Game\t\t\t\t\t</button></div></div><div class=\"painel is-flex is-justify-content-center\"><p class=\"subtitle is-4\" id=\"ttt_code_label\"></p></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"field has-addons has-addons-centered\" id=\"room-menu\"><div class=\"control\"><input class=\"input\" id=\"ttt_code\" name=\"code\" type=\"text\" placeholder=\"Code\"></div><div class=\"control\"><button id=\"tictactoe_join_btn\" class=\"button is-info\">Join</button></div><div class=\"control\"><button class=\"button is-success\" id=\"tictactoe_create_btn\">Create Game\t\t\t\t\t</button></div></div><div class=\"block painel is-flex is-justify-content-center\"><p class=\"subtitle is-4\" id=\"ttt_code_label\"></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -68,7 +68,7 @@ func Menu() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script defer src=\"/assets/scripts/dist/tictactoe.js\" type=\"module\"></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script defer>\n\t\t\tttt_init()\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,7 +94,7 @@ func Board() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"ttt_board\" class=\"fixed-grid has-3-cols is-flex is-justify-content-center\"><div class=\"grid ttt_board_body\"><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div></div><div id=\"game-result-overlay\" class=\"is-hidden\"><p class=\"result-text\" id=\"result-text\"></p></div></div><div id=\"scoreboard\" class=\"container is-flex is-justify-content-center has-text-centered has-text-white\"><div id=\"scoreboard-content\" class=\"columns is-centered is-vcentered\"><div class=\"column is-narrow\"><p class=\"subtitle is-6\" id=\"player1_label\"></p><p class=\"subtitle is-4\" id=\"player1_wins\"></p></div><div class=\"column is-narrow\"><p class=\"subtitle is-6\">TIE</p><p class=\"subtitle is-4\" id=\"ties\"></p></div><div class=\"column is-narrow\"><p class=\"subtitle is-6\" id=\"player2_label\"></p><p class=\"subtitle is-4\" id=\"player2_wins\"></p></div></div><div id=\"game-result-message\" class=\"is-hidden\"><p class=\"result-text\" id=\"result-text\"></p></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"ttt_board\" class=\"block\"><div class=\"grid ttt_board_body\"><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div><div class=\"cell\"></div></div><div id=\"game-result-overlay\" class=\"block is-hidden\"><p class=\"result-text\" id=\"result-text\"></p></div></div><div id=\"scoreboard\" class=\"block is-flex is-justify-content-center has-text-centered has-text-white\"><div id=\"scoreboard-content\" class=\"columns is-centered is-vcentered\"><div class=\"column is-narrow\"><p class=\"subtitle is-6\" id=\"player1_label\"></p><p class=\"subtitle is-4\" id=\"player1_wins\"></p></div><div class=\"column is-narrow\"><p class=\"subtitle is-6\">TIE</p><p class=\"subtitle is-4\" id=\"ties\"></p></div><div class=\"column is-narrow\"><p class=\"subtitle is-6\" id=\"player2_label\"></p><p class=\"subtitle is-4\" id=\"player2_wins\"></p></div></div><div id=\"game-result-message\" class=\"is-hidden\"><p class=\"result-text\" id=\"result-text\"></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

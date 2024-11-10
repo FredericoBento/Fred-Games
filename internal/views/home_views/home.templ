@@ -22,7 +22,7 @@ templ Home(games []services.GameService) {
 
 templ AppThumbnail(a services.GameService) {
   <div class="card app-card">
-    <div class="card-image" hx-push-url="true" hx-target="#contents" hx-get={a.GetRoute()+"/home"}>
+    <div class="card-image" hx-push-url="true" hx-boost="true" hx-target="#contents" hx-get={a.GetRoute()+"/home"}>
       <figure class="image is-5by4 thumbnail">
         <img
           src={"/assets/imgs/apps/"+a.GetRoute()+"/thumbnail.webp"}

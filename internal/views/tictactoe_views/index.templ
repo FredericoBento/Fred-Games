@@ -28,15 +28,18 @@ templ Menu() {
 			</button>
 		</div>
 	</div>
-	<div class="painel is-flex is-justify-content-center">
+	<div class="block painel is-flex is-justify-content-center">
 		<p class="subtitle is-4" id="ttt_code_label"></p>
 	</div> 
 	@Board()
-	<script defer src="/assets/scripts/dist/tictactoe.js" type="module"></script>
+	<script defer>
+			ttt_init()
+	</script>
+	// <script src="/assets/scripts/dist/tictactoe.js" type="text/javascript"></script>
 }
 
 templ Board() {
-	<div id="ttt_board" class="fixed-grid has-3-cols is-flex is-justify-content-center">
+	<div id="ttt_board" class="block">
 		<div class="grid ttt_board_body">
 			<div class="cell"></div>
 			<div class="cell"></div>
@@ -49,12 +52,13 @@ templ Board() {
 			<div class="cell"></div>
 		</div>
 
-	  <div id="game-result-overlay" class="is-hidden">
-	  <p class="result-text" id="result-text"></p>
+	  <div id="game-result-overlay" class="block is-hidden">
+		  <p class="result-text" id="result-text"></p>
 	  </div>
 
 	</div>
-	<div id="scoreboard" class="container is-flex is-justify-content-center has-text-centered has-text-white">
+
+	<div id="scoreboard" class="block is-flex is-justify-content-center has-text-centered has-text-white">
 	  <div id="scoreboard-content" class="columns is-centered is-vcentered">
 	    <div class="column is-narrow">
 	      <p class="subtitle is-6" id="player1_label"></p>

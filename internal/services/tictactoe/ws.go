@@ -14,11 +14,6 @@ func (s *TicTacToeService) Run(hub *ws.Hub) {
 
 		case client := <-hub.Unregister:
 			s.Log.Info("User " + client.Username + " has disconnected")
-
-			if client.Conn.Close() != nil {
-				s.Log.Error("Could not close connection")
-			}
-
 			s.PlayerDisconnect(client)
 			break
 

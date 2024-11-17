@@ -1,4 +1,4 @@
-# Fred Games
+# Fred Games 🎮
 This project is a multiplayer gaming platform developed to explore and learn Golang and real-time WebSocket connections. It combines a robust backend with a responsive frontend to deliver classic games like Pong and Tic-Tac-Toe, playable in real-time with other users.
 ## Tech Stack:
 

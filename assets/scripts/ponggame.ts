@@ -421,7 +421,7 @@ function draw_state(state: GameState): void {
 
     state.ball.draw(state.ctx)
 
-    state.draw_ms(ms, state.width, state.height - 2)
+    // state.draw_ms(ms, state.width, state.height - 2)
 
 }
 

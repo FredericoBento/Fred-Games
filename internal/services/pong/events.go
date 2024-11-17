@@ -46,7 +46,7 @@ const (
 
 	EventTypeSyncGameState = 39
 
-	ball_angle_modifer = float64(1.1)
+	ball_angle_modifer = float64(1.5)
 )
 
 var (

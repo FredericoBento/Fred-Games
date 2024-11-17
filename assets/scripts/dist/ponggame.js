@@ -288,7 +288,7 @@ function draw_state(state) {
     state.p2.paddle.draw(state.ctx);
     state.ctx.fillStyle = "yellow";
     state.ball.draw(state.ctx);
-    state.draw_ms(ms, state.width, state.height - 2);
+    // state.draw_ms(ms, state.width, state.height - 2)
 }
 function update(deltaTime) {
     game_state.update_paddle_p1(deltaTime);
